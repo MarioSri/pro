@@ -1,267 +1,500 @@
-import { useState } from "react";
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { Search, Users, X, ChevronDown, ChevronRight } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { 
+  Search, 
+  ChevronDown, 
+  ChevronRight, 
+  Users, 
+  UserCheck, 
+  Building, 
+  Crown, 
+  X,
+  Check,
+  Minus,
+  ArrowRight
+} from "lucide-react";
 
-interface RecipientSelectorProps {
-  userRole: string;
-  selectedRecipients: string[];
-  onRecipientsChange: (recipients: string[]) => void;
+interface Recipient {
+  id: string;
+  name: string;
+  role: string;
+  department?: string;
+  branch?: string;
+  year?: string;
+  email: string;
 }
 
 interface RecipientGroup {
+  id: string;
   title: string;
-  recipients: Array<{
-    id: string;
-    name: string;
-    role: string;
-    department?: string;
-  }>;
+  icon: React.ComponentType<any>;
+  recipients: Recipient[];
+  expanded?: boolean;
 }
 
-export function RecipientSelector({ userRole, selectedRecipients, onRecipientsChange }: RecipientSelectorProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(["hods", "admins"]);
+interface RecipientSelectorProps {
+  userRole: 'Principal' | 'Registrar' | 'HOD' | 'Employee' | string;
+  selectedRecipients: string[];
+  onRecipientsChange: (recipients: string[]) => void;
+  maxSelections?: number;
+}
 
-  const recipientGroups: RecipientGroup[] = [
-    {
-      title: "Heads of Departments",
-      recipients: [
-        { id: "hod-eee", name: "Dr. Rajesh Kumar", role: "HOD", department: "EEE" },
-        { id: "hod-mech", name: "Dr. Priya Sharma", role: "HOD", department: "MECH" },
-        { id: "hod-cse", name: "Dr. Anil Verma", role: "HOD", department: "CSE" },
-        { id: "hod-ece", name: "Dr. Sunita Rao", role: "HOD", department: "ECE" },
-        { id: "hod-csm", name: "Dr. Vikram Singh", role: "HOD", department: "CSM & CSO" },
-        { id: "hod-csd", name: "Dr. Meera Gupta", role: "HOD", department: "CSD & CSC" },
-      ]
-    },
-    {
-      title: "Administrative Roles",
-      recipients: [
-        { id: "principal", name: "Dr. A.K. Sharma", role: "Principal" },
-        { id: "registrar", name: "Dr. B.N. Reddy", role: "Registrar" },
-        { id: "dean", name: "Dr. C.P. Singh", role: "Dean" },
-        { id: "chairman", name: "Dr. D.R. Gupta", role: "Chairman" },
-        { id: "director", name: "Dr. E.S. Kumar", role: "Director" },
-        { id: "cdc", name: "Dr. F.T. Sharma", role: "CDC" },
-      ]
-    },
-    {
-      title: "Program Heads (All Branches)",
-      recipients: [
-        { id: "ph-cse-1", name: "Dr. Amit Shah", role: "Program Head", department: "CSE - Year 1" },
-        { id: "ph-cse-2", name: "Dr. Neha Patel", role: "Program Head", department: "CSE - Year 2" },
-        { id: "ph-ece-1", name: "Dr. Ravi Mehta", role: "Program Head", department: "ECE - Year 1" },
-        { id: "ph-eee-1", name: "Dr. Sita Ram", role: "Program Head", department: "EEE - Year 1" },
-        { id: "ph-mech-1", name: "Dr. Kiran Joshi", role: "Program Head", department: "MECH - Year 1" },
-      ]
-    },
-    {
-      title: "Specialized Roles",
-      recipients: [
-        { id: "controller", name: "Dr. G.H. Kumar", role: "Controller of Examinations" },
-        { id: "asst-dean", name: "Dr. H.I. Verma", role: "Asst. Dean IIIC" },
-        { id: "head-ops", name: "Mr. I.J. Singh", role: "Head Operations" },
-        { id: "librarian", name: "Mrs. J.K. Sharma", role: "Librarian" },
-        { id: "ssg", name: "Mr. K.L. Gupta", role: "SSG" },
-      ]
-    }
-  ];
+const branches = ['EEE', 'MECH', 'CSE', 'ECE', 'CSM & CSO', 'CSD & CSC'];
+const years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
 
-  // Filter recipients based on user role permissions
-  const getAuthorizedGroups = () => {
-    if (userRole === "principal") {
-      return recipientGroups; // Principal can send to anyone
-    }
-    if (userRole === "registrar") {
-      return recipientGroups.filter(group => 
-        ["Heads of Departments", "Administrative Roles", "Program Heads (All Branches)"].includes(group.title)
-      );
-    }
-    if (userRole.includes("hod")) {
-      return recipientGroups.filter(group => 
-        ["Administrative Roles", "Program Heads (All Branches)", "Specialized Roles"].includes(group.title)
-      );
-    }
-    // Default for employees
-    return recipientGroups.filter(group => 
-      ["Heads of Departments", "Administrative Roles"].includes(group.title)
-    );
+// Mock data generation
+const generateRecipients = (userRole: string): RecipientGroup[] => {
+  const createRecipient = (name: string, role: string, dept?: string, branch?: string, year?: string): Recipient => ({
+    id: `${role.toLowerCase().replace(/\s+/g, '-')}-${name.toLowerCase().replace(/\s+/g, '-')}-${branch || ''}${year || ''}`.replace(/[-]+/g, '-'),
+    name,
+    role,
+    department: dept,
+    branch,
+    year,
+    email: `${name.toLowerCase().replace(/\s+/g, '.')}@hitam.org`
+  });
+
+  if (userRole === 'Principal') {
+    return [
+      {
+        id: 'mentors',
+        title: 'Mentors (All Branches & Years)',
+        icon: Users,
+        recipients: branches.flatMap(branch => 
+          years.map(year => createRecipient(`Dr. ${branch} Mentor`, 'Mentor', `${branch} Department`, branch, year))
+        )
+      },
+      {
+        id: 'program-heads',
+        title: 'Program Heads (All Branches & Years)',
+        icon: UserCheck,
+        recipients: branches.flatMap(branch => 
+          years.map(year => createRecipient(`Prof. ${branch} Head`, 'Program Head', `${branch} Department`, branch, year))
+        )
+      },
+      {
+        id: 'hods',
+        title: 'HODs (All Branches)',
+        icon: Building,
+        recipients: branches.map(branch => 
+          createRecipient(`Dr. ${branch} HOD`, 'Head of Department', `${branch} Department`, branch)
+        )
+      },
+      {
+        id: 'administrative',
+        title: 'Administrative Roles',
+        icon: Crown,
+        recipients: [
+          createRecipient('Dr. Sarah Registrar', 'Registrar', 'Administration'),
+          createRecipient('Prof. John CDC', 'CDC', 'Career Development'),
+          createRecipient('Dr. Maria Dean', 'Dean', 'Academic Affairs'),
+          createRecipient('Mr. David Chairman', 'Chairman', 'Board'),
+          createRecipient('Ms. Lisa Director', 'Director', 'Operations')
+        ]
+      },
+      {
+        id: 'specialized',
+        title: 'Specialized Roles',
+        icon: UserCheck,
+        recipients: [
+          createRecipient('Dr. Robert Controller', 'Controller of Examinations', 'Examinations'),
+          createRecipient('Mr. Michael Operations', 'Head Operations', 'Operations'),
+          createRecipient('Ms. Jennifer Librarian', 'Librarian', 'Library'),
+          createRecipient('Prof. William SSG', 'SSG', 'Student Services')
+        ]
+      }
+    ];
+  } else {
+    // Employee view - limited recipients
+    return [
+      {
+        id: 'program-heads',
+        title: 'Program Heads (All Branches)',
+        icon: UserCheck,
+        recipients: branches.map(branch => 
+          createRecipient(`Prof. ${branch} Head`, 'Program Head', `${branch} Department`, branch)
+        )
+      },
+      {
+        id: 'hods',
+        title: 'HODs (All Branches)',
+        icon: Building,
+        recipients: branches.map(branch => 
+          createRecipient(`Dr. ${branch} HOD`, 'Head of Department', `${branch} Department`, branch)
+        )
+      },
+      {
+        id: 'senior-admin',
+        title: 'Senior Administration',
+        icon: Crown,
+        recipients: [
+          createRecipient('Dr. Sarah Registrar', 'Registrar', 'Administration'),
+          createRecipient('Dr. Robert Principal', 'Principal', 'Administration')
+        ]
+      }
+    ];
+  }
+};
+
+export const RecipientSelector: React.FC<RecipientSelectorProps> = ({
+  userRole,
+  selectedRecipients,
+  onRecipientsChange,
+  maxSelections
+}) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({
+    'hods': true,
+    'program-heads': true
+  });
+
+  const recipientGroups = useMemo(() => generateRecipients(userRole), [userRole]);
+
+  const filteredGroups = useMemo(() => {
+    if (!searchTerm) return recipientGroups;
+
+    return recipientGroups.map(group => ({
+      ...group,
+      recipients: group.recipients.filter(recipient =>
+        recipient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        recipient.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        recipient.branch?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        recipient.department?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    })).filter(group => group.recipients.length > 0);
+  }, [recipientGroups, searchTerm]);
+
+  const selectedRecipientsData = useMemo(() => {
+    const allRecipients = recipientGroups.flatMap(group => group.recipients);
+    return selectedRecipients.map(id => allRecipients.find(r => r.id === id)).filter(Boolean) as Recipient[];
+  }, [recipientGroups, selectedRecipients]);
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups(prev => ({
+      ...prev,
+      [groupId]: !prev[groupId]
+    }));
   };
 
-  const authorizedGroups = getAuthorizedGroups();
-
-  const filteredGroups = authorizedGroups.map(group => ({
-    ...group,
-    recipients: group.recipients.filter(recipient =>
-      recipient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      recipient.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      recipient.department?.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })).filter(group => group.recipients.length > 0);
-
-  const handleRecipientToggle = (recipientId: string) => {
-    const updatedRecipients = selectedRecipients.includes(recipientId)
-      ? selectedRecipients.filter(id => id !== recipientId)
-      : [...selectedRecipients, recipientId];
-    onRecipientsChange(updatedRecipients);
-  };
-
-  const handleGroupSelectAll = (groupRecipients: any[]) => {
-    const groupIds = groupRecipients.map(r => r.id);
-    const allSelected = groupIds.every(id => selectedRecipients.includes(id));
+  const toggleRecipient = (recipientId: string) => {
+    const isSelected = selectedRecipients.includes(recipientId);
     
-    if (allSelected) {
-      onRecipientsChange(selectedRecipients.filter(id => !groupIds.includes(id)));
+    if (isSelected) {
+      onRecipientsChange(selectedRecipients.filter(id => id !== recipientId));
     } else {
-      const newRecipients = [...new Set([...selectedRecipients, ...groupIds])];
-      onRecipientsChange(newRecipients);
+      if (maxSelections && selectedRecipients.length >= maxSelections) {
+        return; // Don't add if max selections reached
+      }
+      onRecipientsChange([...selectedRecipients, recipientId]);
     }
-  };
-
-  const toggleGroupExpansion = (groupTitle: string) => {
-    setExpandedGroups(prev => 
-      prev.includes(groupTitle) 
-        ? prev.filter(title => title !== groupTitle)
-        : [...prev, groupTitle]
-    );
   };
 
   const removeRecipient = (recipientId: string) => {
     onRecipientsChange(selectedRecipients.filter(id => id !== recipientId));
   };
 
-  const getRecipientName = (id: string) => {
-    for (const group of recipientGroups) {
-      const recipient = group.recipients.find(r => r.id === id);
-      if (recipient) return `${recipient.name} (${recipient.role})`;
+  const selectAllInGroup = (group: RecipientGroup) => {
+    const groupRecipientIds = group.recipients.map(r => r.id);
+    const newSelections = [...new Set([...selectedRecipients, ...groupRecipientIds])];
+    
+    if (maxSelections && newSelections.length > maxSelections) {
+      const remaining = maxSelections - selectedRecipients.length;
+      const toAdd = groupRecipientIds.slice(0, remaining);
+      onRecipientsChange([...selectedRecipients, ...toAdd]);
+    } else {
+      onRecipientsChange(newSelections);
     }
-    return id;
+  };
+
+  const deselectAllInGroup = (group: RecipientGroup) => {
+    const groupRecipientIds = group.recipients.map(r => r.id);
+    onRecipientsChange(selectedRecipients.filter(id => !groupRecipientIds.includes(id)));
+  };
+
+  const getGroupSelectionState = (group: RecipientGroup) => {
+    const groupRecipientIds = group.recipients.map(r => r.id);
+    const selectedInGroup = groupRecipientIds.filter(id => selectedRecipients.includes(id));
+    
+    if (selectedInGroup.length === 0) return 'none';
+    if (selectedInGroup.length === groupRecipientIds.length) return 'all';
+    return 'partial';
+  };
+
+  const clearAllSelections = () => {
+    onRecipientsChange([]);
   };
 
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Users className="w-5 h-5" />
+          <Users className="h-5 w-5" />
           Select Recipients
+          {maxSelections && (
+            <Badge variant="outline">
+              {selectedRecipients.length}/{maxSelections}
+            </Badge>
+          )}
         </CardTitle>
-        
+      </CardHeader>
+      <CardContent className="space-y-6">
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search recipients by name, role, or department..."
+            placeholder="Search recipients by name, role, branch, or department..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
+            className="pl-10"
           />
         </div>
 
-        {/* Selected Recipients */}
+        {/* Selected Recipients Chips */}
         {selectedRecipients.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Selected ({selectedRecipients.length})</span>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => onRecipientsChange([])}
-              >
+              <Label className="text-sm font-medium">Selected Recipients ({selectedRecipients.length})</Label>
+              <Button variant="outline" size="sm" onClick={clearAllSelections}>
+                <X className="h-4 w-4 mr-1" />
                 Clear All
               </Button>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {selectedRecipients.map(id => (
-                <Badge key={id} variant="secondary" className="flex items-center gap-1">
-                  {getRecipientName(id)}
-                  <X 
-                    className="w-3 h-3 cursor-pointer hover:text-destructive" 
-                    onClick={() => removeRecipient(id)}
-                  />
-                </Badge>
-              ))}
-            </div>
+            <ScrollArea className="max-h-32">
+              <div className="flex flex-wrap gap-2 p-1">
+                {selectedRecipientsData.map((recipient) => (
+                  <Badge key={recipient.id} variant="secondary" className="flex items-center gap-1 pr-1 max-w-xs">
+                    <span className="text-xs truncate">
+                      {recipient.name}
+                      {recipient.branch && ` (${recipient.branch})`}
+                      {recipient.year && ` - ${recipient.year}`}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0 hover:bg-destructive/20 ml-1"
+                      onClick={() => removeRecipient(recipient.id)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         )}
-      </CardHeader>
 
-      <CardContent>
+        <Separator />
+
+        {/* Role Hierarchy Display */}
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Approval Flow Hierarchy</Label>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg flex-wrap">
+            <span className="font-medium">Employee</span>
+            <ArrowRight className="h-4 w-4" />
+            <span className="font-medium">Program Head/HOD</span>
+            <ArrowRight className="h-4 w-4" />
+            <span className="font-medium">Registrar</span>
+            <ArrowRight className="h-4 w-4" />
+            <span className="font-medium">Principal</span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Documents flow through this hierarchy for approval. Select recipients based on your role permissions.
+          </p>
+        </div>
+
+        <Separator />
+
+        {/* Bulk Selection Actions */}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const allHODs = recipientGroups.find(g => g.id === 'hods')?.recipients.map(r => r.id) || [];
+              selectAllInGroup({ id: 'hods', title: 'HODs', icon: Building, recipients: recipientGroups.find(g => g.id === 'hods')?.recipients || [] });
+            }}
+            disabled={!recipientGroups.find(g => g.id === 'hods')?.recipients.length}
+          >
+            <Check className="h-4 w-4 mr-1" />
+            Select All HODs
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const programHeads = recipientGroups.find(g => g.id === 'program-heads')?.recipients || [];
+              selectAllInGroup({ id: 'program-heads', title: 'Program Heads', icon: UserCheck, recipients: programHeads });
+            }}
+            disabled={!recipientGroups.find(g => g.id === 'program-heads')?.recipients.length}
+          >
+            <Check className="h-4 w-4 mr-1" />
+            Select All Program Heads
+          </Button>
+        </div>
+
+        <Separator />
+
+        {/* Recipient Groups */}
         <ScrollArea className="h-96">
           <div className="space-y-4">
             {filteredGroups.map((group) => {
-              const groupId = group.title.toLowerCase().replace(/\s+/g, '-');
-              const isExpanded = expandedGroups.includes(groupId);
-              const allSelected = group.recipients.every(r => selectedRecipients.includes(r.id));
-              const someSelected = group.recipients.some(r => selectedRecipients.includes(r.id));
-
+              const IconComponent = group.icon;
+              const selectionState = getGroupSelectionState(group);
+              
               return (
-                <Collapsible 
-                  key={group.title}
-                  open={isExpanded}
-                  onOpenChange={() => toggleGroupExpansion(groupId)}
-                >
-                  <div className="border rounded-lg">
-                    <CollapsibleTrigger className="w-full p-3 flex items-center justify-between hover:bg-muted/50">
-                      <div className="flex items-center gap-2">
-                        {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                        <span className="font-medium">{group.title}</span>
-                        <Badge variant="outline">{group.recipients.length}</Badge>
+                <div key={group.id} className="border rounded-lg">
+                  <Collapsible
+                    open={expandedGroups[group.id]}
+                    onOpenChange={() => toggleGroup(group.id)}
+                  >
+                    <CollapsibleTrigger asChild>
+                      <div className="flex items-center justify-between p-4 hover:bg-muted/50 cursor-pointer">
+                        <div className="flex items-center gap-3">
+                          <IconComponent className="h-5 w-5" />
+                          <div>
+                            <h4 className="font-semibold">{group.title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {group.recipients.length} recipient(s)
+                              {selectionState !== 'none' && (
+                                <span className="ml-2">
+                                  • {selectedRecipients.filter(id => group.recipients.some(r => r.id === id)).length} selected
+                                </span>
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {/* Group Selection Controls */}
+                          <div className="flex gap-1">
+                            {selectionState !== 'all' && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  selectAllInGroup(group);
+                                }}
+                                disabled={maxSelections && selectedRecipients.length >= maxSelections}
+                                title="Select all in group"
+                              >
+                                <Check className="h-4 w-4" />
+                              </Button>
+                            )}
+                            {selectionState !== 'none' && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deselectAllInGroup(group);
+                                }}
+                                title="Deselect all in group"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                          {expandedGroups[group.id] ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                        </div>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleGroupSelectAll(group.recipients);
-                        }}
-                      >
-                        {allSelected ? "Deselect All" : "Select All"}
-                      </Button>
                     </CollapsibleTrigger>
-
+                    
                     <CollapsibleContent>
-                      <Separator />
-                      <div className="p-3 space-y-2">
+                      <div className="px-4 pb-4 space-y-2">
                         {group.recipients.map((recipient) => (
-                          <div 
-                            key={recipient.id} 
-                            className="flex items-center space-x-3 p-2 rounded hover:bg-muted/50"
+                          <div
+                            key={recipient.id}
+                            className="flex items-center space-x-3 p-2 hover:bg-muted/30 rounded"
                           >
                             <Checkbox
                               id={recipient.id}
                               checked={selectedRecipients.includes(recipient.id)}
-                              onCheckedChange={() => handleRecipientToggle(recipient.id)}
+                              onCheckedChange={() => toggleRecipient(recipient.id)}
+                              disabled={
+                                maxSelections && 
+                                selectedRecipients.length >= maxSelections && 
+                                !selectedRecipients.includes(recipient.id)
+                              }
                             />
-                            <div className="flex-1">
-                              <label 
-                                htmlFor={recipient.id} 
-                                className="text-sm font-medium cursor-pointer"
+                            <div className="flex-1 min-w-0">
+                              <Label
+                                htmlFor={recipient.id}
+                                className="flex flex-col gap-1 cursor-pointer"
                               >
-                                {recipient.name}
-                              </label>
-                              <p className="text-xs text-muted-foreground">
-                                {recipient.role}
-                                {recipient.department && ` - ${recipient.department}`}
-                              </p>
+                                <span className="font-medium">{recipient.name}</span>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                                  <span>{recipient.role}</span>
+                                  {recipient.department && (
+                                    <>
+                                      <span>•</span>
+                                      <span>{recipient.department}</span>
+                                    </>
+                                  )}
+                                  {recipient.branch && (
+                                    <>
+                                      <span>•</span>
+                                      <Badge variant="outline" className="text-xs px-1 py-0">
+                                        {recipient.branch}
+                                      </Badge>
+                                    </>
+                                  )}
+                                  {recipient.year && (
+                                    <>
+                                      <span>•</span>
+                                      <Badge variant="outline" className="text-xs px-1 py-0">
+                                        {recipient.year}
+                                      </Badge>
+                                    </>
+                                  )}
+                                </div>
+                                <span className="text-xs text-muted-foreground">{recipient.email}</span>
+                              </Label>
                             </div>
                           </div>
                         ))}
+                        
+                        {group.recipients.length === 0 && (
+                          <p className="text-sm text-muted-foreground text-center py-4">
+                            No recipients found matching your search.
+                          </p>
+                        )}
                       </div>
                     </CollapsibleContent>
-                  </div>
-                </Collapsible>
+                  </Collapsible>
+                </div>
               );
             })}
           </div>
         </ScrollArea>
+
+        {maxSelections && selectedRecipients.length >= maxSelections && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <p className="text-sm text-yellow-800">
+              Maximum selection limit reached ({maxSelections} recipients).
+            </p>
+          </div>
+        )}
+
+        {filteredGroups.length === 0 && searchTerm && (
+          <div className="text-center py-8 text-muted-foreground">
+            <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>No recipients found matching "{searchTerm}"</p>
+            <p className="text-sm">Try adjusting your search terms</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
-}
+};
