@@ -1,375 +1,463 @@
-import { useState, useRef, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Canvas as FabricCanvas } from 'fabric';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  PenTool,
-  Upload,
-  Save,
-  Trash2,
-  CheckCircle,
-  RotateCcw,
-  Camera,
-  FileImage,
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { 
+  PenTool, 
+  Camera, 
+  Save, 
+  Trash2, 
+  Download, 
+  Upload, 
+  CheckCircle, 
+  XCircle,
+  Clock,
   User,
   Calendar,
-  Clock
+  Eye,
+  Settings,
+  RefreshCw
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-interface DigitalSignatureProps {
-  document?: any;
-  onSignature?: (signatureData: string) => void;
-  userRole: string;
+interface SavedSignature {
+  id: string;
+  name: string;
+  dataUrl: string;
+  createdAt: Date;
+  metadata: {
+    width: number;
+    height: number;
+    signer: string;
+    role: string;
+  };
 }
 
-export function DigitalSignature({ document, onSignature, userRole }: DigitalSignatureProps) {
+interface SignatureComponentProps {
+  onSignatureCapture?: (signature: string) => void;
+  userRole?: string;
+  userName?: string;
+}
+
+export const DigitalSignature: React.FC<SignatureComponentProps> = ({ 
+  onSignatureCapture, 
+  userRole = "Employee",
+  userName = "Current User" 
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [fabricCanvas, setFabricCanvas] = useState<FabricCanvas | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [savedSignatures, setSavedSignatures] = useState<string[]>([]);
-  const [selectedSignature, setSelectedSignature] = useState<string>("");
-  const [signatureMode, setSignatureMode] = useState<"draw" | "upload" | "saved">("draw");
+  const [canvasSize, setCanvasSize] = useState({ width: 400, height: 200 });
+  const [savedSignatures, setSavedSignatures] = useState<SavedSignature[]>([]);
+  const [selectedSignature, setSelectedSignature] = useState<SavedSignature | null>(null);
+  const [signatureName, setSignatureName] = useState('');
+  const [cameraActive, setCameraActive] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [currentSignatureData, setCurrentSignatureData] = useState<string>('');
+  const { toast } = useToast();
 
-  // Mock document for signature
-  const mockDocument = document || {
-    id: "DOC-2024-001",
-    title: "Faculty Recruitment Authorization",
-    submittedBy: "Dr. Sharma (HOD-CSE)",
-    submittedDate: "2024-01-15",
-    status: "pending-signature"
-  };
-
+  // Initialize Fabric.js canvas
   useEffect(() => {
-    // Load saved signatures from localStorage
-    const saved = localStorage.getItem(`signatures-${userRole}`);
+    if (!canvasRef.current) return;
+
+    const canvas = new FabricCanvas(canvasRef.current, {
+      width: canvasSize.width,
+      height: canvasSize.height,
+      backgroundColor: "#ffffff",
+      isDrawingMode: true,
+    });
+
+    // Configure brush settings
+    canvas.freeDrawingBrush.color = "#000000";
+    canvas.freeDrawingBrush.width = 2;
+
+    setFabricCanvas(canvas);
+
+    return () => {
+      canvas.dispose();
+    };
+  }, [canvasSize]);
+
+  // Load saved signatures from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('digitalSignatures');
     if (saved) {
       setSavedSignatures(JSON.parse(saved));
     }
-  }, [userRole]);
+  }, []);
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    setIsDrawing(true);
-    const rect = canvas.getBoundingClientRect();
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.beginPath();
-      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+  const saveSignature = useCallback(() => {
+    if (!fabricCanvas || !signatureName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please provide a signature name and draw a signature",
+        variant: "destructive"
+      });
+      return;
     }
-  };
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-    
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const rect = canvas.getBoundingClientRect();
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      ctx.stroke();
-    }
-  };
+    const dataUrl = fabricCanvas.toDataURL({
+      format: 'png',
+      quality: 1.0,
+      multiplier: 1
+    });
 
-  const stopDrawing = () => {
-    setIsDrawing(false);
-  };
-
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-  };
-
-  const saveSignature = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const dataURL = canvas.toDataURL();
-    const newSignatures = [...savedSignatures, dataURL];
-    setSavedSignatures(newSignatures);
-    localStorage.setItem(`signatures-${userRole}`, JSON.stringify(newSignatures));
-  };
-
-  const applySignature = () => {
-    const canvas = canvasRef.current;
-    let signatureData = "";
-    
-    if (signatureMode === "draw" && canvas) {
-      signatureData = canvas.toDataURL();
-    } else if (signatureMode === "saved" && selectedSignature) {
-      signatureData = selectedSignature;
-    }
-    
-    if (signatureData && onSignature) {
-      onSignature(signatureData);
-    }
-  };
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.strokeStyle = '#10b981';
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+    const newSignature: SavedSignature = {
+      id: Date.now().toString(),
+      name: signatureName,
+      dataUrl,
+      createdAt: new Date(),
+      metadata: {
+        width: canvasSize.width,
+        height: canvasSize.height,
+        signer: userName,
+        role: userRole
       }
+    };
+
+    const updatedSignatures = [...savedSignatures, newSignature];
+    setSavedSignatures(updatedSignatures);
+    localStorage.setItem('digitalSignatures', JSON.stringify(updatedSignatures));
+    
+    setSignatureName('');
+    clearCanvas();
+    
+    toast({
+      title: "Success",
+      description: "Signature saved successfully"
+    });
+  }, [fabricCanvas, signatureName, canvasSize, savedSignatures, userName, userRole, toast]);
+
+  const clearCanvas = useCallback(() => {
+    if (fabricCanvas) {
+      fabricCanvas.clear();
+      fabricCanvas.backgroundColor = "#ffffff";
+      fabricCanvas.renderAll();
+    }
+  }, [fabricCanvas]);
+
+  const loadSignature = useCallback((signature: SavedSignature) => {
+    if (!fabricCanvas) return;
+
+    fabricCanvas.clear();
+    fabricCanvas.backgroundColor = "#ffffff";
+    fabricCanvas.renderAll();
+    setSelectedSignature(signature);
+    
+    toast({
+      title: "Signature Loaded",
+      description: "Signature loaded successfully. You can now draw over it or use as-is."
+    });
+  }, [fabricCanvas, toast]);
+
+  const captureSignature = useCallback(() => {
+    if (!fabricCanvas) return;
+
+    const dataUrl = fabricCanvas.toDataURL({
+      format: 'png',
+      quality: 1.0,
+      multiplier: 1
+    });
+
+    setCurrentSignatureData(dataUrl);
+    setShowPreview(true);
+    
+    if (onSignatureCapture) {
+      onSignatureCapture(dataUrl);
+    }
+  }, [fabricCanvas, onSignatureCapture]);
+
+  const deleteSignature = useCallback((id: string) => {
+    const updatedSignatures = savedSignatures.filter(sig => sig.id !== id);
+    setSavedSignatures(updatedSignatures);
+    localStorage.setItem('digitalSignatures', JSON.stringify(updatedSignatures));
+    
+    toast({
+      title: "Deleted",
+      description: "Signature removed from library"
+    });
+  }, [savedSignatures, toast]);
+
+  const startCamera = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' } 
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setCameraActive(true);
+      }
+    } catch (error) {
+      toast({
+        title: "Camera Error",
+        description: "Unable to access camera",
+        variant: "destructive"
+      });
+    }
+  }, [toast]);
+
+  const stopCamera = useCallback(() => {
+    if (videoRef.current?.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      setCameraActive(false);
     }
   }, []);
 
+  const captureFromCamera = useCallback(() => {
+    if (!videoRef.current || !fabricCanvas) return;
+
+    fabricCanvas.clear();
+    fabricCanvas.backgroundColor = "#ffffff";
+    fabricCanvas.renderAll();
+    stopCamera();
+    
+    toast({
+      title: "Camera Capture",
+      description: "Camera input captured. You can now draw your signature."
+    });
+  }, [fabricCanvas, stopCamera, toast]);
+
+  const resizeCanvas = useCallback((width: number, height: number) => {
+    setCanvasSize({ width, height });
+  }, []);
+
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Document Information */}
-      <Card className="shadow-elegant">
+    <div className="space-y-6">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <PenTool className="w-5 h-5 text-primary" />
-            Digital Signature Required
+            <PenTool className="h-5 w-5" />
+            Digital Signature Capture
           </CardTitle>
-          <CardDescription>
-            Please review and sign the document below
-          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-muted/30 rounded-lg p-4">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="font-medium">Document ID:</span>
-                <span className="ml-2">{mockDocument.id}</span>
-              </div>
-              <div>
-                <span className="font-medium">Status:</span>
-                <Badge variant="warning" className="ml-2">Pending Signature</Badge>
-              </div>
-              <div>
-                <span className="font-medium">Submitted By:</span>
-                <span className="ml-2">{mockDocument.submittedBy}</span>
-              </div>
-              <div>
-                <span className="font-medium">Date:</span>
-                <span className="ml-2">{mockDocument.submittedDate}</span>
-              </div>
-            </div>
-            <Separator className="my-4" />
-            <div>
-              <h4 className="font-medium mb-2">{mockDocument.title}</h4>
-              <p className="text-muted-foreground text-sm">
-                This document requires your digital signature for approval. Please review the content carefully before signing.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        <CardContent>
+          <Tabs defaultValue="draw" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="draw">Hand Draw</TabsTrigger>
+              <TabsTrigger value="camera">Camera</TabsTrigger>
+              <TabsTrigger value="library">Saved Signatures</TabsTrigger>
+            </TabsList>
 
-      {/* Signature Methods */}
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle>Choose Signature Method</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <Button
-              variant={signatureMode === "draw" ? "default" : "outline"}
-              onClick={() => setSignatureMode("draw")}
-              className="flex-1"
-            >
-              <PenTool className="w-4 h-4 mr-2" />
-              Draw Signature
-            </Button>
-            <Button
-              variant={signatureMode === "saved" ? "default" : "outline"}
-              onClick={() => setSignatureMode("saved")}
-              className="flex-1"
-              disabled={savedSignatures.length === 0}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Use Saved ({savedSignatures.length})
-            </Button>
-            <Button
-              variant={signatureMode === "upload" ? "default" : "outline"}
-              onClick={() => setSignatureMode("upload")}
-              className="flex-1"
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Image
-            </Button>
-          </div>
-
-          {/* Draw Signature */}
-          {signatureMode === "draw" && (
-            <div className="space-y-4 animate-scale-in">
-              <div className="border-2 border-dashed border-border rounded-lg p-4">
-                <Label className="text-sm font-medium mb-2 block">
-                  Draw your signature below:
-                </Label>
-                <canvas
-                  ref={canvasRef}
-                  width={500}
-                  height={200}
-                  className="border border-border rounded-md bg-white cursor-crosshair w-full max-w-full"
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
-                />
-                <div className="flex gap-2 mt-3">
-                  <Button variant="outline" size="sm" onClick={clearCanvas}>
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Clear
+            <TabsContent value="draw" className="space-y-4">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-2">
+                  <Label>Canvas Size:</Label>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => resizeCanvas(300, 150)}
+                  >
+                    Small
                   </Button>
-                  <Button variant="outline" size="sm" onClick={saveSignature}>
-                    <Save className="w-4 h-4 mr-2" />
-                    Save Signature
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => resizeCanvas(400, 200)}
+                  >
+                    Medium
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => resizeCanvas(500, 250)}
+                  >
+                    Large
+                  </Button>
+                </div>
+                <Button onClick={clearCanvas} variant="outline" size="sm">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Clear
+                </Button>
+              </div>
+
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <canvas 
+                  ref={canvasRef}
+                  className="border border-gray-300 rounded bg-white cursor-crosshair"
+                />
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <Label htmlFor="signatureName">Signature Name</Label>
+                  <Input
+                    id="signatureName"
+                    value={signatureName}
+                    onChange={(e) => setSignatureName(e.target.value)}
+                    placeholder="e.g., Primary Signature"
+                  />
+                </div>
+                <div className="flex gap-2 pt-6">
+                  <Button onClick={saveSignature}>
+                    <Save className="h-4 w-4 mr-2" />
+                    Save
+                  </Button>
+                  <Button onClick={captureSignature} variant="outline">
+                    <Eye className="h-4 w-4 mr-2" />
+                    Preview
                   </Button>
                 </div>
               </div>
-            </div>
-          )}
+            </TabsContent>
 
-          {/* Saved Signatures */}
-          {signatureMode === "saved" && savedSignatures.length > 0 && (
-            <div className="space-y-4 animate-scale-in">
-              <Label className="text-sm font-medium">Select a saved signature:</Label>
-              <div className="grid grid-cols-2 gap-3">
-                {savedSignatures.map((sig, index) => (
-                  <div
-                    key={index}
-                    className={`border-2 rounded-lg p-3 cursor-pointer transition-all hover:shadow-md ${
-                      selectedSignature === sig ? 'border-primary bg-primary/5' : 'border-border'
-                    }`}
-                    onClick={() => setSelectedSignature(sig)}
-                  >
-                    <img
-                      src={sig}
-                      alt={`Signature ${index + 1}`}
-                      className="w-full h-16 object-contain"
-                    />
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="text-xs text-muted-foreground">
-                        Signature {index + 1}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const newSignatures = savedSignatures.filter((_, i) => i !== index);
-                          setSavedSignatures(newSignatures);
-                          localStorage.setItem(`signatures-${userRole}`, JSON.stringify(newSignatures));
-                        }}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Upload Signature */}
-          {signatureMode === "upload" && (
-            <div className="space-y-4 animate-scale-in">
-              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  id="signature-upload"
-                />
-                <Label htmlFor="signature-upload" className="cursor-pointer">
-                  <div className="space-y-2">
-                    <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
-                      Upload signature image
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      PNG, JPG up to 2MB
-                    </p>
-                  </div>
-                </Label>
-              </div>
-            </div>
-          )}
-
-          {/* Signature Actions */}
-          <div className="flex justify-between pt-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="w-4 h-4" />
-              <span>Signing as: {userRole.charAt(0).toUpperCase() + userRole.slice(1)}</span>
-            </div>
-            <div className="flex gap-2">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline">
-                    Preview Document
+            <TabsContent value="camera" className="space-y-4">
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <Button onClick={startCamera} disabled={cameraActive}>
+                    <Camera className="h-4 w-4 mr-2" />
+                    Start Camera
                   </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl">
-                  <DialogHeader>
-                    <DialogTitle>Document Preview</DialogTitle>
-                    <DialogDescription>
-                      Review the document before signing
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="bg-muted/30 rounded-lg p-6 min-h-[400px] flex items-center justify-center">
-                    <p className="text-muted-foreground">Document preview would appear here</p>
+                  <Button 
+                    onClick={captureFromCamera} 
+                    disabled={!cameraActive}
+                    variant="outline"
+                  >
+                    Capture Signature
+                  </Button>
+                  <Button onClick={stopCamera} disabled={!cameraActive} variant="outline">
+                    Stop Camera
+                  </Button>
+                </div>
+                
+                {cameraActive && (
+                  <div className="border rounded-lg p-4">
+                    <video 
+                      ref={videoRef} 
+                      autoPlay 
+                      muted 
+                      className="w-full max-w-md rounded"
+                    />
                   </div>
-                </DialogContent>
-              </Dialog>
-              <Button
-                variant="gradient"
-                onClick={applySignature}
-                className="min-w-32"
-                disabled={
-                  (signatureMode === "saved" && !selectedSignature) ||
-                  (signatureMode === "upload")
-                }
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Sign Document
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="library" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {savedSignatures.map((signature) => (
+                  <Card key={signature.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium">{signature.name}</h4>
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            onClick={() => deleteSignature(signature.id)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                        
+                        <img 
+                          src={signature.dataUrl} 
+                          alt={signature.name}
+                          className="w-full h-20 object-contain border rounded bg-white"
+                        />
+                        
+                        <div className="space-y-1 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <User className="h-3 w-3" />
+                            {signature.metadata.signer}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {signature.createdAt.toLocaleDateString()}
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            {signature.metadata.role}
+                          </Badge>
+                        </div>
+                        
+                        <Button 
+                          size="sm" 
+                          className="w-full"
+                          onClick={() => loadSignature(signature)}
+                        >
+                          Use Signature
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                
+                {savedSignatures.length === 0 && (
+                  <div className="col-span-full text-center py-8 text-muted-foreground">
+                    <PenTool className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No saved signatures yet</p>
+                    <p className="text-sm">Create your first signature using the drawing tools</p>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
+      {/* Signature Preview Dialog */}
+      <Dialog open={showPreview} onOpenChange={setShowPreview}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Signature Preview</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {currentSignatureData && (
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <img 
+                  src={currentSignatureData} 
+                  alt="Signature Preview"
+                  className="max-w-full h-auto"
+                />
+              </div>
+            )}
+            
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <Label>Signer</Label>
+                <p className="text-muted-foreground">{userName}</p>
+              </div>
+              <div>
+                <Label>Role</Label>
+                <p className="text-muted-foreground">{userRole}</p>
+              </div>
+              <div>
+                <Label>Timestamp</Label>
+                <p className="text-muted-foreground">{new Date().toLocaleString()}</p>
+              </div>
+              <div>
+                <Label>Canvas Size</Label>
+                <p className="text-muted-foreground">{canvasSize.width} × {canvasSize.height}</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setShowPreview(false)}>
+                Close
+              </Button>
+              <Button onClick={() => {
+                // Apply signature logic here
+                setShowPreview(false);
+                toast({
+                  title: "Signature Applied",
+                  description: "Your signature has been applied to the document"
+                });
+              }}>
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Apply Signature
               </Button>
             </div>
           </div>
-
-          {/* Signature Metadata */}
-          <div className="bg-muted/20 rounded-lg p-3 text-xs text-muted-foreground">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                <span>Date: {new Date().toLocaleDateString()}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                <span>Time: {new Date().toLocaleTimeString()}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <User className="w-3 h-3" />
-                <span>IP: 192.168.1.100</span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-}
+};
