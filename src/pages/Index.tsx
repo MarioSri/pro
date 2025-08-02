@@ -45,7 +45,7 @@ const Index = () => {
   };
 
   const handleNavigate = (view: string) => {
-    setCurrentView(view as "dashboard" | "submit" | "documents" | "tracking");
+    setCurrentView(view as "dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "notes" | "emergency");
   };
 
   if (!isAuthenticated) {
