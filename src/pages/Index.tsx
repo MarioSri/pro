@@ -1,13 +1,68 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import { AuthenticationCard } from "@/components/AuthenticationCard";
+import { DashboardLayout } from "@/components/DashboardLayout";
+import { DashboardStats } from "@/components/DashboardStats";
+import { DocumentUploader } from "@/components/DocumentUploader";
+import { DocumentTracker } from "@/components/DocumentTracker";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<string>("");
+  const [currentView, setCurrentView] = useState<"dashboard" | "submit" | "documents" | "tracking">("dashboard");
+  const { toast } = useToast();
+
+  const handleLogin = (role: string) => {
+    setUserRole(role);
+    setIsAuthenticated(true);
+    toast({
+      title: "Login Successful",
+      description: `Welcome to IAOMS, ${role}!`,
+    });
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUserRole("");
+    setCurrentView("dashboard");
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+  };
+
+  const handleDocumentSubmit = (data: any) => {
+    console.log("Document submitted:", data);
+    toast({
+      title: "Document Submitted",
+      description: "Your document has been submitted for review.",
+    });
+    setCurrentView("dashboard");
+  };
+
+  const handleNavigate = (view: string) => {
+    setCurrentView(view as "dashboard" | "submit" | "documents" | "tracking");
+  };
+
+  if (!isAuthenticated) {
+    return <AuthenticationCard onLogin={handleLogin} />;
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <DashboardLayout userRole={userRole} onLogout={handleLogout}>
+      {currentView === "dashboard" && (
+        <DashboardStats userRole={userRole} onNavigate={handleNavigate} />
+      )}
+      {currentView === "submit" && (
+        <DocumentUploader userRole={userRole} onSubmit={handleDocumentSubmit} />
+      )}
+      {currentView === "tracking" && (
+        <DocumentTracker userRole={userRole} />
+      )}
+      {currentView === "documents" && (
+        <DocumentTracker userRole={userRole} />
+      )}
+    </DashboardLayout>
   );
 };
 
