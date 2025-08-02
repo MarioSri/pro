@@ -13,19 +13,21 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import {
+  LayoutDashboard,
   FileText,
-  Upload,
-  CheckCircle,
-  Clock,
-  Users,
-  Settings,
-  BarChart3,
   Calendar,
   MessageSquare,
-  AlertTriangle,
-  Building2,
+  GitBranch,
+  CheckSquare,
+  BarChart3,
+  UserCheck,
+  Users,
+  GraduationCap,
+  Building,
   Shield,
-  User
+  Settings,
+  Crown,
+  Briefcase,
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -43,7 +45,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
   // Role-based menu items
   const getMenuItems = () => {
     const commonItems = [
-      { title: "Dashboard", url: "/dashboard", icon: BarChart3 },
+      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
       { title: "Documents", url: "/documents", icon: FileText },
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
@@ -52,29 +54,24 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     const roleSpecificItems = {
       principal: [
         ...commonItems,
-        { title: "All Approvals", url: "/approvals", icon: CheckCircle },
-        { title: "User Management", url: "/users", icon: Users },
-        { title: "System Settings", url: "/settings", icon: Settings },
-        { title: "Emergency Center", url: "/emergency", icon: AlertTriangle },
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+        { title: "Approvals", url: "/approvals", icon: CheckSquare },
+        { title: "Analytics", url: "/analytics", icon: BarChart3 },
       ],
       registrar: [
         ...commonItems,
-        { title: "Workflow Management", url: "/workflows", icon: Settings },
-        { title: "Approvals", url: "/approvals", icon: CheckCircle },
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+        { title: "Approvals", url: "/approvals", icon: CheckSquare },
         { title: "Analytics", url: "/analytics", icon: BarChart3 },
       ],
       hod: [
         ...commonItems,
-        { title: "Submit Document", url: "/submit", icon: Upload },
-        { title: "Department Reports", url: "/reports", icon: FileText },
-        { title: "Team Calendar", url: "/team-calendar", icon: Calendar },
-        { title: "Pending Reviews", url: "/pending", icon: Clock },
+        { title: "Approvals", url: "/approvals", icon: CheckSquare },
+        { title: "Analytics", url: "/analytics", icon: BarChart3 },
       ],
       employee: [
         ...commonItems,
-        { title: "Submit Document", url: "/submit", icon: Upload },
-        { title: "My Submissions", url: "/submissions", icon: FileText },
-        { title: "Status Tracking", url: "/tracking", icon: Clock },
+        { title: "Analytics", url: "/analytics", icon: BarChart3 },
       ],
     };
 
@@ -86,10 +83,10 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
 
   const getRoleIcon = () => {
     switch (userRole) {
-      case "principal": return Building2;
+      case "principal": return Crown;
       case "registrar": return Shield;
       case "hod": return Users;
-      default: return User;
+      default: return UserCheck;
     }
   };
 
