@@ -4,12 +4,16 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { DashboardStats } from "@/components/DashboardStats";
 import { DocumentUploader } from "@/components/DocumentUploader";
 import { DocumentTracker } from "@/components/DocumentTracker";
+import { DigitalSignature } from "@/components/DigitalSignature";
+import { MeetingScheduler } from "@/components/MeetingScheduler";
+import { NotesReminders } from "@/components/NotesReminders";
+import { EmergencyFeatures } from "@/components/EmergencyFeatures";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
-  const [currentView, setCurrentView] = useState<"dashboard" | "submit" | "documents" | "tracking">("dashboard");
+  const [currentView, setCurrentView] = useState<"dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "notes" | "emergency">("dashboard");
   const { toast } = useToast();
 
   const handleLogin = (role: string) => {
@@ -61,6 +65,18 @@ const Index = () => {
       )}
       {currentView === "documents" && (
         <DocumentTracker userRole={userRole} />
+      )}
+      {currentView === "signature" && (
+        <DigitalSignature userRole={userRole} />
+      )}
+      {currentView === "meetings" && (
+        <MeetingScheduler userRole={userRole} />
+      )}
+      {currentView === "notes" && (
+        <NotesReminders userRole={userRole} />
+      )}
+      {currentView === "emergency" && (
+        <EmergencyFeatures userRole={userRole} />
       )}
     </DashboardLayout>
   );
