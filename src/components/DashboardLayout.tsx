@@ -1,8 +1,9 @@
 import { ReactNode } from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
+import { NotificationCenter } from "./NotificationCenter";
 import { Button } from "@/components/ui/button";
-import { Bell, User, LogOut } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,10 +45,7 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
 
               <div className="flex items-center gap-2">
                 {/* Notifications */}
-                <Button variant="ghost" size="icon" className="relative">
-                  <Bell className="w-4 h-4" />
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-                </Button>
+                <NotificationCenter userRole={userRole} />
 
                 {/* User Menu */}
                 <DropdownMenu>
