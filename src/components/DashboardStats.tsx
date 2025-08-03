@@ -1,13 +1,14 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import {
   FileText,
   Clock,
   CheckCircle,
   XCircle,
   Users,
-  Calendar,
+  Calendar as CalendarIcon,
   TrendingUp,
   AlertTriangle,
   Eye
@@ -19,6 +20,7 @@ interface DashboardStatsProps {
 }
 
 export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
+  const navigate = useNavigate();
   // Mock data - in real app this would come from API
   const getStatsForRole = () => {
     const commonStats = [
@@ -182,7 +184,7 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
               <CardTitle>Recent Documents</CardTitle>
               <CardDescription>Latest document submissions and their status</CardDescription>
             </div>
-            <Button variant="outline" size="sm" onClick={() => onNavigate("tracking")}>
+            <Button variant="outline" size="sm" onClick={() => navigate("/documents")}>
               <Eye className="w-4 h-4 mr-2" />
               View All
             </Button>
@@ -226,7 +228,7 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
             <Button 
               variant="outline" 
               className="h-auto p-4 flex flex-col gap-2"
-              onClick={() => onNavigate("submit")}
+              onClick={() => navigate("/documents")}
             >
               <FileText className="w-6 h-6 text-primary" />
               <span className="text-sm">Submit Document</span>
@@ -234,19 +236,23 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
             <Button 
               variant="outline" 
               className="h-auto p-4 flex flex-col gap-2"
-              onClick={() => onNavigate("tracking")}
+              onClick={() => navigate("/approvals")}
             >
               <Clock className="w-6 h-6 text-warning" />
               <span className="text-sm">Review Pending</span>
             </Button>
-            <Button variant="outline" className="h-auto p-4 flex flex-col gap-2">
-              <Calendar className="w-6 h-6 text-blue-500" />
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col gap-2"
+              onClick={() => navigate("/calendar")}
+            >
+              <CalendarIcon className="w-6 h-6 text-blue-500" />
               <span className="text-sm">Schedule Meeting</span>
             </Button>
             <Button 
               variant="outline" 
               className="h-auto p-4 flex flex-col gap-2"
-              onClick={() => onNavigate("documents")}
+              onClick={() => navigate("/documents")}
             >
               <Users className="w-6 h-6 text-purple-500" />
               <span className="text-sm">View Documents</span>
