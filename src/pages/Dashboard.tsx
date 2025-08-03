@@ -1,8 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { PrincipalDashboard } from "@/components/dashboards/PrincipalDashboard";
-import { RegistrarDashboard } from "@/components/dashboards/RegistrarDashboard";
-import { HodDashboard } from "@/components/dashboards/HodDashboard";
-import { EmployeeDashboard } from "@/components/dashboards/EmployeeDashboard";
+import { DashboardStats } from "@/components/DashboardStats";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,23 +19,9 @@ const Dashboard = () => {
     console.log("Navigate to:", view);
   };
 
-  const renderDashboard = () => {
-    switch (userRole) {
-      case "principal":
-        return <PrincipalDashboard onNavigate={handleNavigate} />;
-      case "registrar":
-        return <RegistrarDashboard onNavigate={handleNavigate} />;
-      case "hod":
-        return <HodDashboard onNavigate={handleNavigate} />;
-      case "employee":
-      default:
-        return <EmployeeDashboard onNavigate={handleNavigate} />;
-    }
-  };
-
   return (
     <DashboardLayout userRole={userRole} onLogout={handleLogout}>
-      {renderDashboard()}
+      <DashboardStats userRole={userRole} onNavigate={handleNavigate} />
     </DashboardLayout>
   );
 };
