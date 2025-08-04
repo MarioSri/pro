@@ -86,3 +86,5 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
     </SidebarProvider>
   );
 }
+  )
+}
