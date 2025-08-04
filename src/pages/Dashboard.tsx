@@ -14,7 +14,8 @@ const Dashboard = () => {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
-    navigate("/");
+    // Redirect to login page (Index page)
+    navigate("/", { replace: true });
   };
 
   const handleNavigate = (view: string) => {

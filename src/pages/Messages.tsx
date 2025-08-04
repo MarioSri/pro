@@ -1,5 +1,4 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { NotesReminders } from "@/components/NotesReminders";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageCircle, Users, Bell } from "lucide-react";
@@ -15,6 +14,8 @@ const Messages = () => {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    // Redirect to login page
+    window.location.href = "/";
   };
 
   return (
@@ -27,13 +28,28 @@ const Messages = () => {
 
         <Tabs defaultValue="notes" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="notes">Notes & Reminders</TabsTrigger>
+            <TabsTrigger value="notes">Messages</TabsTrigger>
             <TabsTrigger value="chat">Department Chat</TabsTrigger>
             <TabsTrigger value="notifications">Notifications</TabsTrigger>
           </TabsList>
           
           <TabsContent value="notes" className="space-y-6">
-            <NotesReminders userRole={userRole} />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5" />
+                  Internal Messages
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-center h-64 text-muted-foreground">
+                  <div className="text-center">
+                    <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>Internal messaging system coming soon</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
           
           <TabsContent value="chat" className="space-y-6">

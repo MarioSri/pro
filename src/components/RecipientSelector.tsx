@@ -41,7 +41,7 @@ interface RecipientGroup {
 }
 
 interface RecipientSelectorProps {
-  userRole: 'Principal' | 'Registrar' | 'HOD' | 'Employee' | string;
+  userRole: 'Principal' | 'Registrar' | 'HOD-EEE' | 'HOD-MECH' | 'HOD-CSE' | 'HOD-ECE' | 'HOD-CSM-CSO' | 'HOD-CSD-CSC' | 'Employee' | string;
   selectedRecipients: string[];
   onRecipientsChange: (recipients: string[]) => void;
   maxSelections?: number;

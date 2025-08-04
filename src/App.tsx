@@ -11,11 +11,9 @@ import Messages from "./pages/Messages";
 import WorkflowManagement from "./pages/Workflow";
 import Approvals from "./pages/Approvals";
 import Analytics from "./pages/Analytics";
-import AudioNotes from "./pages/AudioNotes";
 import AdvancedSignature from "./pages/AdvancedSignature";
-import NotesCanvas from "./pages/NotesCanvas";
-import Reminders from "./pages/Reminders";
 import Emergency from "./pages/Emergency";
+import NextSteps from "./pages/NextSteps";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,11 +33,9 @@ const App = () => (
           <Route path="/workflow" element={<WorkflowManagement />} />
           <Route path="/approvals" element={<Approvals />} />
           <Route path="/analytics" element={<Analytics />} />
-          <Route path="/audio-notes" element={<AudioNotes />} />
           <Route path="/advanced-signature" element={<AdvancedSignature />} />
-          <Route path="/notes-canvas" element={<NotesCanvas />} />
-          <Route path="/reminders" element={<Reminders />} />
           <Route path="/emergency" element={<Emergency />} />
+          <Route path="/next-steps" element={<NextSteps />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

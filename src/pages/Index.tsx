@@ -6,14 +6,13 @@ import { DocumentUploader } from "@/components/DocumentUploader";
 import { DocumentTracker } from "@/components/DocumentTracker";
 import { DigitalSignature } from "@/components/DigitalSignature";
 import { MeetingScheduler } from "@/components/MeetingScheduler";
-import { NotesReminders } from "@/components/NotesReminders";
 import { EmergencyFeatures } from "@/components/EmergencyFeatures";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
-  const [currentView, setCurrentView] = useState<"dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "notes" | "emergency">("dashboard");
+  const [currentView, setCurrentView] = useState<"dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "emergency">("dashboard");
   const { toast } = useToast();
 
   const handleLogin = (role: string) => {
@@ -45,7 +44,7 @@ const Index = () => {
   };
 
   const handleNavigate = (view: string) => {
-    setCurrentView(view as "dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "notes" | "emergency");
+    setCurrentView(view as "dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "emergency");
   };
 
   if (!isAuthenticated) {
@@ -71,9 +70,6 @@ const Index = () => {
       )}
       {currentView === "meetings" && (
         <MeetingScheduler userRole={userRole} />
-      )}
-      {currentView === "notes" && (
-        <NotesReminders userRole={userRole} />
       )}
       {currentView === "emergency" && (
         <EmergencyFeatures userRole={userRole} />

@@ -18,7 +18,12 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
   const roles = [
     { value: "principal", label: "Principal", icon: Building2 },
     { value: "registrar", label: "Registrar", icon: Shield },
-    { value: "hod", label: "Head of Department", icon: Users },
+    { value: "hod-eee", label: "HOD - EEE", icon: Users },
+    { value: "hod-mech", label: "HOD - MECH", icon: Users },
+    { value: "hod-cse", label: "HOD - CSE", icon: Users },
+    { value: "hod-ece", label: "HOD - ECE", icon: Users },
+    { value: "hod-csm-cso", label: "HOD - CSM & CSO", icon: Users },
+    { value: "hod-csd-csc", label: "HOD - CSD & CSC", icon: Users },
     { value: "employee", label: "Employee", icon: FileText },
   ];
 
