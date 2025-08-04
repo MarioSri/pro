@@ -28,6 +28,11 @@ import {
   Settings,
   Crown,
   Briefcase,
+  Mic,
+  PenTool,
+  StickyNote,
+  Bell,
+  AlertTriangle
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -49,6 +54,11 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       { title: "Documents", url: "/documents", icon: FileText },
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
+      { title: "Audio Notes", url: "/audio-notes", icon: Mic },
+      { title: "Advanced Signature", url: "/advanced-signature", icon: PenTool },
+      { title: "Notes Canvas", url: "/notes-canvas", icon: StickyNote },
+      { title: "Reminders", url: "/reminders", icon: Bell },
+      { title: "Emergency", url: "/emergency", icon: AlertTriangle },
     ];
 
     const roleSpecificItems = {
