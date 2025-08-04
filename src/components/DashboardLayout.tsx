@@ -65,8 +65,8 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuItem>
                       <User className="w-4 h-4 mr-2" />
-                      Profile Settings
-                    <Link to="/profile">Profile Settings</Link>
+                      <Link to="/profile">Profile Settings</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={onLogout}>
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign Out
