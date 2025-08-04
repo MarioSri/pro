@@ -18,7 +18,7 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
   const roles = [
     { value: "principal", label: "Principal", icon: Building2 },
     { value: "registrar", label: "Registrar", icon: Shield },
-    { value: "hod", label: "Head of Department", icon: Users },
+    { value: "hod", label: "HOD (Head of Department)", icon: Users },
     { value: "employee", label: "Employee", icon: FileText },
   ];
 
@@ -48,12 +48,12 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
             <div className="space-y-2">
               <Label htmlFor="role">Select Your Role</Label>
               <Select value={selectedRole} onValueChange={setSelectedRole}>
-                <SelectTrigger>
+                <SelectTrigger className="h-12 text-base">
                   <SelectValue placeholder="Choose your role..." />
                 </SelectTrigger>
                 <SelectContent>
                   {roles.map((role) => (
-                    <SelectItem key={role.value} value={role.value}>
+                    <SelectItem key={role.value} value={role.value} className="h-12 text-base">
                       <div className="flex items-center gap-2">
                         <role.icon className="w-4 h-4" />
                         {role.label}
@@ -69,7 +69,7 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
                 type="button"
                 variant={loginMethod === "google" ? "default" : "outline"}
                 onClick={() => setLoginMethod("google")}
-                className="flex-1"
+                className="flex-1 h-12 text-base"
               >
                 Google
               </Button>
@@ -77,7 +77,7 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
                 type="button"
                 variant={loginMethod === "hitam" ? "default" : "outline"}
                 onClick={() => setLoginMethod("hitam")}
-                className="flex-1"
+                className="flex-1 h-12 text-base"
               >
                 HITAM ID
               </Button>
@@ -88,7 +88,7 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
                 <Button
                   type="submit"
                   variant="gradient"
-                  className="w-full"
+                  className="w-full h-12 text-base"
                   disabled={!selectedRole}
                 >
                   Sign in with Google (@hitam.org)
@@ -101,16 +101,16 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="hitam-id">HITAM ID</Label>
-                  <Input id="hitam-id" placeholder="Enter your HITAM ID" />
+                  <Input id="hitam-id" placeholder="Enter your HITAM ID" className="h-12 text-base" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" placeholder="Enter your password" />
+                  <Input id="password" type="password" placeholder="Enter your password" className="h-12 text-base" />
                 </div>
                 <Button
                   type="submit"
                   variant="gradient"
-                  className="w-full"
+                  className="w-full h-12 text-base"
                   disabled={!selectedRole}
                 >
                   Sign In

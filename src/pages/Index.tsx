@@ -6,15 +6,17 @@ import { DocumentUploader } from "@/components/DocumentUploader";
 import { DocumentTracker } from "@/components/DocumentTracker";
 import { DigitalSignature } from "@/components/DigitalSignature";
 import { MeetingScheduler } from "@/components/MeetingScheduler";
-import { NotesReminders } from "@/components/NotesReminders";
 import { EmergencyFeatures } from "@/components/EmergencyFeatures";
+import Profile from "./Profile";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
-  const [currentView, setCurrentView] = useState<"dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "notes" | "emergency">("dashboard");
+  const [currentView, setCurrentView] = useState<"dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "emergency" | "profile">("dashboard");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleLogin = (role: string) => {
     setUserRole(role);
@@ -23,6 +25,7 @@ const Index = () => {
       title: "Login Successful",
       description: `Welcome to IAOMS, ${role}!`,
     });
+    navigate("/dashboard");
   };
 
   const handleLogout = () => {
@@ -33,6 +36,7 @@ const Index = () => {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    navigate("/");
   };
 
   const handleDocumentSubmit = (data: any) => {
@@ -45,7 +49,7 @@ const Index = () => {
   };
 
   const handleNavigate = (view: string) => {
-    setCurrentView(view as "dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "notes" | "emergency");
+    setCurrentView(view as "dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "emergency" | "profile");
   };
 
   if (!isAuthenticated) {
@@ -72,11 +76,11 @@ const Index = () => {
       {currentView === "meetings" && (
         <MeetingScheduler userRole={userRole} />
       )}
-      {currentView === "notes" && (
-        <NotesReminders userRole={userRole} />
-      )}
       {currentView === "emergency" && (
         <EmergencyFeatures userRole={userRole} />
+      )}
+      {currentView === "profile" && (
+        <Profile />
       )}
     </DashboardLayout>
   );
