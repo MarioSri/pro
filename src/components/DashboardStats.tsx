@@ -152,23 +152,23 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
   return (
     <div className="space-y-6">
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <Card key={index} className="shadow-elegant hover:shadow-glow transition-all duration-300">
-            <CardContent className="p-4 md:p-6">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs md:text-sm text-muted-foreground">{stat.title}</p>
-                  <p className="text-xl md:text-2xl font-bold">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground mt-1 hidden md:block">
+                  <p className="text-sm text-muted-foreground">{stat.title}</p>
+                  <p className="text-2xl font-bold">{stat.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
                     <span className={stat.change.startsWith('+') ? 'text-success' : 'text-destructive'}>
                       {stat.change}
                     </span>
                     {' '}from last week
                   </p>
                 </div>
-                <div className={`p-2 md:p-3 rounded-full ${stat.bgColor}`}>
-                  <stat.icon className={`w-5 h-5 md:w-6 md:h-6 ${stat.color}`} />
+                <div className={`p-3 rounded-full ${stat.bgColor}`}>
+                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
                 </div>
               </div>
             </CardContent>
@@ -193,14 +193,14 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
         <CardContent>
           <div className="space-y-4">
             {recentDocuments.map((doc) => (
-              <div key={doc.id} className="flex flex-col md:flex-row md:items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors space-y-2 md:space-y-0">
+              <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary/10 rounded-md">
                     <FileText className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-sm md:text-base">{doc.title}</h4>
-                    <p className="text-xs md:text-sm text-muted-foreground">
+                    <h4 className="font-medium">{doc.title}</h4>
+                    <p className="text-sm text-muted-foreground">
                       {doc.type} • Submitted by {doc.submittedBy} • {doc.date}
                     </p>
                   </div>
@@ -224,38 +224,38 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
           <CardDescription>Frequently used actions for your role</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Button 
               variant="outline" 
-              className="h-20 md:h-auto p-4 flex flex-col gap-2 min-w-[44px]"
+              className="h-auto p-4 flex flex-col gap-2"
               onClick={() => navigate("/documents")}
             >
-              <FileText className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-              <span className="text-xs md:text-sm">Submit Document</span>
+              <FileText className="w-6 h-6 text-primary" />
+              <span className="text-sm">Submit Document</span>
             </Button>
             <Button 
               variant="outline" 
-              className="h-20 md:h-auto p-4 flex flex-col gap-2 min-w-[44px]"
+              className="h-auto p-4 flex flex-col gap-2"
               onClick={() => navigate("/approvals")}
             >
-              <Clock className="w-5 h-5 md:w-6 md:h-6 text-warning" />
-              <span className="text-xs md:text-sm">Review Pending</span>
+              <Clock className="w-6 h-6 text-warning" />
+              <span className="text-sm">Review Pending</span>
             </Button>
             <Button 
               variant="outline" 
-              className="h-20 md:h-auto p-4 flex flex-col gap-2 min-w-[44px]"
+              className="h-auto p-4 flex flex-col gap-2"
               onClick={() => navigate("/calendar")}
             >
-              <CalendarIcon className="w-5 h-5 md:w-6 md:h-6 text-blue-500" />
-              <span className="text-xs md:text-sm">Schedule Meeting</span>
+              <CalendarIcon className="w-6 h-6 text-blue-500" />
+              <span className="text-sm">Schedule Meeting</span>
             </Button>
             <Button 
               variant="outline" 
-              className="h-20 md:h-auto p-4 flex flex-col gap-2 min-w-[44px]"
+              className="h-auto p-4 flex flex-col gap-2"
               onClick={() => navigate("/documents")}
             >
-              <Users className="w-5 h-5 md:w-6 md:h-6 text-purple-500" />
-              <span className="text-xs md:text-sm">View Documents</span>
+              <Users className="w-6 h-6 text-purple-500" />
+              <span className="text-sm">View Documents</span>
             </Button>
           </div>
         </CardContent>
