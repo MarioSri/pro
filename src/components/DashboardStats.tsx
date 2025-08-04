@@ -81,12 +81,7 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
           bgColor: "bg-indigo-50"
         }
       ],
-      "hod-eee": commonStats,
-      "hod-mech": commonStats,
-      "hod-cse": commonStats,
-      "hod-ece": commonStats,
-      "hod-csm-cso": commonStats,
-      "hod-csd-csc": commonStats,
+      hod: commonStats,
       employee: commonStats.slice(0, 3)
     };
 

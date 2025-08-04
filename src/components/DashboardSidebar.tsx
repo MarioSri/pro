@@ -32,8 +32,7 @@ import {
   PenTool,
   StickyNote,
   Bell,
-  AlertTriangle,
-  Target
+  AlertTriangle
 } from "lucide-react";
 
 interface DashboardSidebarProps {
@@ -55,9 +54,11 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       { title: "Documents", url: "/documents", icon: FileText },
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
+      { title: "Audio Notes", url: "/audio-notes", icon: Mic },
       { title: "Advanced Signature", url: "/advanced-signature", icon: PenTool },
+      { title: "Notes Canvas", url: "/notes-canvas", icon: StickyNote },
+      { title: "Reminders", url: "/reminders", icon: Bell },
       { title: "Emergency", url: "/emergency", icon: AlertTriangle },
-      { title: "Next Steps", url: "/next-steps", icon: Target },
     ];
 
     const roleSpecificItems = {
@@ -73,32 +74,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
         { title: "Approvals", url: "/approvals", icon: CheckSquare },
         { title: "Analytics", url: "/analytics", icon: BarChart3 },
       ],
-      "hod-eee": [
-        ...commonItems,
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      "hod-mech": [
-        ...commonItems,
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      "hod-cse": [
-        ...commonItems,
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      "hod-ece": [
-        ...commonItems,
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      "hod-csm-cso": [
-        ...commonItems,
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      "hod-csd-csc": [
+      hod: [
         ...commonItems,
         { title: "Approvals", url: "/approvals", icon: CheckSquare },
         { title: "Analytics", url: "/analytics", icon: BarChart3 },
@@ -119,13 +95,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     switch (userRole) {
       case "principal": return Crown;
       case "registrar": return Shield;
-      case "hod-eee":
-      case "hod-mech":
-      case "hod-cse":
-      case "hod-ece":
-      case "hod-csm-cso":
-      case "hod-csd-csc":
-        return Users;
+      case "hod": return Users;
       default: return UserCheck;
     }
   };

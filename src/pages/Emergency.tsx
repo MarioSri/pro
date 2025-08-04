@@ -12,8 +12,6 @@ const Emergency = () => {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
-    // Redirect to login page
-    window.location.href = "/";
   };
 
   return (

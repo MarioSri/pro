@@ -49,37 +49,10 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
       { id: "hod-cse", label: "HOD - CSE" },
       { id: "hod-ece", label: "HOD - ECE" },
       { id: "hod-mech", label: "HOD - MECH" },
-      { id: "hod-csm-cso", label: "HOD - CSM & CSO" },
-      { id: "hod-csd-csc", label: "HOD - CSD & CSC" },
       { id: "registrar", label: "Registrar" },
       { id: "principal", label: "Principal" },
     ],
-    "hod-eee": [
-      { id: "registrar", label: "Registrar" },
-      { id: "principal", label: "Principal" },
-      { id: "dean", label: "Dean" },
-    ],
-    "hod-mech": [
-      { id: "registrar", label: "Registrar" },
-      { id: "principal", label: "Principal" },
-      { id: "dean", label: "Dean" },
-    ],
-    "hod-cse": [
-      { id: "registrar", label: "Registrar" },
-      { id: "principal", label: "Principal" },
-      { id: "dean", label: "Dean" },
-    ],
-    "hod-ece": [
-      { id: "registrar", label: "Registrar" },
-      { id: "principal", label: "Principal" },
-      { id: "dean", label: "Dean" },
-    ],
-    "hod-csm-cso": [
-      { id: "registrar", label: "Registrar" },
-      { id: "principal", label: "Principal" },
-      { id: "dean", label: "Dean" },
-    ],
-    "hod-csd-csc": [
+    hod: [
       { id: "registrar", label: "Registrar" },
       { id: "principal", label: "Principal" },
       { id: "dean", label: "Dean" },

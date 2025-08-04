@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { NotificationCenter } from "./NotificationCenter";
@@ -20,8 +19,6 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, userRole, onLogout }: DashboardLayoutProps) {
-  const navigate = useNavigate();
-  
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",

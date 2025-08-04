@@ -1,9 +1,9 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { AdvancedDigitalSignature } from "@/components/AdvancedDigitalSignature";
+import { AudioNotesGenerator } from "@/components/AudioNotesGenerator";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-const AdvancedSignature = () => {
+const AudioNotes = () => {
   const [userRole] = useState("employee");
   const { toast } = useToast();
 
@@ -18,14 +18,14 @@ const AdvancedSignature = () => {
     <DashboardLayout userRole={userRole} onLogout={handleLogout}>
       <div className="container mx-auto p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Advanced Digital Signature</h1>
-          <p className="text-muted-foreground">Multi-modal signature capture with quality validation</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Audio Notes Generator</h1>
+          <p className="text-muted-foreground">Convert speech to text with AI-powered transcription</p>
         </div>
         
-        <AdvancedDigitalSignature userRole={userRole} />
+        <AudioNotesGenerator userRole={userRole} />
       </div>
     </DashboardLayout>
   );
 };
 
-export default AdvancedSignature;
+export default AudioNotes;
