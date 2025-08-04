@@ -31,16 +31,16 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const [userRole] = useState("employee");
+  const [userRole] = useState("hod");
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    name: "Current User",
-    email: "user@hitam.org",
+    name: "Dr. Rajesh Kumar",
+    email: "rajesh.kumar@hitam.org",
     phone: "+91-9876543210",
-    department: "Department Name",
-    employeeId: "HITAM-EMP-001",
-    designation: "Employee",
-    bio: "HITAM employee working in institutional activities and management.",
+    department: "Computer Science & Engineering",
+    employeeId: "HITAM-CSE-001",
+    designation: "Head of Department",
+    bio: "Experienced educator and researcher with 15+ years in computer science education and administration.",
     avatar: ""
   });
 

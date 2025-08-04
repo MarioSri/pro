@@ -45,7 +45,7 @@ export const TouchOptimizedInput: React.FC<TouchOptimizedInputProps> = ({
       </Label>
       <Input
         {...props}
-        className={cn("h-12 text-base touch-manipulation", className)}
+        className={cn("h-12 text-base", className)}
       />
     </div>
   );
@@ -70,7 +70,7 @@ export const TouchOptimizedTextarea: React.FC<TouchOptimizedTextareaProps> = ({
       </Label>
       <Textarea
         {...props}
-        className={cn("min-h-[120px] text-base touch-manipulation", className)}
+        className={cn("min-h-[120px] text-base", className)}
       />
     </div>
   );
@@ -88,7 +88,7 @@ export const TouchOptimizedButton: React.FC<TouchOptimizedButtonProps> = ({
   return (
     <Button
       {...props}
-      className={cn("h-12 px-6 text-base min-w-[44px] touch-manipulation", className)}
+      className={cn("h-12 px-6 text-base min-w-[44px]", className)}
     >
       {children}
     </Button>

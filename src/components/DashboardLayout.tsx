@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { NotificationCenter } from "./NotificationCenter";
-import { MobileNavigation } from "./MobileNavigation";
 import { Button } from "@/components/ui/button";
 import { User, LogOut } from "lucide-react";
 import {
@@ -12,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useNavigate } from "react-router-dom";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -21,7 +19,6 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, userRole, onLogout }: DashboardLayoutProps) {
-  const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -32,20 +29,17 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        {/* Mobile Navigation */}
-        <MobileNavigation userRole={userRole} />
-        
         <DashboardSidebar userRole={userRole} />
         
         <SidebarInset className="flex-1">
           {/* Header */}
-          <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:pl-0 pl-16">
+          <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="flex h-14 items-center justify-between px-4">
               <div className="flex items-center gap-4">
-                <SidebarTrigger className="hidden md:flex" />
+                <SidebarTrigger />
                 <div>
                   <h1 className="text-lg font-semibold">IAOMS Dashboard</h1>
-                  <p className="text-xs text-muted-foreground hidden sm:block">{currentDate}</p>
+                  <p className="text-xs text-muted-foreground">{currentDate}</p>
                 </div>
               </div>
 
@@ -81,7 +75,7 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
+          <main className="flex-1 p-6">
             {children}
           </main>
         </SidebarInset>
