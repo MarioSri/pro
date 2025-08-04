@@ -18,7 +18,7 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
   const roles = [
     { value: "principal", label: "Principal", icon: Building2 },
     { value: "registrar", label: "Registrar", icon: Shield },
-    { value: "hod", label: "Head of Department", icon: Users },
+    { value: "hod", label: "HOD (Head of Department)", icon: Users },
     { value: "employee", label: "Employee", icon: FileText },
   ];
 
