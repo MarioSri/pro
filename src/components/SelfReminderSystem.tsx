@@ -7,21 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Bell, 
-  Plus, 
-  Calendar, 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Repeat, 
-  Tag,
-  Edit,
-  Trash2,
-  Snooze,
-  Play,
-  Pause
-} from "lucide-react";
+import { Bell, Plus, Calendar, Clock, AlertTriangle, CheckCircle2, Repeat, Tag, Edit, Trash2, SunSnow as Snooze, Play, Pause } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Reminder {
