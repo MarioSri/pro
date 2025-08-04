@@ -6,19 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { 
-  Mic, 
-  MicOff, 
-  Play, 
-  Pause, 
-  Square, 
-  Download, 
-  FileText, 
-  Save,
-  Waveform,
-  Brain,
-  Volume2
-} from "lucide-react";
+import { Mic, MicOff, Play, Pause, Square, Download, FileText, Save, AudioWaveform as Waveform, Brain, Volume2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface AudioNotesGeneratorProps {
