@@ -11,7 +11,6 @@ import Messages from "./pages/Messages";
 import WorkflowManagement from "./pages/Workflow";
 import Approvals from "./pages/Approvals";
 import Analytics from "./pages/Analytics";
-import AudioNotes from "./pages/AudioNotes";
 import AdvancedSignature from "./pages/AdvancedSignature";
 import NotesCanvas from "./pages/NotesCanvas";
 import Reminders from "./pages/Reminders";
@@ -35,7 +34,6 @@ const App = () => (
           <Route path="/workflow" element={<WorkflowManagement />} />
           <Route path="/approvals" element={<Approvals />} />
           <Route path="/analytics" element={<Analytics />} />
-          <Route path="/audio-notes" element={<AudioNotes />} />
           <Route path="/advanced-signature" element={<AdvancedSignature />} />
           <Route path="/notes-canvas" element={<NotesCanvas />} />
           <Route path="/reminders" element={<Reminders />} />

@@ -9,12 +9,12 @@ import {
   MessageSquare,
   CheckSquare,
   BarChart3,
-  PenTool,
   AlertTriangle,
   User,
   Menu,
   X
 } from "lucide-react";
+import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 import { cn } from "@/lib/utils";
 
 interface MobileNavigationProps {
@@ -32,7 +32,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ userRole }) 
       { title: "Documents", url: "/documents", icon: FileText },
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
-      { title: "Signature", url: "/advanced-signature", icon: PenTool },
+      { title: "Signature", url: "/advanced-signature", icon: AdvancedSignatureIcon },
       { title: "Emergency", url: "/emergency", icon: AlertTriangle },
       { title: "Profile", url: "/profile", icon: User },
     ];

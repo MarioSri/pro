@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
-  PenTool, 
   Camera, 
   Save, 
   Trash2, 
@@ -21,6 +20,7 @@ import {
   Palette,
   Layers
 } from "lucide-react";
+import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 import { useToast } from "@/hooks/use-toast";
 
 interface AdvancedDigitalSignatureProps {
@@ -362,7 +362,7 @@ export const AdvancedDigitalSignature: React.FC<AdvancedDigitalSignatureProps> =
       <Card className="shadow-elegant">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <PenTool className="w-5 h-5 text-primary" />
+            <AdvancedSignatureIcon className="w-5 h-5 text-primary" />
             Advanced Digital Signature System
           </CardTitle>
         </CardHeader>
@@ -618,7 +618,7 @@ export const AdvancedDigitalSignature: React.FC<AdvancedDigitalSignatureProps> =
                 
                 {signatures.length === 0 && (
                   <div className="col-span-full text-center py-12 text-muted-foreground">
-                    <PenTool className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <AdvancedSignatureIcon className="w-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>No signatures saved yet</p>
                     <p className="text-sm">Create your first signature using the tools above</p>
                   </div>

@@ -17,6 +17,7 @@ import {
   Users,
   Send
 } from "lucide-react";
+import { LoadingState } from "@/components/ui/loading-states";
 import {
   Select,
   SelectContent,
@@ -33,6 +34,7 @@ interface DocumentUploaderProps {
 export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) {
   const [documentTypes, setDocumentTypes] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [recipients, setRecipients] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("normal");
@@ -86,15 +88,21 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
   };
 
   const handleSubmit = () => {
-    const data = {
-      documentTypes,
-      files: uploadedFiles,
-      recipients,
-      description,
-      priority,
-      timestamp: new Date().toISOString(),
-    };
-    onSubmit(data);
+    setIsUploading(true);
+    
+    // Simulate upload process with loading animation
+    setTimeout(() => {
+      const data = {
+        documentTypes,
+        files: uploadedFiles,
+        recipients,
+        description,
+        priority,
+        timestamp: new Date().toISOString(),
+      };
+      onSubmit(data);
+      setIsUploading(false);
+    }, 2000);
   };
 
   const isSubmitDisabled = documentTypes.length === 0 || uploadedFiles.length === 0 || recipients.length === 0;
@@ -247,6 +255,13 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
 
           {/* Submit Button */}
           <div className="flex justify-end pt-4">
+            {isUploading ? (
+              <LoadingState 
+                type="spinner" 
+                message="Uploading document..." 
+                className="py-4"
+              />
+            ) : (
             <Button
               onClick={handleSubmit}
               disabled={isSubmitDisabled}
@@ -257,6 +272,7 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
               <Send className="w-4 h-4 mr-2" />
               Submit Document
             </Button>
+            )}
           </div>
         </CardContent>
       </Card>

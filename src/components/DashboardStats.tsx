@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   Eye
 } from "lucide-react";
+import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 
 interface DashboardStatsProps {
   userRole: string;
@@ -238,7 +239,7 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
               className="h-auto p-4 flex flex-col gap-2"
               onClick={() => navigate("/approvals")}
             >
-              <Clock className="w-6 h-6 text-warning" />
+              <AdvancedSignatureIcon className="w-6 h-6 text-warning" />
               <span className="text-sm">Review Pending</span>
             </Button>
             <Button 

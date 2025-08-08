@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Building2, Shield, Users, FileText } from "lucide-react";
+import { HITAMTreeLoading } from "@/components/ui/loading-animation";
 
 interface AuthenticationCardProps {
   onLogin: (role: string) => void;
@@ -14,6 +15,7 @@ interface AuthenticationCardProps {
 export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [loginMethod, setLoginMethod] = useState<"google" | "hitam">("google");
+  const [isLoading, setIsLoading] = useState(false);
 
   const roles = [
     { value: "principal", label: "Principal", icon: Building2 },
@@ -25,9 +27,18 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedRole) {
+      setIsLoading(true);
       onLogin(selectedRole);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
+        <HITAMTreeLoading size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">

@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
-  PenTool, 
   Camera, 
   Save, 
   Trash2, 
@@ -25,6 +24,7 @@ import {
   Settings,
   RefreshCw
 } from "lucide-react";
+import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 import { useToast } from "@/hooks/use-toast";
 
 interface SavedSignature {
@@ -235,7 +235,7 @@ export const DigitalSignature: React.FC<SignatureComponentProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <PenTool className="h-5 w-5" />
+            <AdvancedSignatureIcon className="w-5 h-5 text-primary" />
             Digital Signature Capture
           </CardTitle>
         </CardHeader>
@@ -392,7 +392,7 @@ export const DigitalSignature: React.FC<SignatureComponentProps> = ({
                 
                 {savedSignatures.length === 0 && (
                   <div className="col-span-full text-center py-8 text-muted-foreground">
-                    <PenTool className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <AdvancedSignatureIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>No saved signatures yet</p>
                     <p className="text-sm">Create your first signature using the drawing tools</p>
                   </div>
