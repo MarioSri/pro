@@ -51,6 +51,19 @@ export const HITAMTreeLoading: React.FC<HITAMTreeLoadingProps> = ({
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
+  useEffect(() => {
+    if (controlledProgress !== undefined) {
+      setProgress(controlledProgress);
+      if (controlledProgress >= 100 && !isComplete) {
+        setIsComplete(true);
+        setTimeout(() => onComplete?.(), 500);
+      }
+      return;
+    }
+
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
       const newProgress = Math.min((elapsed / duration) * 100, 100);
       
       setProgress(newProgress);
