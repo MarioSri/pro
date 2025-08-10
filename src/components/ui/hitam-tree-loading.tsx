@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from "@/lib/utils";
 
+// Shared size and text configurations for all components
+const sizeClasses = {
+  sm: 'w-16 h-16',
+  md: 'w-24 h-24', 
+  lg: 'w-32 h-32',
+  xl: 'w-40 h-40'
+};
+
+const textSizes = {
+  sm: 'text-sm',
+  md: 'text-base',
+  lg: 'text-lg',
+  xl: 'text-xl'
+};
+
 interface HITAMTreeLoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
@@ -20,20 +35,6 @@ export const HITAMTreeLoading: React.FC<HITAMTreeLoadingProps> = ({
 }) => {
   const [progress, setProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
-
-  const sizeClasses = {
-    sm: 'w-16 h-16',
-    md: 'w-24 h-24', 
-    lg: 'w-32 h-32',
-    xl: 'w-40 h-40'
-  };
-
-  const textSizes = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-lg',
-    xl: 'text-xl'
-  };
 
   useEffect(() => {
     if (controlledProgress !== undefined) {
