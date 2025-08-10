@@ -16,21 +16,6 @@ const textSizes = {
   xl: 'text-xl'
 };
 
-// Shared size and text configurations for all components
-const sizeClasses = {
-  sm: 'w-16 h-16',
-  md: 'w-24 h-24', 
-  lg: 'w-32 h-32',
-  xl: 'w-40 h-40'
-};
-
-const textSizes = {
-  sm: 'text-sm',
-  md: 'text-base',
-  lg: 'text-lg',
-  xl: 'text-xl'
-};
-
 interface HITAMTreeLoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;
