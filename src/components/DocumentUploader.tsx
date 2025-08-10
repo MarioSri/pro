@@ -17,7 +17,7 @@ import {
   Users,
   Send
 } from "lucide-react";
-import { HITAMTreeLoadingSimple } from "@/components/ui/hitam-tree-loading";
+import { LoadingState } from "@/components/ui/loading-states";
 import {
   Select,
   SelectContent,
@@ -256,10 +256,11 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
           {/* Submit Button */}
           <div className="flex justify-end pt-4">
             {isUploading ? (
-              <div className="flex items-center gap-3 py-4">
-                <HITAMTreeLoadingSimple size="sm" />
-                <span className="text-sm text-muted-foreground">Uploading document...</span>
-              </div>
+              <LoadingState 
+                type="spinner" 
+                message="Uploading document..." 
+                className="py-4"
+              />
             ) : (
             <Button
               onClick={handleSubmit}

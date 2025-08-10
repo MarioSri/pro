@@ -8,7 +8,7 @@ import { DigitalSignature } from "@/components/DigitalSignature";
 import { MeetingScheduler } from "@/components/MeetingScheduler";
 import { NotesReminders } from "@/components/NotesReminders";
 import { EmergencyFeatures } from "@/components/EmergencyFeatures";
-import { HITAMTreeLoadingDetailed } from "@/components/ui/hitam-tree-loading";
+import { HITAMTreeLoading } from "@/components/ui/loading-animation";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -16,35 +16,21 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
   const [currentView, setCurrentView] = useState<"dashboard" | "submit" | "documents" | "tracking" | "signature" | "meetings" | "notes" | "emergency">("dashboard");
-  const [authProgress, setAuthProgress] = useState(0);
   const { toast } = useToast();
 
   const handleLogin = (role: string) => {
     setIsLoading(true);
-    setAuthProgress(0);
     
-    // Simulate realistic authentication progress
-    const progressInterval = setInterval(() => {
-      setAuthProgress(prev => {
-        const increment = Math.random() * 12 + 3; // Random progress between 3-15%
-        const newProgress = Math.min(prev + increment, 100);
-        
-        if (newProgress >= 100) {
-          clearInterval(progressInterval);
-          setTimeout(() => {
-            setUserRole(role);
-            setIsAuthenticated(true);
-            setIsLoading(false);
-            toast({
-              title: "Login Successful",
-              description: `Welcome to IAOMS, ${role}!`,
-            });
-          }, 500);
-        }
-        
-        return newProgress;
+    // Simulate authentication process with HITAM tree animation
+    setTimeout(() => {
+      setUserRole(role);
+      setIsAuthenticated(true);
+      setIsLoading(false);
+      toast({
+        title: "Login Successful",
+        description: `Welcome to IAOMS, ${role}!`,
       });
-    }, 150);
+    }, 3000);
   };
 
   const handleLogout = () => {
@@ -74,12 +60,7 @@ const Index = () => {
     if (isLoading) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
-          <HITAMTreeLoadingDetailed 
-            size="xl"
-            showText={true}
-            progress={authProgress}
-            duration={3000}
-          />
+          <HITAMTreeLoading size="lg" />
         </div>
       );
     }
