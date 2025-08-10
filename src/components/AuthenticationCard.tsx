@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Building2, Shield, Users, FileText } from "lucide-react";
-import { HITAMTreeLoading } from "@/components/ui/loading-animation";
+import { HITAMTreeLoadingDetailed } from "@/components/ui/hitam-tree-loading";
+import { useState as useLoadingState } from "react";
 
 interface AuthenticationCardProps {
   onLogin: (role: string) => void;
@@ -16,6 +17,7 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [loginMethod, setLoginMethod] = useState<"google" | "hitam">("google");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   const roles = [
     { value: "principal", label: "Principal", icon: Building2 },
@@ -28,14 +30,40 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
     e.preventDefault();
     if (selectedRole) {
       setIsLoading(true);
-      onLogin(selectedRole);
+      setLoadingProgress(0);
+      
+      // Simulate authentication progress
+      const progressInterval = setInterval(() => {
+        setLoadingProgress(prev => {
+          const newProgress = prev + Math.random() * 15 + 5;
+          if (newProgress >= 100) {
+            clearInterval(progressInterval);
+            setTimeout(() => onLogin(selectedRole), 500);
+            return 100;
+          }
+          return newProgress;
+        });
+      }, 200);
     }
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-subtle p-4">
-        <HITAMTreeLoading size="lg" />
+        <div className="text-center">
+          <HITAMTreeLoadingDetailed 
+            size="xl" 
+            showText={true}
+            progress={loadingProgress}
+            duration={3000}
+          />
+          <div className="mt-8 space-y-2">
+            <p className="text-lg font-semibold text-primary">Authenticating...</p>
+            <p className="text-sm text-muted-foreground">
+              Logging in as {roles.find(r => r.value === selectedRole)?.label}
+            </p>
+          </div>
+        </div>
       </div>
     );
   }

@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HITAMFaviconUpdater } from "@/components/ui/favicon-generator";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Documents from "./pages/Documents";
@@ -22,6 +23,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <HITAMFaviconUpdater />
       <Toaster />
       <Sonner />
       <BrowserRouter>

@@ -60,6 +60,57 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## HITAM Tree Loading Animation
+
+The project includes a custom HITAM tree logo loading animation with the following features:
+
+### Animation Components
+- `HITAMTreeLoading` - Basic tree loading animation
+- `HITAMTreeLoadingDetailed` - Advanced version with progress control and phases
+- `HITAMTreeLoadingSimple` - Minimal version for inline use
+- `AuthenticationLoading` - Full-screen authentication loading experience
+- `ResponsiveHITAMLoading` - Responsive loading that adapts to screen size
+
+### Features
+- **Progressive Filling**: Tree fills from white (roots) to green (leaves)
+- **Progress Control**: Can be controlled with progress prop (0-100%)
+- **Responsive Design**: Adapts to mobile and desktop screens
+- **Multiple Variants**: Different sizes and complexity levels
+- **Brand Integration**: Uses official HITAM tree logo and brand colors
+- **Performance Optimized**: Lightweight SVG animations
+
+### Usage Examples
+
+```tsx
+// Basic usage
+<HITAMTreeLoading size="lg" showText={true} />
+
+// Controlled progress
+<HITAMTreeLoadingDetailed 
+  progress={loadingProgress} 
+  onComplete={() => console.log('Loading complete!')}
+/>
+
+// Authentication loading
+<AuthenticationLoading 
+  userRole="employee"
+  onComplete={() => navigate('/dashboard')}
+/>
+
+// Responsive loading
+<ResponsiveHITAMLoading 
+  variant="auth"
+  message="Authenticating..."
+/>
+```
+
+### Integration Points
+- Login/Authentication screens
+- Page transitions
+- Document upload progress
+- Form submissions
+- API call loading states
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/0ea76660-9d8e-4aab-b25a-26cad15a67b6) and click on Share -> Publish.
