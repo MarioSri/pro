@@ -73,6 +73,11 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
         { title: "Approvals", url: "/approvals", icon: CheckSquare },
         { title: "Analytics", url: "/analytics", icon: BarChart3 },
       ],
+      "program-head": [
+        ...commonItems,
+        { title: "Approvals", url: "/approvals", icon: CheckSquare },
+        { title: "Analytics", url: "/analytics", icon: BarChart3 },
+      ],
       hod: [
         ...commonItems,
         { title: "Approvals", url: "/approvals", icon: CheckSquare },
@@ -94,6 +99,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     switch (userRole) {
       case "principal": return Crown;
       case "registrar": return Shield;
+      case "program-head": return Users;
       case "hod": return Users;
       default: return UserCheck;
     }

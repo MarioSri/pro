@@ -37,6 +37,8 @@ const Index = () => {
     setIsAuthenticated(false);
     setUserRole("");
     setCurrentView("dashboard");
+    // Redirect to login page
+    window.location.href = "/";
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",

@@ -21,6 +21,7 @@ export function AuthenticationCard({ onLogin }: AuthenticationCardProps) {
     { value: "principal", label: "Principal", icon: Building2 },
     { value: "registrar", label: "Registrar", icon: Shield },
     { value: "hod", label: "Head of Department", icon: Users },
+    { value: "program-head", label: "Program Department Head", icon: Users },
     { value: "employee", label: "Employee", icon: FileText },
   ];
 

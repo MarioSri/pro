@@ -63,6 +63,11 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
       { id: "principal", label: "Principal" },
       { id: "chairman", label: "Chairman" },
     ],
+    "program-head": [
+      { id: "hod", label: "Head of Department" },
+      { id: "registrar", label: "Registrar" },
+      { id: "principal", label: "Principal" },
+    ],
     principal: [
       { id: "all-hods", label: "All HODs" },
       { id: "all-employees", label: "All Employees" },

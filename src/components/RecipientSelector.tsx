@@ -41,7 +41,7 @@ interface RecipientGroup {
 }
 
 interface RecipientSelectorProps {
-  userRole: 'Principal' | 'Registrar' | 'HOD' | 'Employee' | string;
+  userRole: 'Principal' | 'Registrar' | 'HOD' | 'Program Head' | 'Employee' | string;
   selectedRecipients: string[];
   onRecipientsChange: (recipients: string[]) => void;
   maxSelections?: number;
@@ -109,6 +109,26 @@ const generateRecipients = (userRole: string): RecipientGroup[] => {
           createRecipient('Mr. Michael Operations', 'Head Operations', 'Operations'),
           createRecipient('Ms. Jennifer Librarian', 'Librarian', 'Library'),
           createRecipient('Prof. William SSG', 'SSG', 'Student Services')
+        ]
+      }
+    ];
+  } else if (userRole === 'Program Head' || userRole === 'program-head') {
+    return [
+      {
+        id: 'hods',
+        title: 'HODs (All Branches)',
+        icon: Building,
+        recipients: branches.map(branch => 
+          createRecipient(`Dr. ${branch} HOD`, 'Head of Department', `${branch} Department`, branch)
+        )
+      },
+      {
+        id: 'senior-admin',
+        title: 'Senior Administration',
+        icon: Crown,
+        recipients: [
+          createRecipient('Dr. Sarah Registrar', 'Registrar', 'Administration'),
+          createRecipient('Dr. Robert Principal', 'Principal', 'Administration')
         ]
       }
     ];

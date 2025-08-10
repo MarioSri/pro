@@ -48,6 +48,11 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ userRole }) 
         { title: "Approvals", url: "/approvals", icon: CheckSquare },
         { title: "Analytics", url: "/analytics", icon: BarChart3 },
       ],
+      "program-head": [
+        ...commonItems,
+        { title: "Approvals", url: "/approvals", icon: CheckSquare },
+        { title: "Analytics", url: "/analytics", icon: BarChart3 },
+      ],
       hod: [
         ...commonItems,
         { title: "Approvals", url: "/approvals", icon: CheckSquare },
