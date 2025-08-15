@@ -1,30 +1,48 @@
-import { DashboardLayout } from "@/components/DashboardLayout";
+import { ResponsiveLayout } from "@/components/layout/ResponsiveLayout";
 import { AdvancedDigitalSignature } from "@/components/AdvancedDigitalSignature";
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { TouchSignaturePad } from "@/components/signature/TouchSignaturePad";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import { useResponsive } from "@/hooks/useResponsive";
 
 const AdvancedSignature = () => {
-  const [userRole] = useState("employee");
-  const { toast } = useToast();
+  const { user } = useAuth();
+  const { isMobile } = useResponsive();
 
-  const handleLogout = () => {
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
-    });
-  };
+  if (!user) return null;
 
   return (
-    <DashboardLayout userRole={userRole} onLogout={handleLogout}>
+    <ResponsiveLayout>
       <div className="container mx-auto p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Advanced Digital Signature</h1>
-          <p className="text-muted-foreground">Multi-modal signature capture with quality validation</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+            Digital Signature
+          </h1>
+          <p className="text-muted-foreground">
+            {isMobile ? 'Touch-optimized signature capture' : 'Multi-modal signature capture with quality validation'}
+          </p>
         </div>
         
-        <AdvancedDigitalSignature userRole={userRole} />
+        {isMobile ? (
+          <TouchSignaturePad />
+        ) : (
+          <Tabs defaultValue="advanced" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="advanced">Advanced Tools</TabsTrigger>
+              <TabsTrigger value="touch">Touch Pad</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="advanced">
+              <AdvancedDigitalSignature userRole={user.role} />
+            </TabsContent>
+            
+            <TabsContent value="touch">
+              <TouchSignaturePad />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
-    </DashboardLayout>
+    </ResponsiveLayout>
   );
 };
 

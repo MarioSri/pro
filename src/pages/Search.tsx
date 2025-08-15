@@ -1,28 +1,50 @@
-import { DashboardLayout } from "@/components/DashboardLayout";
+import { ResponsiveLayout } from "@/components/layout/ResponsiveLayout";
+import { MobileSearchInterface } from "@/components/search/MobileSearchInterface";
 import { UniversalSearch } from "@/components/UniversalSearch";
+import { useResponsive } from "@/hooks/useResponsive";
+import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 
 const Search = () => {
-  const [userRole] = useState("employee"); // This would come from auth context
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { isMobile } = useResponsive();
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogout = () => {
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
-    });
-    window.location.href = "/";
+  const handleSearch = async (query: string, filters: any) => {
+    setLoading(true);
+    // Simulate search API call
+    setTimeout(() => {
+      setSearchResults([]);
+      setLoading(false);
+    }, 1000);
   };
 
+  if (!user) return null;
+
   return (
-    <DashboardLayout userRole={userRole} onLogout={handleLogout}>
-      <div className="container mx-auto p-6">
-        <UniversalSearch userRole={userRole} />
+    <ResponsiveLayout>
+      <div className="container mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+            Universal Search
+          </h1>
+          <p className="text-muted-foreground">
+            Search across documents, users, departments, and more
+          </p>
+        </div>
+        
+        {isMobile ? (
+          <MobileSearchInterface
+            onSearch={handleSearch}
+            results={searchResults}
+            loading={loading}
+          />
+        ) : (
+          <UniversalSearch userRole={user.role} />
+        )}
       </div>
-    </DashboardLayout>
+    </ResponsiveLayout>
   );
 };
 
