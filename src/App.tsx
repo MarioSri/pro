@@ -15,6 +15,7 @@ import AdvancedSignature from "./pages/AdvancedSignature";
 import NotesCanvas from "./pages/NotesCanvas";
 import Reminders from "./pages/Reminders";
 import Emergency from "./pages/Emergency";
+import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
           <Route path="/notes-canvas" element={<NotesCanvas />} />
           <Route path="/reminders" element={<Reminders />} />
           <Route path="/emergency" element={<Emergency />} />
+          <Route path="/search" element={<Search />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

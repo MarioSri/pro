@@ -3,7 +3,7 @@ import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/s
 import { DashboardSidebar } from "./DashboardSidebar";
 import { NotificationCenter } from "./NotificationCenter";
 import { Button } from "@/components/ui/button";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Search } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -19,6 +20,7 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, userRole, onLogout }: DashboardLayoutProps) {
+  const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString("en-US", {
     weekday: "long",
     year: "numeric",
@@ -46,6 +48,16 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
               <div className="flex items-center gap-2">
                 {/* Notifications */}
                 <NotificationCenter userRole={userRole} />
+
+                {/* Quick Search Button */}
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={() => navigate("/search")}
+                  title="Universal Search"
+                >
+                  <Search className="w-4 h-4" />
+                </Button>
 
                 {/* User Menu */}
                 <DropdownMenu>

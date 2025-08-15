@@ -12,7 +12,8 @@ import {
   AlertTriangle,
   User,
   Menu,
-  X
+  X,
+  Search
 } from "lucide-react";
 import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ userRole }) 
   const getMenuItems = () => {
     const commonItems = [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Search", url: "/search", icon: Search },
       { title: "Documents", url: "/documents", icon: FileText },
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },

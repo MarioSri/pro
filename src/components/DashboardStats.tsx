@@ -11,7 +11,8 @@ import {
   Calendar as CalendarIcon,
   TrendingUp,
   AlertTriangle,
-  Eye
+  Eye,
+  Search
 } from "lucide-react";
 import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 
@@ -226,6 +227,14 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Button 
+              variant="outline" 
+              className="h-auto p-4 flex flex-col gap-2"
+              onClick={() => navigate("/search")}
+            >
+              <Search className="w-6 h-6 text-primary" />
+              <span className="text-sm">Universal Search</span>
+            </Button>
             <Button 
               variant="outline" 
               className="h-auto p-4 flex flex-col gap-2"

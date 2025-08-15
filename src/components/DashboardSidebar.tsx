@@ -31,7 +31,8 @@ import {
   PenTool,
   StickyNote,
   Bell,
-  AlertTriangle
+  AlertTriangle,
+  Search
 } from "lucide-react";
 import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 
@@ -51,6 +52,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
   const getMenuItems = () => {
     const commonItems = [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Search", url: "/search", icon: Search },
       { title: "Documents", url: "/documents", icon: FileText },
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
