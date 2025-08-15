@@ -18,21 +18,30 @@ interface UniversalSearchProps {
 }
 
 export function UniversalSearch({ userRole, className = '' }: UniversalSearchProps) {
+  const searchHook = useUniversalSearch(userRole);
+  
+  // Safely destructure with defaults
   const {
-    searchTerm,
-    setSearchTerm,
-    filters,
-    setFilters,
-    results,
-    loading,
-    error,
-    viewMode,
-    setViewMode,
-    recentSearches,
-    clearRecentSearches,
-    performSearch,
-    resetFilters
-  } = useUniversalSearch(userRole);
+    searchTerm = '',
+    setSearchTerm = () => {},
+    filters = {
+      status: [],
+      departments: [],
+      roles: [],
+      priority: [],
+      dateRange: { from: null, to: null }
+    },
+    setFilters = () => {},
+    results = [],
+    loading = false,
+    error = null,
+    viewMode = 'grid',
+    setViewMode = () => {},
+    recentSearches = [],
+    clearRecentSearches = () => {},
+    performSearch = () => {},
+    resetFilters = () => {}
+  } = searchHook || {};
 
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -99,10 +108,11 @@ export function UniversalSearch({ userRole, className = '' }: UniversalSearchPro
 
   // Filter active count
   const activeFiltersCount = useMemo(() => {
+    if (!filters) return 0;
     let count = 0;
     if (filters.status.length > 0) count++;
-    if (filters.department.length > 0) count++;
-    if (filters.role.length > 0) count++;
+    if (filters.departments.length > 0) count++;
+    if (filters.roles.length > 0) count++;
     if (filters.priority.length > 0) count++;
     if (filters.dateRange.from || filters.dateRange.to) count++;
     return count;
@@ -174,18 +184,20 @@ export function UniversalSearch({ userRole, className = '' }: UniversalSearchPro
 
   // Render filter chips
   const renderActiveFilters = () => {
+    if (!filters) return null;
+    
     const activeFilters = [];
     
     filters.status.forEach(status => {
       activeFilters.push({ type: 'status', value: status, label: status });
     });
     
-    filters.department.forEach(dept => {
-      activeFilters.push({ type: 'department', value: dept, label: dept });
+    filters.departments.forEach(dept => {
+      activeFilters.push({ type: 'departments', value: dept, label: dept });
     });
     
-    filters.role.forEach(role => {
-      activeFilters.push({ type: 'role', value: role, label: role });
+    filters.roles.forEach(role => {
+      activeFilters.push({ type: 'roles', value: role, label: role });
     });
     
     filters.priority.forEach(priority => {
@@ -352,10 +364,10 @@ export function UniversalSearch({ userRole, className = '' }: UniversalSearchPro
               </div>
               
               <div className="text-xs text-gray-500 mb-3">
-                <div>Created: {new Date(result.createdAt).toLocaleDateString()}</div>
+                <div>Created: {new Date(result.createdDate).toLocaleDateString()}</div>
                 <div>By: {result.submittedBy}</div>
-                {result.lastModified && (
-                  <div>Modified: {new Date(result.lastModified).toLocaleDateString()}</div>
+                {result.modifiedDate && (
+                  <div>Modified: {new Date(result.modifiedDate).toLocaleDateString()}</div>
                 )}
               </div>
               
