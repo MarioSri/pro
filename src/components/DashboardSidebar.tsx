@@ -57,7 +57,6 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
       { title: "Advanced Signature", url: "/advanced-signature", icon: AdvancedSignatureIcon },
-      { title: "Notes Canvas", url: "/notes-canvas", icon: StickyNote },
       { title: "Reminders", url: "/reminders", icon: Bell },
       { title: "Emergency", url: "/emergency", icon: AlertTriangle },
     ];
