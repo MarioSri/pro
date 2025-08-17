@@ -1,11 +1,11 @@
 import { ResponsiveLayout } from "@/components/layout/ResponsiveLayout";
-import { ResponsiveDashboard } from "@/components/dashboard/ResponsiveDashboard";
+import { RoleDashboard } from "@/components/dashboard/RoleDashboard";
 
 const Dashboard = () => {
 
   return (
     <ResponsiveLayout>
-      <ResponsiveDashboard />
+      <RoleDashboard />
     </ResponsiveLayout>
   );
 };

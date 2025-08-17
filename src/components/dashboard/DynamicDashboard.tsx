@@ -1,0 +1,461 @@
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import { useResponsive } from '@/hooks/useResponsive';
+import { getDashboardConfig } from '@/config/roleConfigs';
+import { DashboardWidget } from '@/types/dashboard';
+import { cn } from '@/lib/utils';
+
+// Widget Components
+import { StatsWidget } from './widgets/StatsWidget';
+import { QuickActionsWidget } from './widgets/QuickActionsWidget';
+import { DocumentsWidget } from './widgets/DocumentsWidget';
+import { CalendarWidget } from './widgets/CalendarWidget';
+import { NotificationsWidget } from './widgets/NotificationsWidget';
+import { AnalyticsWidget } from './widgets/AnalyticsWidget';
+import { StickyNotesWidget } from './widgets/StickyNotesWidget';
+import { ChatWidget } from './widgets/ChatWidget';
+import { WorkflowWidget } from './widgets/WorkflowWidget';
+import { AIWidget } from './widgets/AIWidget';
+
+import {
+  Settings,
+  Layout,
+  Maximize2,
+  Minimize2,
+  Eye,
+  EyeOff,
+  RotateCcw,
+  Save
+} from 'lucide-react';
+
+interface DynamicDashboardProps {
+  className?: string;
+}
+
+export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className }) => {
+  const { user } = useAuth();
+  const { isMobile, isTablet } = useResponsive();
+  const [dashboardConfig, setDashboardConfig] = useState<any>(null);
+  const [widgets, setWidgets] = useState<DashboardWidget[]>([]);
+  const [isCustomizing, setIsCustomizing] = useState(false);
+  const [selectedWidget, setSelectedWidget] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      const config = getDashboardConfig(user.role, user.department, user.branch);
+      setDashboardConfig(config);
+      
+      // Load saved widget configuration or use defaults
+      const savedWidgets = localStorage.getItem(`dashboard-widgets-${user.role}`);
+      if (savedWidgets) {
+        setWidgets(JSON.parse(savedWidgets));
+      } else {
+        setWidgets(getDefaultWidgets(config));
+      }
+    }
+  }, [user]);
+
+  const getDefaultWidgets = (config: any): DashboardWidget[] => {
+    const defaultWidgets: DashboardWidget[] = [
+      {
+        id: 'stats',
+        type: 'stats',
+        title: 'Dashboard Statistics',
+        position: { x: 0, y: 0, w: isMobile ? 12 : 6, h: 2 },
+        visible: true,
+        permissions: []
+      },
+      {
+        id: 'quickActions',
+        type: 'quickActions',
+        title: 'Quick Actions',
+        position: { x: isMobile ? 0 : 6, y: 0, w: isMobile ? 12 : 6, h: 2 },
+        visible: true,
+        permissions: []
+      },
+      {
+        id: 'documents',
+        type: 'documents',
+        title: 'Recent Documents',
+        position: { x: 0, y: 2, w: isMobile ? 12 : 8, h: 3 },
+        visible: true,
+        permissions: []
+      },
+      {
+        id: 'calendar',
+        type: 'calendar',
+        title: 'Calendar & Meetings',
+        position: { x: isMobile ? 0 : 8, y: 2, w: isMobile ? 12 : 4, h: 3 },
+        visible: true,
+        permissions: []
+      },
+      {
+        id: 'notifications',
+        type: 'notifications',
+        title: 'Notifications',
+        position: { x: 0, y: 5, w: isMobile ? 12 : 4, h: 2 },
+        visible: true,
+        permissions: []
+      },
+      {
+        id: 'stickyNotes',
+        type: 'stickyNotes',
+        title: 'Sticky Notes',
+        position: { x: isMobile ? 0 : 4, y: 5, w: isMobile ? 12 : 4, h: 2 },
+        visible: true,
+        permissions: []
+      },
+      {
+        id: 'analytics',
+        type: 'analytics',
+        title: 'Analytics Overview',
+        position: { x: isMobile ? 0 : 8, y: 5, w: isMobile ? 12 : 4, h: 2 },
+        visible: config.permissions.canViewAnalytics,
+        permissions: ['canViewAnalytics']
+      },
+      {
+        id: 'workflow',
+        type: 'workflow',
+        title: 'Workflow Management',
+        position: { x: 0, y: 7, w: isMobile ? 12 : 6, h: 2 },
+        visible: config.permissions.canManageWorkflows,
+        permissions: ['canManageWorkflows']
+      },
+      {
+        id: 'ai',
+        type: 'ai',
+        title: 'AI Assistant',
+        position: { x: isMobile ? 0 : 6, y: 7, w: isMobile ? 12 : 6, h: 2 },
+        visible: config.permissions.canAccessAI,
+        permissions: ['canAccessAI']
+      },
+      {
+        id: 'chat',
+        type: 'chat',
+        title: 'Real-Time Communication',
+        position: { x: 0, y: 9, w: 12, h: 2 },
+        visible: config.features.realTimeChat,
+        permissions: []
+      }
+    ];
+
+    return defaultWidgets.filter(widget => {
+      if (widget.permissions.length === 0) return widget.visible;
+      return widget.permissions.every(permission => 
+        config.permissions[permission as keyof typeof config.permissions]
+      );
+    });
+  };
+
+  const renderWidget = (widget: DashboardWidget) => {
+    if (!widget.visible) return null;
+
+    const widgetProps = {
+      userRole: user?.role || '',
+      permissions: dashboardConfig?.permissions,
+      isCustomizing,
+      onSelect: () => setSelectedWidget(widget.id),
+      isSelected: selectedWidget === widget.id
+    };
+
+    const WidgetComponent = () => {
+      switch (widget.type) {
+        case 'stats':
+          return <StatsWidget {...widgetProps} />;
+        case 'quickActions':
+          return <QuickActionsWidget {...widgetProps} />;
+        case 'documents':
+          return <DocumentsWidget {...widgetProps} />;
+        case 'calendar':
+          return <CalendarWidget {...widgetProps} />;
+        case 'notifications':
+          return <NotificationsWidget {...widgetProps} />;
+        case 'analytics':
+          return <AnalyticsWidget {...widgetProps} />;
+        case 'stickyNotes':
+          return <StickyNotesWidget {...widgetProps} />;
+        case 'chat':
+          return <ChatWidget {...widgetProps} />;
+        case 'workflow':
+          return <WorkflowWidget {...widgetProps} />;
+        case 'ai':
+          return <AIWidget {...widgetProps} />;
+        default:
+          return <div>Unknown widget type: {widget.type}</div>;
+      }
+    };
+
+    return (
+      <div
+        key={widget.id}
+        className={cn(
+          "relative transition-all duration-200",
+          isCustomizing && "border-2 border-dashed border-primary/50 rounded-lg",
+          selectedWidget === widget.id && "border-primary shadow-glow"
+        )}
+        style={{
+          gridColumn: isMobile ? 'span 1' : `span ${widget.position.w}`,
+          gridRow: `span ${widget.position.h}`
+        }}
+        onClick={() => isCustomizing && setSelectedWidget(widget.id)}
+      >
+        <WidgetComponent />
+        
+        {isCustomizing && (
+          <div className="absolute top-2 right-2 flex gap-1">
+            <Button
+              size="icon"
+              variant="outline"
+              className="h-6 w-6"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleWidgetVisibility(widget.id);
+              }}
+            >
+              {widget.visible ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const toggleWidgetVisibility = (widgetId: string) => {
+    setWidgets(prev => prev.map(widget =>
+      widget.id === widgetId ? { ...widget, visible: !widget.visible } : widget
+    ));
+  };
+
+  const saveLayout = () => {
+    if (user) {
+      localStorage.setItem(`dashboard-widgets-${user.role}`, JSON.stringify(widgets));
+      setIsCustomizing(false);
+      setSelectedWidget(null);
+    }
+  };
+
+  const resetLayout = () => {
+    if (dashboardConfig) {
+      setWidgets(getDefaultWidgets(dashboardConfig));
+    }
+  };
+
+  if (!user || !dashboardConfig) {
+    return <div>Loading dashboard...</div>;
+  }
+
+  const layout = dashboardConfig.dashboardLayout;
+  const currentLayout = isMobile ? layout.responsive.mobile : 
+                       isTablet ? layout.responsive.tablet : 
+                       layout.responsive.desktop;
+
+  return (
+    <div className={cn("space-y-6", className)}>
+      {/* Dashboard Header */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className={cn(
+            "font-bold",
+            isMobile ? "text-2xl" : "text-3xl"
+          )}>
+            {dashboardConfig.displayName} Dashboard
+          </h1>
+          <p className="text-muted-foreground">
+            {user.department && `${user.department} • `}
+            {user.branch && `${user.branch} • `}
+            {user.year && `${user.year} • `}
+            Personalized for your role
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant={isCustomizing ? "default" : "outline"}
+            onClick={() => setIsCustomizing(!isCustomizing)}
+            className={cn(isMobile && "h-12")}
+          >
+            <Layout className="w-4 h-4 mr-2" />
+            {isCustomizing ? "Exit Customize" : "Customize"}
+          </Button>
+          
+          {isCustomizing && (
+            <>
+              <Button
+                variant="outline"
+                onClick={resetLayout}
+                className={cn(isMobile && "h-12")}
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+              <Button
+                onClick={saveLayout}
+                className={cn(isMobile && "h-12")}
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Role Badge */}
+      <div className="flex items-center gap-2">
+        <Badge 
+          style={{ backgroundColor: dashboardConfig.color }}
+          className="text-white px-3 py-1"
+        >
+          {dashboardConfig.displayName}
+        </Badge>
+        {user.department && (
+          <Badge variant="outline">{user.department}</Badge>
+        )}
+        {user.branch && (
+          <Badge variant="outline">{user.branch}</Badge>
+        )}
+        {user.year && (
+          <Badge variant="outline">{user.year}</Badge>
+        )}
+      </div>
+
+      {/* Customization Instructions */}
+      {isCustomizing && (
+        <Card className="border-primary bg-primary/5">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 text-primary">
+              <Settings className="w-5 h-5" />
+              <span className="font-medium">Customization Mode Active</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Click on widgets to select them. Use the eye icon to show/hide widgets. 
+              Changes are saved automatically when you exit customization mode.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Dashboard Grid */}
+      <div 
+        className={cn(
+          "grid gap-4 auto-rows-min",
+          isMobile ? "grid-cols-1" : 
+          isTablet ? "grid-cols-2" : 
+          "grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+        )}
+        style={{
+          gridTemplateColumns: isMobile ? '1fr' : 
+                              isTablet ? 'repeat(2, 1fr)' :
+                              `repeat(${currentLayout.columns}, 1fr)`
+        }}
+      >
+        {widgets
+          .filter(widget => widget.visible || isCustomizing)
+          .map(widget => renderWidget(widget))}
+      </div>
+
+      {/* Widget Customization Panel */}
+      {isCustomizing && selectedWidget && (
+        <Card className="border-primary">
+          <CardHeader>
+            <CardTitle className="text-lg">
+              Widget Settings: {widgets.find(w => w.id === selectedWidget)?.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div>
+                <label className="text-sm font-medium">Width</label>
+                <select 
+                  className="w-full mt-1 p-2 border rounded"
+                  value={widgets.find(w => w.id === selectedWidget)?.position.w || 1}
+                  onChange={(e) => {
+                    const newWidth = parseInt(e.target.value);
+                    setWidgets(prev => prev.map(widget =>
+                      widget.id === selectedWidget 
+                        ? { ...widget, position: { ...widget.position, w: newWidth } }
+                        : widget
+                    ));
+                  }}
+                >
+                  {[1, 2, 3, 4, 6, 12].map(w => (
+                    <option key={w} value={w}>{w} columns</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium">Height</label>
+                <select 
+                  className="w-full mt-1 p-2 border rounded"
+                  value={widgets.find(w => w.id === selectedWidget)?.position.h || 1}
+                  onChange={(e) => {
+                    const newHeight = parseInt(e.target.value);
+                    setWidgets(prev => prev.map(widget =>
+                      widget.id === selectedWidget 
+                        ? { ...widget, position: { ...widget.position, h: newHeight } }
+                        : widget
+                    ));
+                  }}
+                >
+                  {[1, 2, 3, 4, 5, 6].map(h => (
+                    <option key={h} value={h}>{h} rows</option>
+                  ))}
+                </select>
+              </div>
+              
+              <Button
+                variant="outline"
+                onClick={() => toggleWidgetVisibility(selectedWidget)}
+                className="mt-6"
+              >
+                {widgets.find(w => w.id === selectedWidget)?.visible ? (
+                  <>
+                    <EyeOff className="w-4 h-4 mr-2" />
+                    Hide
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4 mr-2" />
+                    Show
+                  </>
+                )}
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={() => setSelectedWidget(null)}
+                className="mt-6"
+              >
+                Done
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Role-Specific Features Info */}
+      {!isCustomizing && (
+        <Card className="shadow-elegant">
+          <CardHeader>
+            <CardTitle className="text-lg">Available Features</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {Object.entries(dashboardConfig.features)
+                .filter(([_, enabled]) => enabled)
+                .map(([feature, _]) => (
+                  <Badge key={feature} variant="outline" className="justify-center py-2">
+                    {feature.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                  </Badge>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+};
