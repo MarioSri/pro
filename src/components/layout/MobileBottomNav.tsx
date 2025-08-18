@@ -45,27 +45,27 @@ export const MobileBottomNav: React.FC = () => {
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t border-border z-50 safe-area-pb">
-      <div className="grid grid-cols-4 gap-1 p-2">
+      <div className="grid grid-cols-4 gap-2 p-3 pb-4">
         {navItems.map((item) => (
           <Button
             key={item.path}
             variant={isActive(item.path) ? "default" : "ghost"}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col h-16 px-2 py-1 relative",
-              "min-w-[44px] min-h-[44px]", // Touch target requirements
+              "flex flex-col h-18 px-3 py-2 relative touch-manipulation",
+              "min-w-[56px] min-h-[56px]", // Enhanced touch target requirements
               isActive(item.path) && "bg-primary/10 text-primary"
             )}
           >
             <div className="relative">
-              <item.icon className="w-5 h-5 mb-1" />
+              <item.icon className="w-6 h-6 mb-2" />
               {item.path === '/approvals' && unreadCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 w-5 h-5 p-0 text-xs bg-destructive">
+                <Badge className="absolute -top-1 -right-1 w-5 h-5 p-0 text-xs bg-destructive">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </Badge>
               )}
             </div>
-            <span className="text-xs font-medium">{item.label}</span>
+            <span className="text-xs font-medium leading-tight">{item.label}</span>
           </Button>
         ))}
       </div>

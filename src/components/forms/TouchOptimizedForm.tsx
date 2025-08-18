@@ -26,8 +26,8 @@ export const TouchOptimizedForm: React.FC<TouchOptimizedFormProps> = ({
     <form 
       onSubmit={onSubmit} 
       className={cn(
-        "space-y-6 touch-manipulation",
-        isMobile && "space-y-8", // Increased spacing on mobile
+        "touch-manipulation",
+        isMobile ? "space-y-8 px-4" : "space-y-6", // Increased spacing and padding on mobile
         className
       )}
     >
@@ -54,7 +54,7 @@ export const TouchOptimizedInput: React.FC<TouchOptimizedInputProps> = ({
   const { isMobile } = useResponsive();
 
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-3", isMobile && "space-y-4")}>
       <Label className={cn("text-base font-medium", isMobile && "text-lg")}>
         {label}
         {required && <span className="text-destructive ml-1">*</span>}
@@ -63,7 +63,7 @@ export const TouchOptimizedInput: React.FC<TouchOptimizedInputProps> = ({
         {...props}
         className={cn(
           "transition-all duration-200",
-          isMobile ? "h-14 text-lg px-4" : "h-12 text-base",
+          isMobile ? "h-16 text-lg px-4 py-3" : "h-12 text-base",
           error && "border-destructive focus:ring-destructive",
           className
         )}
@@ -71,12 +71,12 @@ export const TouchOptimizedInput: React.FC<TouchOptimizedInputProps> = ({
         aria-describedby={error ? `${props.id}-error` : helpText ? `${props.id}-help` : undefined}
       />
       {error && (
-        <p id={`${props.id}-error`} className="text-sm text-destructive">
+        <p id={`${props.id}-error`} className={cn("text-destructive", isMobile ? "text-base" : "text-sm")}>
           {error}
         </p>
       )}
       {helpText && !error && (
-        <p id={`${props.id}-help`} className="text-sm text-muted-foreground">
+        <p id={`${props.id}-help`} className={cn("text-muted-foreground", isMobile ? "text-base" : "text-sm")}>
           {helpText}
         </p>
       )}
@@ -102,7 +102,7 @@ export const TouchOptimizedTextarea: React.FC<TouchOptimizedTextareaProps> = ({
   const { isMobile } = useResponsive();
 
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-3", isMobile && "space-y-4")}>
       <Label className={cn("text-base font-medium", isMobile && "text-lg")}>
         {label}
         {required && <span className="text-destructive ml-1">*</span>}
@@ -111,7 +111,7 @@ export const TouchOptimizedTextarea: React.FC<TouchOptimizedTextareaProps> = ({
         {...props}
         className={cn(
           "transition-all duration-200",
-          isMobile ? "min-h-[120px] text-lg px-4 py-3" : "min-h-[100px] text-base",
+          isMobile ? "min-h-[140px] text-lg px-4 py-4" : "min-h-[100px] text-base",
           error && "border-destructive focus:ring-destructive",
           className
         )}
@@ -119,12 +119,12 @@ export const TouchOptimizedTextarea: React.FC<TouchOptimizedTextareaProps> = ({
         aria-describedby={error ? `${props.id}-error` : helpText ? `${props.id}-help` : undefined}
       />
       {error && (
-        <p id={`${props.id}-error`} className="text-sm text-destructive">
+        <p id={`${props.id}-error`} className={cn("text-destructive", isMobile ? "text-base" : "text-sm")}>
           {error}
         </p>
       )}
       {helpText && !error && (
-        <p id={`${props.id}-help`} className="text-sm text-muted-foreground">
+        <p id={`${props.id}-help`} className={cn("text-muted-foreground", isMobile ? "text-base" : "text-sm")}>
           {helpText}
         </p>
       )}

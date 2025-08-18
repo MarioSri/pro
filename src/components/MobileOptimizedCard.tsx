@@ -28,7 +28,7 @@ export const MobileOptimizedCard: React.FC<MobileOptimizedCardProps> = ({
   const [touchStart, setTouchStart] = React.useState<number | null>(null);
   const [touchEnd, setTouchEnd] = React.useState<number | null>(null);
 
-  const minSwipeDistance = 50;
+  const minSwipeDistance = 80; // Increased for better touch accuracy
 
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
@@ -57,7 +57,7 @@ export const MobileOptimizedCard: React.FC<MobileOptimizedCardProps> = ({
   return (
     <Card
       className={cn(
-        "shadow-elegant transition-all duration-300 touch-manipulation",
+        "shadow-elegant transition-transform duration-200 touch-manipulation min-h-[80px]",
         className
       )}
       onTouchStart={onTouchStart}
@@ -67,17 +67,17 @@ export const MobileOptimizedCard: React.FC<MobileOptimizedCardProps> = ({
       <CardHeader className="pb-3">
         <CardTitle className="text-lg md:text-xl">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="p-6 md:p-6 min-h-[60px]">
         {children}
         
         {actions.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
             {actions.map((action, index) => (
               <Button
                 key={index}
                 variant={action.variant || "default"}
                 onClick={action.onClick}
-                className="h-12 px-6 text-base min-w-[44px] flex-1 md:flex-none"
+                className="h-16 px-8 text-lg min-w-[56px] min-h-[56px] flex-1 md:flex-none touch-manipulation"
               >
                 {action.icon && <span className="mr-2">{action.icon}</span>}
                 {action.label}

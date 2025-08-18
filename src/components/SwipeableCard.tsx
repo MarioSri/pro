@@ -42,15 +42,15 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
     const touch = e.touches[0];
     const startX = e.currentTarget.getBoundingClientRect().left;
     const currentX = touch.clientX;
-    const offset = currentX - startX;
+    const offset = currentX - startX - (e.currentTarget.getBoundingClientRect().width / 2);
     
-    setSwipeOffset(Math.max(-200, Math.min(200, offset)));
+    setSwipeOffset(Math.max(-160, Math.min(160, offset)));
   };
 
   const handleTouchEnd = () => {
     setIsDragging(false);
     
-    if (Math.abs(swipeOffset) > 80) {
+    if (Math.abs(swipeOffset) > 100) {
       const direction = swipeOffset > 0 ? 'right' : 'left';
       setShowActions(direction);
       onSwipe?.(direction);
@@ -69,23 +69,23 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-lg">
+    <div className="relative overflow-hidden rounded-lg min-h-[80px]">
       {/* Left Actions */}
       {leftActions.length > 0 && (
-        <div className="absolute left-0 top-0 h-full flex items-center z-10">
+        <div className="absolute left-0 top-0 h-full flex items-center z-10 min-h-[80px]">
           {leftActions.map((action, index) => (
             <Button
               key={index}
               variant="ghost"
               className={cn(
-                "h-full rounded-none px-4 min-w-[80px]",
+                "h-full rounded-none px-4 min-w-[88px] min-h-[80px]",
                 getActionVariantClass(action.variant)
               )}
               onClick={action.action}
             >
-              <div className="flex flex-col items-center gap-1">
+              <div className="flex flex-col items-center gap-2">
                 {action.icon}
-                <span className="text-xs">{action.label}</span>
+                <span className="text-xs leading-tight text-center">{action.label}</span>
               </div>
             </Button>
           ))}
@@ -94,20 +94,20 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
 
       {/* Right Actions */}
       {rightActions.length > 0 && (
-        <div className="absolute right-0 top-0 h-full flex items-center z-10">
+        <div className="absolute right-0 top-0 h-full flex items-center z-10 min-h-[80px]">
           {rightActions.map((action, index) => (
             <Button
               key={index}
               variant="ghost"
               className={cn(
-                "h-full rounded-none px-4 min-w-[80px]",
+                "h-full rounded-none px-4 min-w-[88px] min-h-[80px]",
                 getActionVariantClass(action.variant)
               )}
               onClick={action.action}
             >
-              <div className="flex flex-col items-center gap-1">
+              <div className="flex flex-col items-center gap-2">
                 {action.icon}
-                <span className="text-xs">{action.label}</span>
+                <span className="text-xs leading-tight text-center">{action.label}</span>
               </div>
             </Button>
           ))}
@@ -117,7 +117,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
       {/* Main Card */}
       <Card
         className={cn(
-          "transition-transform duration-200 touch-manipulation",
+          "transition-transform duration-200 touch-manipulation min-h-[80px]",
           isDragging && "transition-none",
           className
         )}
@@ -128,7 +128,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <CardContent className="p-4 md:p-6">
+        <CardContent className="p-6 md:p-6 min-h-[60px]">
           {children}
         </CardContent>
       </Card>

@@ -321,8 +321,8 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
 
         {/* Notes Display */}
         <div className={cn(
-          "relative rounded-lg p-2 min-h-[200px] overflow-hidden",
-          isMobile ? "bg-gradient-subtle" : "bg-gradient-subtle"
+          "relative rounded-lg p-3 overflow-hidden",
+          isMobile ? "min-h-[240px] bg-gradient-subtle" : "min-h-[200px] bg-gradient-subtle"
         )}>
           {sortedNotes.slice(0, isMobile ? 4 : 6).map((note, index) => (
             <div
@@ -330,22 +330,22 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
               className={cn(
                 "absolute p-3 rounded-lg shadow-md cursor-move transition-all hover:shadow-lg animate-scale-in",
                 note.color,
-                isMobile ? "w-32 text-xs" : "w-40 text-sm"
+                isMobile ? "w-36 text-xs" : "w-40 text-sm"
               )}
               style={{
-                left: isMobile ? `${(index % 2) * 140 + 10}px` : `${note.position.x}px`,
-                top: isMobile ? `${Math.floor(index / 2) * 80 + 10}px` : `${note.position.y}px`,
+                left: isMobile ? `${(index % 2) * 150 + 12}px` : `${note.position.x}px`,
+                top: isMobile ? `${Math.floor(index / 2) * 90 + 12}px` : `${note.position.y}px`,
                 zIndex: note.pinned ? 10 : 1,
                 animationDelay: `${index * 100}ms`
               }}
             >
-              <div className="flex items-start justify-between mb-2">
+              <div className="flex items-start justify-between mb-2 min-h-[20px]">
                 <h5 className="font-medium line-clamp-1 pr-2">{note.title}</h5>
                 <div className="flex gap-1">
                   <button
                     onClick={() => togglePin(note.id)}
                     className={cn(
-                      "p-1 rounded transition-colors",
+                      "p-1 rounded transition-colors min-w-[24px] min-h-[24px]",
                       note.pinned ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                   >
@@ -353,22 +353,22 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
                   </button>
                   <button
                     onClick={() => setEditingNote(note.id)}
-                    className="p-1 rounded text-muted-foreground hover:text-primary transition-colors"
+                    className="p-1 rounded text-muted-foreground hover:text-primary transition-colors min-w-[24px] min-h-[24px]"
                   >
                     <Edit className="w-3 h-3" />
                   </button>
                   <button
                     onClick={() => deleteNote(note.id)}
-                    className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                    className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors min-w-[24px] min-h-[24px]"
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </div>
               </div>
               
-              <p className="text-gray-700 mb-2 line-clamp-3">{note.content}</p>
+              <p className="text-gray-700 mb-3 line-clamp-3 leading-relaxed">{note.content}</p>
               
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mt-auto">
                 <Badge variant="outline" className="text-xs">
                   {note.category}
                 </Badge>
@@ -376,14 +376,14 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
               </div>
               
               {note.reminder?.enabled && (
-                <div className="flex items-center gap-1 mt-2 p-1 bg-white/50 rounded text-xs">
+                <div className="flex items-center gap-1 mt-2 p-2 bg-white/50 rounded text-xs">
                   <Clock className="w-3 h-3 text-warning" />
                   <span>{note.reminder.date} {note.reminder.time}</span>
                 </div>
               )}
               
               {note.pinned && (
-                <div className="absolute -top-1 -right-1">
+                <div className="absolute -top-2 -right-2">
                   <Pin className="w-4 h-4 text-primary" />
                 </div>
               )}
@@ -391,7 +391,7 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
           ))}
           
           {sortedNotes.length === 0 && (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
+            <div className="flex items-center justify-center h-full text-muted-foreground min-h-[200px]">
               <div className="text-center">
                 <StickyNote className="w-12 h-12 mx-auto mb-4 opacity-50" />
                 <p className={cn(isMobile ? "text-sm" : "text-base")}>

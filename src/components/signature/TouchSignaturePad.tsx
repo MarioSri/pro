@@ -263,19 +263,19 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
           Touch Signature Pad
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-8 pb-8">
         {/* Settings */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div className="space-y-2">
-            <Label className="text-sm">Stroke Width</Label>
-            <div className="flex gap-1">
+            <Label className="text-base font-medium">Stroke Width</Label>
+            <div className="flex gap-2">
               {[1, 2, 3, 4, 6].map(width => (
                 <Button
                   key={width}
                   variant={settings.strokeWidth === width ? "default" : "outline"}
                   size="sm"
                   onClick={() => setSettings(prev => ({ ...prev, strokeWidth: width }))}
-                  className={cn(isMobile && "h-10 w-10 p-0")}
+                  className={cn(isMobile && "h-12 w-12 p-0 min-w-[48px] min-h-[48px]")}
                 >
                   {width}
                 </Button>
@@ -284,15 +284,15 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm">Color</Label>
-            <div className="flex gap-1">
+            <Label className="text-base font-medium">Color</Label>
+            <div className="flex gap-2">
               {['#000000', '#0066cc', '#cc0000', '#00cc00'].map(color => (
                 <button
                   key={color}
                   className={cn(
-                    "w-8 h-8 rounded border-2 transition-all",
+                    "rounded border-2 transition-all touch-manipulation",
                     settings.strokeColor === color ? "border-primary scale-110" : "border-border",
-                    isMobile && "w-10 h-10"
+                    isMobile ? "w-12 h-12 min-w-[48px] min-h-[48px]" : "w-8 h-8"
                   )}
                   style={{ backgroundColor: color }}
                   onClick={() => setSettings(prev => ({ ...prev, strokeColor: color }))}
@@ -302,15 +302,15 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm">Background</Label>
-            <div className="flex gap-1">
+            <Label className="text-base font-medium">Background</Label>
+            <div className="flex gap-2">
               {['#ffffff', '#f8f9fa', '#fff3cd', '#d1ecf1'].map(color => (
                 <button
                   key={color}
                   className={cn(
-                    "w-8 h-8 rounded border-2 transition-all",
+                    "rounded border-2 transition-all touch-manipulation",
                     settings.backgroundColor === color ? "border-primary scale-110" : "border-border",
-                    isMobile && "w-10 h-10"
+                    isMobile ? "w-12 h-12 min-w-[48px] min-h-[48px]" : "w-8 h-8"
                   )}
                   style={{ backgroundColor: color }}
                   onClick={() => setSettings(prev => ({ ...prev, backgroundColor: color }))}
@@ -320,12 +320,12 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm">Actions</Label>
+            <Label className="text-base font-medium">Actions</Label>
             <Button
               variant="outline"
               size="sm"
               onClick={clearCanvas}
-              className={cn("w-full", isMobile && "h-10")}
+              className={cn("w-full", isMobile && "h-12 min-h-[48px] touch-manipulation")}
             >
               <RotateCcw className="w-4 h-4 mr-1" />
               Clear
@@ -334,8 +334,8 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
         </div>
 
         {/* Canvas */}
-        <div className="flex justify-center">
-          <div className="relative border-2 border-dashed border-border rounded-lg p-2">
+        <div className="flex justify-center my-8">
+          <div className="relative border-2 border-dashed border-border rounded-lg p-4">
             <canvas
               ref={canvasRef}
               className={cn(
@@ -357,7 +357,7 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
             
             {/* Canvas overlay for better touch feedback */}
             {isMobile && (
-              <div className="absolute inset-2 pointer-events-none">
+              <div className="absolute inset-4 pointer-events-none">
                 <div className="w-full h-full border border-primary/20 rounded" />
               </div>
             )}
@@ -365,7 +365,7 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
         </div>
 
         {/* Signature Info */}
-        <div className="bg-muted/30 rounded-lg p-4 space-y-3">
+        <div className="bg-muted/30 rounded-lg p-6 space-y-4">
           <div className="flex items-center justify-between text-sm">
             <span>Points captured:</span>
             <Badge variant="outline">{points.current.length}</Badge>
@@ -375,33 +375,33 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
             <Badge variant="outline">{canvasSize.width} × {canvasSize.height}</Badge>
           </div>
           {isMobile && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground leading-relaxed">
               💡 Use your finger or stylus to draw. Pressure sensitivity supported on compatible devices.
             </p>
           )}
         </div>
 
         {/* Save Controls */}
-        <div className="space-y-4">
-          <div className="space-y-2">
+        <div className="space-y-6">
+          <div className="space-y-3">
             <Label htmlFor="signature-name">Signature Name</Label>
             <Input
               id="signature-name"
               value={signatureName}
               onChange={(e) => setSignatureName(e.target.value)}
               placeholder="e.g., Primary Signature"
-              className={cn(isMobile && "h-12 text-base")}
+              className={cn(isMobile && "h-16 text-lg min-h-[64px]")}
             />
           </div>
 
           <div className={cn(
             "flex gap-2",
-            isMobile ? "flex-col" : "flex-row"
+            isMobile ? "flex-col gap-4" : "flex-row"
           )}>
             <Button
               onClick={saveSignature}
               variant="default"
-              className={cn("flex-1", isMobile && "h-12")}
+              className={cn("flex-1", isMobile && "h-16 text-lg min-h-[64px] touch-manipulation")}
             >
               <Save className="w-4 h-4 mr-2" />
               Save Signature
@@ -410,7 +410,7 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
             <Button
               onClick={downloadSignature}
               variant="outline"
-              className={cn("flex-1", isMobile && "h-12")}
+              className={cn("flex-1", isMobile && "h-16 text-lg min-h-[64px] touch-manipulation")}
             >
               <Download className="w-4 h-4 mr-2" />
               Download
@@ -420,14 +420,14 @@ export const TouchSignaturePad: React.FC<TouchSignaturePadProps> = ({
 
         {/* Mobile-specific features */}
         {isMobile && (
-          <div className="space-y-4 pt-4 border-t">
-            <h4 className="font-medium">Mobile Features</h4>
-            <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="h-12">
+          <div className="space-y-6 pt-6 border-t">
+            <h4 className="font-medium text-lg">Mobile Features</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <Button variant="outline" className="h-16 text-base min-h-[64px] touch-manipulation">
                 <Camera className="w-4 h-4 mr-2" />
                 Camera Capture
               </Button>
-              <Button variant="outline" className="h-12">
+              <Button variant="outline" className="h-16 text-base min-h-[64px] touch-manipulation">
                 <Upload className="w-4 h-4 mr-2" />
                 Upload Image
               </Button>

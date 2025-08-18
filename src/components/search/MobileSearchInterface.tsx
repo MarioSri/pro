@@ -116,7 +116,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
   return (
     <div className={cn("space-y-4", className)}>
       {/* Search Bar */}
-      <div className="relative">
+      <div className="relative mb-6">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
           <Input
@@ -127,7 +127,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
               setQuery(e.target.value);
               setShowSuggestions(e.target.value.length > 0);
             }}
-            className="pl-12 pr-12 h-14 text-lg rounded-full shadow-sm"
+            className="pl-14 pr-14 h-16 text-lg rounded-full shadow-sm min-h-[64px]"
             onFocus={() => setShowSuggestions(query.length > 0)}
           />
           {query && (
@@ -135,7 +135,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
               variant="ghost"
               size="icon"
               onClick={clearSearch}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 h-10 w-10"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 h-12 w-12 min-w-[48px] min-h-[48px]"
             >
               <X className="w-5 h-5" />
             </Button>
@@ -144,21 +144,21 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
 
         {/* Search Suggestions */}
         {showSuggestions && (query || recentSearches.length > 0) && (
-          <Card className="absolute top-full left-0 right-0 mt-2 z-50 shadow-lg">
+          <Card className="absolute top-full left-0 right-0 mt-3 z-50 shadow-lg max-h-[60vh] overflow-hidden">
             <CardContent className="p-0">
-              <ScrollArea className="max-h-80">
+              <ScrollArea className="max-h-[50vh]">
                 {query && suggestions.length > 0 && (
-                  <div className="p-3">
+                  <div className="p-4">
                     <p className="text-sm font-medium text-muted-foreground mb-2">Suggestions</p>
                     {suggestions.map((suggestion, index) => (
                       <Button
                         key={index}
                         variant="ghost"
                         onClick={() => handleSuggestionClick(suggestion)}
-                        className="w-full justify-start h-12 text-left"
+                        className="w-full justify-start h-14 text-left min-h-[56px] touch-manipulation"
                       >
                         <Search className="w-4 h-4 mr-3 text-muted-foreground" />
-                        <span className="text-base">{suggestion}</span>
+                        <span className="text-lg">{suggestion}</span>
                       </Button>
                     ))}
                   </div>
@@ -167,17 +167,17 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
                 {recentSearches.length > 0 && (
                   <>
                     {query && suggestions.length > 0 && <Separator />}
-                    <div className="p-3">
+                    <div className="p-4">
                       <p className="text-sm font-medium text-muted-foreground mb-2">Recent Searches</p>
                       {recentSearches.map((recent, index) => (
                         <Button
                           key={index}
                           variant="ghost"
                           onClick={() => handleSuggestionClick(recent)}
-                          className="w-full justify-start h-12 text-left"
+                          className="w-full justify-start h-14 text-left min-h-[56px] touch-manipulation"
                         >
                           <Clock className="w-4 h-4 mr-3 text-muted-foreground" />
-                          <span className="text-base">{recent}</span>
+                          <span className="text-lg">{recent}</span>
                         </Button>
                       ))}
                     </div>
@@ -190,7 +190,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3 mb-6">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" className="h-12 px-4">
@@ -203,16 +203,16 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="h-[70vh]">
+          <SheetContent side="bottom" className="h-[75vh] max-h-[600px]">
             <SheetHeader>
               <SheetTitle>Search Filters</SheetTitle>
             </SheetHeader>
-            <ScrollArea className="h-full mt-4">
-              <div className="space-y-6 pb-6">
+            <ScrollArea className="h-full mt-6">
+              <div className="space-y-8 pb-8 px-2">
                 {/* Status Filters */}
                 <div>
-                  <h4 className="font-medium mb-3">Status</h4>
-                  <div className="grid grid-cols-2 gap-2">
+                  <h4 className="font-medium mb-4 text-lg">Status</h4>
+                  <div className="grid grid-cols-2 gap-3">
                     {['Approved', 'Pending', 'Rejected', 'Under Review'].map((status) => (
                       <Button
                         key={status}
@@ -225,7 +225,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
                               : [...prev.status, status]
                           }));
                         }}
-                        className="h-12 text-sm"
+                        className="h-14 text-base min-h-[56px] touch-manipulation"
                       >
                         {status}
                       </Button>
@@ -235,8 +235,8 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
 
                 {/* Department Filters */}
                 <div>
-                  <h4 className="font-medium mb-3">Departments</h4>
-                  <div className="grid grid-cols-1 gap-2">
+                  <h4 className="font-medium mb-4 text-lg">Departments</h4>
+                  <div className="grid grid-cols-1 gap-3">
                     {[
                       'Computer Science & Engineering',
                       'Electrical Engineering', 
@@ -254,7 +254,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
                               : [...prev.departments, dept]
                           }));
                         }}
-                        className="h-12 text-sm justify-start"
+                        className="h-14 text-base justify-start min-h-[56px] touch-manipulation"
                       >
                         <Building className="w-4 h-4 mr-2" />
                         {dept}
@@ -265,8 +265,8 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
 
                 {/* Type Filters */}
                 <div>
-                  <h4 className="font-medium mb-3">Document Types</h4>
-                  <div className="grid grid-cols-2 gap-2">
+                  <h4 className="font-medium mb-4 text-lg">Document Types</h4>
+                  <div className="grid grid-cols-2 gap-3">
                     {['Letter', 'Circular', 'Report', 'Meeting'].map((type) => (
                       <Button
                         key={type}
@@ -279,7 +279,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
                               : [...prev.types, type]
                           }));
                         }}
-                        className="h-12 text-sm"
+                        className="h-14 text-base min-h-[56px] touch-manipulation"
                       >
                         {getTypeIcon(type)}
                         <span className="ml-2">{type}</span>
@@ -291,7 +291,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
                 <Button
                   variant="outline"
                   onClick={() => setFilters({ status: [], departments: [], types: [] })}
-                  className="w-full h-12"
+                  className="w-full h-14 text-base min-h-[56px] touch-manipulation"
                 >
                   Clear All Filters
                 </Button>
@@ -302,13 +302,13 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
       </div>
 
       {/* Search Results */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {loading && (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
               <Card key={i} className="animate-pulse">
-                <CardContent className="p-4">
-                  <div className="space-y-2">
+                <CardContent className="p-6">
+                  <div className="space-y-3">
                     <div className="h-4 bg-muted rounded w-3/4"></div>
                     <div className="h-3 bg-muted rounded w-1/2"></div>
                     <div className="flex gap-2">
@@ -324,7 +324,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
 
         {!loading && results.length === 0 && query && (
           <Card>
-            <CardContent className="p-8 text-center">
+            <CardContent className="p-8 text-center min-h-[120px] flex flex-col justify-center">
               <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No Results Found</h3>
               <p className="text-muted-foreground mb-4">
@@ -336,10 +336,10 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
 
         {!loading && results.map((result) => (
           <Card key={result.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="space-y-3">
+            <CardContent className="p-6">
+              <div className="space-y-4">
                 <div className="flex items-start justify-between">
-                  <h3 className="font-semibold text-base line-clamp-2 flex-1 pr-2">
+                  <h3 className="font-semibold text-lg line-clamp-2 flex-1 pr-3 leading-relaxed">
                     {result.title}
                   </h3>
                   <Badge className={getStatusColor(result.status)}>
@@ -347,7 +347,7 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
                   </Badge>
                 </div>
                 
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center gap-3 flex-wrap">
                   <Badge variant="outline" className="text-xs">
                     {getTypeIcon(result.type)}
                     <span className="ml-1">{result.type}</span>
@@ -358,12 +358,12 @@ export const MobileSearchInterface: React.FC<MobileSearchInterfaceProps> = ({
                   </Badge>
                 </div>
                 
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <div className="flex items-center justify-between text-base text-muted-foreground">
                   <span>{result.date}</span>
                   <span>{Math.round(result.relevance * 100)}% match</span>
                 </div>
                 
-                <Button variant="outline" className="w-full h-12">
+                <Button variant="outline" className="w-full h-14 text-base min-h-[56px] touch-manipulation">
                   View Details
                 </Button>
               </div>
