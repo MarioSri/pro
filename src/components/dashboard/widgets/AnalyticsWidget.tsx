@@ -18,7 +18,8 @@ import {
   AlertTriangle,
   Calendar,
   ArrowRight,
-  Activity
+  Activity,
+  Eye
 } from 'lucide-react';
 
 interface AnalyticsData {
