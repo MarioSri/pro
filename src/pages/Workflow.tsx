@@ -6,17 +6,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Workflow, GitBranch, Clock, CheckCircle2, XCircle, Users, Settings } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { WorkflowBuilder } from "@/components/WorkflowBuilder";
 
 const WorkflowManagement = () => {
   const [userRole] = useState("employee");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    navigate("/");
   };
 
   const workflows = [

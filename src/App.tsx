@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ErrorBoundary } from "@/utils/errorBoundary";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Documents from "./pages/Documents";
@@ -34,18 +35,66 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/documents" element={<Documents />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/workflow" element={<WorkflowManagement />} />
-                <Route path="/approvals" element={<Approvals />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/advanced-signature" element={<AdvancedSignature />} />
-                <Route path="/reminders" element={<Reminders />} />
-                <Route path="/emergency" element={<Emergency />} />
-                <Route path="/search" element={<Search />} />
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } />
+                <Route path="/documents" element={
+                  <ProtectedRoute>
+                    <Documents />
+                  </ProtectedRoute>
+                } />
+                <Route path="/calendar" element={
+                  <ProtectedRoute>
+                    <Calendar />
+                  </ProtectedRoute>
+                } />
+                <Route path="/messages" element={
+                  <ProtectedRoute>
+                    <Messages />
+                  </ProtectedRoute>
+                } />
+                <Route path="/workflow" element={
+                  <ProtectedRoute requiredPermissions={['canManageWorkflows']}>
+                    <WorkflowManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/approvals" element={
+                  <ProtectedRoute requiredPermissions={['canApprove']}>
+                    <Approvals />
+                  </ProtectedRoute>
+                } />
+                <Route path="/analytics" element={
+                  <ProtectedRoute requiredPermissions={['canViewAnalytics']}>
+                    <Analytics />
+                  </ProtectedRoute>
+                } />
+                <Route path="/advanced-signature" element={
+                  <ProtectedRoute>
+                    <AdvancedSignature />
+                  </ProtectedRoute>
+                } />
+                <Route path="/reminders" element={
+                  <ProtectedRoute>
+                    <Reminders />
+                  </ProtectedRoute>
+                } />
+                <Route path="/emergency" element={
+                  <ProtectedRoute>
+                    <Emergency />
+                  </ProtectedRoute>
+                } />
+                <Route path="/search" element={
+                  <ProtectedRoute>
+                    <Search />
+                  </ProtectedRoute>
+                } />
+                <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

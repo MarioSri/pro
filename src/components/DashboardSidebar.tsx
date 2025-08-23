@@ -12,6 +12,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Badge } from "@/components/ui/badge";
 import {
   LayoutDashboard,
   FileText,
@@ -35,6 +36,7 @@ import {
   Search
 } from "lucide-react";
 import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
+import { cn } from "@/lib/utils";
 
 interface DashboardSidebarProps {
   userRole: string;
@@ -47,6 +49,56 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
   const collapsed = state === "collapsed";
 
   const isActive = (path: string) => currentPath === path;
+
+  const getRoleInfo = () => {
+    switch (userRole) {
+      case "principal":
+        return { 
+          icon: Crown, 
+          title: "Principal", 
+          color: "bg-purple-100 text-purple-700 border-purple-200",
+          description: "Institution Principal"
+        };
+      case "registrar":
+        return { 
+          icon: Shield, 
+          title: "Registrar", 
+          color: "bg-blue-100 text-blue-700 border-blue-200",
+          description: "Academic Registrar"
+        };
+      case "program-head":
+        return { 
+          icon: Users, 
+          title: "Program Head", 
+          color: "bg-green-100 text-green-700 border-green-200",
+          description: "Program Department Head"
+        };
+      case "hod":
+        return { 
+          icon: Users, 
+          title: "HOD", 
+          color: "bg-orange-100 text-orange-700 border-orange-200",
+          description: "Head of Department"
+        };
+      case "employee":
+        return { 
+          icon: Briefcase, 
+          title: "Employee", 
+          color: "bg-gray-100 text-gray-700 border-gray-200",
+          description: "Staff Member"
+        };
+      default:
+        return { 
+          icon: UserCheck, 
+          title: "User", 
+          color: "bg-gray-100 text-gray-700 border-gray-200",
+          description: "System User"
+        };
+    }
+  };
+
+  const roleInfo = getRoleInfo();
+  const RoleIcon = roleInfo.icon;
 
   // Role-based menu items
   const getMenuItems = () => {
@@ -61,33 +113,18 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       { title: "Emergency", url: "/emergency", icon: AlertTriangle },
     ];
 
+    const adminItems = [
+      { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+      { title: "Approvals", url: "/approvals", icon: CheckSquare },
+      { title: "Analytics", url: "/analytics", icon: BarChart3 },
+    ];
+
     const roleSpecificItems = {
-      principal: [
-        ...commonItems,
-        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      registrar: [
-        ...commonItems,
-        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      "program-head": [
-        ...commonItems,
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      hod: [
-        ...commonItems,
-        { title: "Approvals", url: "/approvals", icon: CheckSquare },
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
-      employee: [
-        ...commonItems,
-        { title: "Analytics", url: "/analytics", icon: BarChart3 },
-      ],
+      principal: [...commonItems, ...adminItems],
+      registrar: [...commonItems, ...adminItems],
+      "program-head": [...commonItems, ...adminItems],
+      hod: [...commonItems, ...adminItems],
+      employee: [...commonItems, { title: "Workflow Management", url: "/workflow", icon: GitBranch }],
     };
 
     return roleSpecificItems[userRole as keyof typeof roleSpecificItems] || commonItems;
@@ -95,18 +132,6 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
 
   const menuItems = getMenuItems();
   const isExpanded = menuItems.some(item => isActive(item.url));
-
-  const getRoleIcon = () => {
-    switch (userRole) {
-      case "principal": return Crown;
-      case "registrar": return Shield;
-      case "program-head": return Users;
-      case "hod": return Users;
-      default: return UserCheck;
-    }
-  };
-
-  const RoleIcon = getRoleIcon();
 
   return (
     <Sidebar collapsible="icon">
@@ -116,9 +141,13 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
             <RoleIcon className="w-4 h-4 text-primary-foreground" />
           </div>
           {!collapsed && (
-            <div>
+            <div className="flex-1">
               <h2 className="font-semibold text-sm">IAOMS</h2>
-              <p className="text-xs text-muted-foreground capitalize">{userRole}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Badge className={cn("text-xs font-medium border", roleInfo.color)}>
+                  {roleInfo.title}
+                </Badge>
+              </div>
             </div>
           )}
         </div>

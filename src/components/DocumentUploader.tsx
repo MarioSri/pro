@@ -47,29 +47,148 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
 
   const recipientOptions = {
     employee: [
+      // CDC Department Employees
+      { id: "cdc-head", label: "CDC Head" },
+      { id: "cdc-coordinator", label: "CDC Coordinator" },
+      { id: "cdc-executive", label: "CDC Executive" },
+      
+      // Leadership
+      { id: "dean", label: "Dean" },
+      { id: "chairman", label: "Chairman" },
+      { id: "director", label: "Director (For Information)" },
+      { id: "leadership", label: "Leadership" },
+      
+      // Administrative Roles
+      { id: "controller-examinations", label: "Controller of Examinations" },
+      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
+      { id: "head-operations", label: "Head Operations" },
+      { id: "librarian", label: "Librarian" },
+      { id: "ssg", label: "SSG" },
+      
+      // Faculty (All branches)
+      { id: "faculty-eee", label: "Faculty - EEE" },
+      { id: "faculty-mech", label: "Faculty - MECH" },
+      { id: "faculty-cse", label: "Faculty - CSE" },
+      { id: "faculty-ece", label: "Faculty - ECE" },
+      { id: "faculty-csm", label: "Faculty - CSM" },
+      { id: "faculty-cso", label: "Faculty - CSO" },
+      { id: "faculty-csd", label: "Faculty - CSD" },
+      { id: "faculty-csc", label: "Faculty - CSC" },
+      
+      // Program Department Heads
+      { id: "program-head-eee", label: "Program Department Head - EEE" },
+      { id: "program-head-mech", label: "Program Department Head - MECH" },
+      { id: "program-head-cse", label: "Program Department Head - CSE" },
+      { id: "program-head-ece", label: "Program Department Head - ECE" },
+      { id: "program-head-csm", label: "Program Department Head - CSM" },
+      { id: "program-head-cso", label: "Program Department Head - CSO" },
+      { id: "program-head-csd", label: "Program Department Head - CSD" },
+      { id: "program-head-csc", label: "Program Department Head - CSC" },
+      
+      // HODs
       { id: "hod-eee", label: "HOD - EEE" },
+      { id: "hod-mech", label: "HOD - MECH" },
       { id: "hod-cse", label: "HOD - CSE" },
       { id: "hod-ece", label: "HOD - ECE" },
-      { id: "hod-mech", label: "HOD - MECH" },
+      { id: "hod-csm", label: "HOD - CSM" },
+      { id: "hod-cso", label: "HOD - CSO" },
+      { id: "hod-csd", label: "HOD - CSD" },
+      { id: "hod-csc", label: "HOD - CSC" },
+      
       { id: "registrar", label: "Registrar" },
       { id: "principal", label: "Principal" },
     ],
     hod: [
+      // CDC Department Employees
+      { id: "cdc-head", label: "CDC Head" },
+      { id: "cdc-coordinator", label: "CDC Coordinator" },
+      { id: "cdc-executive", label: "CDC Executive" },
+      
+      // Leadership
+      { id: "dean", label: "Dean" },
+      { id: "chairman", label: "Chairman" },
+      { id: "director", label: "Director (For Information)" },
+      { id: "leadership", label: "Leadership" },
+      
+      // Administrative Roles
+      { id: "controller-examinations", label: "Controller of Examinations" },
+      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
+      { id: "head-operations", label: "Head Operations" },
+      { id: "librarian", label: "Librarian" },
+      { id: "ssg", label: "SSG" },
+      
       { id: "registrar", label: "Registrar" },
       { id: "principal", label: "Principal" },
-      { id: "dean", label: "Dean" },
     ],
     registrar: [
-      { id: "principal", label: "Principal" },
+      // CDC Department Employees
+      { id: "cdc-head", label: "CDC Head" },
+      { id: "cdc-coordinator", label: "CDC Coordinator" },
+      { id: "cdc-executive", label: "CDC Executive" },
+      
+      // Leadership
+      { id: "dean", label: "Dean" },
       { id: "chairman", label: "Chairman" },
+      { id: "director", label: "Director (For Information)" },
+      { id: "leadership", label: "Leadership" },
+      
+      // Administrative Roles
+      { id: "controller-examinations", label: "Controller of Examinations" },
+      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
+      { id: "head-operations", label: "Head Operations" },
+      { id: "librarian", label: "Librarian" },
+      { id: "ssg", label: "SSG" },
+      
+      { id: "principal", label: "Principal" },
+      { id: "all-hods", label: "All HODs" },
+      { id: "all-program-heads", label: "All Program Department Heads" },
+      { id: "all-faculty", label: "All Faculty" },
     ],
     "program-head": [
+      // CDC Department Employees
+      { id: "cdc-head", label: "CDC Head" },
+      { id: "cdc-coordinator", label: "CDC Coordinator" },
+      { id: "cdc-executive", label: "CDC Executive" },
+      
+      // Leadership
+      { id: "dean", label: "Dean" },
+      { id: "chairman", label: "Chairman" },
+      { id: "director", label: "Director (For Information)" },
+      { id: "leadership", label: "Leadership" },
+      
+      // Administrative Roles
+      { id: "controller-examinations", label: "Controller of Examinations" },
+      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
+      { id: "head-operations", label: "Head Operations" },
+      { id: "librarian", label: "Librarian" },
+      { id: "ssg", label: "SSG" },
+      
       { id: "hod", label: "Head of Department" },
       { id: "registrar", label: "Registrar" },
       { id: "principal", label: "Principal" },
     ],
     principal: [
+      // CDC Department Employees
+      { id: "cdc-head", label: "CDC Head" },
+      { id: "cdc-coordinator", label: "CDC Coordinator" },
+      { id: "cdc-executive", label: "CDC Executive" },
+      
+      // Leadership
+      { id: "dean", label: "Dean" },
+      { id: "chairman", label: "Chairman" },
+      { id: "director", label: "Director (For Information)" },
+      { id: "leadership", label: "Leadership" },
+      
+      // Administrative Roles
+      { id: "controller-examinations", label: "Controller of Examinations" },
+      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
+      { id: "head-operations", label: "Head Operations" },
+      { id: "librarian", label: "Librarian" },
+      { id: "ssg", label: "SSG" },
+      
       { id: "all-hods", label: "All HODs" },
+      { id: "all-program-heads", label: "All Program Department Heads" },
+      { id: "all-faculty", label: "All Faculty" },
       { id: "all-employees", label: "All Employees" },
       { id: "registrar", label: "Registrar" },
     ],
@@ -200,18 +319,49 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
           {/* Recipients */}
           <div className="space-y-3">
             <Label className="text-base font-medium">Recipients</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select recipients..." />
-              </SelectTrigger>
-              <SelectContent>
+            <div className="border rounded-lg p-4 max-h-64 overflow-y-auto">
+              <div className="grid grid-cols-1 gap-3">
                 {(recipientOptions[userRole as keyof typeof recipientOptions] || []).map((recipient) => (
-                  <SelectItem key={recipient.id} value={recipient.id}>
-                    {recipient.label}
-                  </SelectItem>
+                  <div key={recipient.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={recipient.id}
+                      checked={recipients.includes(recipient.id)}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setRecipients([...recipients, recipient.id]);
+                        } else {
+                          setRecipients(recipients.filter(id => id !== recipient.id));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={recipient.id} className="text-sm font-normal cursor-pointer">
+                      {recipient.label}
+                    </Label>
+                  </div>
                 ))}
-              </SelectContent>
-            </Select>
+              </div>
+            </div>
+            {recipients.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {recipients.map((recipientId) => {
+                  const recipient = (recipientOptions[userRole as keyof typeof recipientOptions] || [])
+                    .find(r => r.id === recipientId);
+                  return recipient ? (
+                    <Badge key={recipientId} variant="secondary" className="text-xs">
+                      {recipient.label}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-4 w-4 ml-1 hover:bg-destructive hover:text-destructive-foreground"
+                        onClick={() => setRecipients(recipients.filter(id => id !== recipientId))}
+                      >
+                        <X className="w-3 h-3" />
+                      </Button>
+                    </Badge>
+                  ) : null;
+                })}
+              </div>
+            )}
           </div>
 
           {/* Priority */}

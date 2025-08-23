@@ -2,16 +2,19 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { MeetingScheduler } from "@/components/MeetingScheduler";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Calendar = () => {
   const [userRole] = useState("employee");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    navigate("/");
   };
 
   return (

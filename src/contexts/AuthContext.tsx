@@ -64,21 +64,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       hod: {
         canApprove: true,
         canViewAllDepartments: false,
-        canManageWorkflows: false,
+        canManageWorkflows: true,
         canViewAnalytics: true,
         canManageUsers: false,
       },
       'program-head': {
         canApprove: true,
         canViewAllDepartments: false,
-        canManageWorkflows: false,
+        canManageWorkflows: true,
         canViewAnalytics: true,
         canManageUsers: false,
       },
       employee: {
         canApprove: false,
         canViewAllDepartments: false,
-        canManageWorkflows: false,
+        canManageWorkflows: true,
         canViewAnalytics: false,
         canManageUsers: false,
       },
@@ -114,11 +114,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     // Store in localStorage for persistence
     localStorage.setItem('iaoms-user', JSON.stringify(mockUser));
+    
+    // Success notification will be handled by the calling component
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('iaoms-user');
+    // Navigation will be handled by individual components
   };
 
   // Check for existing session on mount

@@ -4,6 +4,7 @@ import { MobileHeader } from './MobileHeader';
 import { MobileBottomNav } from './MobileBottomNav';
 import { DashboardLayout } from '@/components/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface ResponsiveLayoutProps {
   children: ReactNode;
@@ -12,6 +13,12 @@ interface ResponsiveLayoutProps {
 export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) => {
   const { isMobile } = useResponsive();
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   if (!user) return null;
 
@@ -28,7 +35,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
   }
 
   return (
-    <DashboardLayout userRole={user.role} onLogout={logout}>
+    <DashboardLayout userRole={user.role} onLogout={handleLogout}>
       {children}
     </DashboardLayout>
   );

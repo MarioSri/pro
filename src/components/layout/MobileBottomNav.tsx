@@ -11,7 +11,8 @@ import {
   User,
   CheckSquare,
   Calendar,
-  MessageSquare
+  MessageSquare,
+  GitBranch
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
@@ -31,10 +32,11 @@ export const MobileBottomNav: React.FC = () => {
       { path: '/documents', icon: FileText, label: 'Docs' },
     ];
 
+    // Show Approvals for all except employees, Workflow for all roles
     if (user.permissions.canApprove) {
       baseItems.push({ path: '/approvals', icon: CheckSquare, label: 'Approve' });
     } else {
-      baseItems.push({ path: '/calendar', icon: Calendar, label: 'Calendar' });
+      baseItems.push({ path: '/workflow', icon: GitBranch, label: 'Workflow' });
     }
 
     return baseItems;

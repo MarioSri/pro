@@ -2,16 +2,19 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { EmergencyWorkflowInterface } from "@/components/EmergencyWorkflowInterface";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Emergency = () => {
   const [userRole] = useState("employee");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    navigate("/");
   };
 
   return (

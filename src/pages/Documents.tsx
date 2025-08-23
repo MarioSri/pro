@@ -4,16 +4,19 @@ import { DocumentTracker } from "@/components/DocumentTracker";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Documents = () => {
   const [userRole] = useState("employee");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     toast({
       title: "Logged Out", 
       description: "You have been successfully logged out.",
     });
+    navigate("/");
   };
 
   const handleDocumentSubmit = (data: any) => {

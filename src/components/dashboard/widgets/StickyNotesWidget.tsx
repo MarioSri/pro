@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,7 +17,10 @@ import {
   Palette,
   Search,
   Calendar,
-  Clock
+  Clock,
+  Move,
+  Lock,
+  Unlock
 } from 'lucide-react';
 import {
   Dialog,
@@ -64,6 +67,10 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [editingNote, setEditingNote] = useState<string | null>(null);
+  const [draggedNote, setDraggedNote] = useState<string | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isLocked, setIsLocked] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [newNote, setNewNote] = useState({
     title: '',
     content: '',
@@ -157,6 +164,126 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
     saveNotes(notes.filter(note => note.id !== id));
   };
 
+  // Drag functionality
+  const handleMouseDown = (e: React.MouseEvent, noteId: string) => {
+    if (isLocked) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const note = notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    
+    if (containerRect) {
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    }
+    
+    setDraggedNote(noteId);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!draggedNote || isLocked) return;
+    
+    e.preventDefault();
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    
+    if (containerRect) {
+      const noteWidth = isMobile ? 144 : 160; // w-36 = 144px, w-40 = 160px
+      const noteHeight = 120;
+      
+      const newX = Math.max(0, Math.min(
+        containerRect.width - noteWidth,
+        e.clientX - containerRect.left - dragOffset.x
+      ));
+      const newY = Math.max(0, Math.min(
+        containerRect.height - noteHeight,
+        e.clientY - containerRect.top - dragOffset.y
+      ));
+
+      setNotes(prev => prev.map(note => 
+        note.id === draggedNote 
+          ? { ...note, position: { x: newX, y: newY } }
+          : note
+      ));
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (draggedNote) {
+      // Save the new positions
+      saveNotes(notes);
+      setDraggedNote(null);
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent, noteId: string) => {
+    if (isLocked) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const note = notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    
+    if (containerRect) {
+      setDragOffset({
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      });
+    }
+    
+    setDraggedNote(noteId);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!draggedNote || isLocked) return;
+    
+    e.preventDefault();
+    const touch = e.touches[0];
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    
+    if (containerRect) {
+      const noteWidth = isMobile ? 144 : 160; // w-36 = 144px, w-40 = 160px  
+      const noteHeight = 120;
+      
+      const newX = Math.max(0, Math.min(
+        containerRect.width - noteWidth,
+        touch.clientX - containerRect.left - dragOffset.x
+      ));
+      const newY = Math.max(0, Math.min(
+        containerRect.height - noteHeight,
+        touch.clientY - containerRect.top - dragOffset.y
+      ));
+
+      setNotes(prev => prev.map(note => 
+        note.id === draggedNote 
+          ? { ...note, position: { x: newX, y: newY } }
+          : note
+      ));
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (draggedNote) {
+      saveNotes(notes);
+      setDraggedNote(null);
+    }
+  };
+
+  const toggleLock = () => {
+    setIsLocked(!isLocked);
+  };
+
   const togglePin = (id: string) => {
     saveNotes(notes.map(note => 
       note.id === id ? { ...note, pinned: !note.pinned } : note
@@ -213,13 +340,27 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
             </div>
           </CardTitle>
           
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <Plus className="w-4 h-4 mr-1" />
-                Add
-              </Button>
-            </DialogTrigger>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleLock}
+              title={isLocked ? "Unlock notes for moving" : "Lock notes in place"}
+              className={cn(
+                "p-2",
+                isLocked ? "text-red-600 border-red-300" : "text-green-600 border-green-300"
+              )}
+            >
+              {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+            </Button>
+            
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add
+                </Button>
+              </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Create New Sticky Note</DialogTitle>
@@ -251,6 +392,7 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
                       {noteColors.map(color => (
                         <button
                           key={color.class}
+                          title={`Select ${color.name} color`}
                           className={cn(
                             "w-8 h-8 rounded-full border-2 transition-all",
                             color.class,
@@ -268,6 +410,7 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
                       value={newNote.category}
                       onChange={(e) => setNewNote({...newNote, category: e.target.value})}
                       className="w-full p-2 border rounded text-sm"
+                      aria-label="Note category"
                     >
                       {categories.map(cat => (
                         <option key={cat} value={cat}>
@@ -290,6 +433,7 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
               </div>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
       </CardHeader>
       
@@ -309,6 +453,7 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="px-2 py-1 border rounded text-sm"
+            aria-label="Filter by category"
           >
             <option value="all">All</option>
             {categories.map(cat => (
@@ -320,30 +465,65 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
         </div>
 
         {/* Notes Display */}
-        <div className={cn(
-          "relative rounded-lg p-3 overflow-hidden",
-          isMobile ? "min-h-[240px] bg-gradient-subtle" : "min-h-[200px] bg-gradient-subtle"
-        )}>
+        <div 
+          ref={containerRef}
+          className={cn(
+            "relative rounded-lg p-3 overflow-hidden select-none",
+            isMobile ? "min-h-[240px] bg-gradient-subtle" : "min-h-[200px] bg-gradient-subtle",
+            !isLocked && "cursor-move"
+          )}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          {isLocked && (
+            <div className="absolute top-2 right-2 z-20">
+              <Badge variant="secondary" className="text-xs bg-red-100 text-red-700">
+                <Lock className="w-3 h-3 mr-1" />
+                Locked
+              </Badge>
+            </div>
+          )}
+          
+          {!isLocked && !isMobile && (
+            <div className="absolute top-2 left-2 z-20">
+              <Badge variant="outline" className="text-xs bg-white/80">
+                <Move className="w-3 h-3 mr-1" />
+                Drag to move
+              </Badge>
+            </div>
+          )}
+          
           {sortedNotes.slice(0, isMobile ? 4 : 6).map((note, index) => (
             <div
               key={note.id}
               className={cn(
-                "absolute p-3 rounded-lg shadow-md cursor-move transition-all hover:shadow-lg animate-scale-in",
+                "absolute p-3 rounded-lg shadow-md transition-all hover:shadow-lg animate-scale-in border-2",
                 note.color,
-                isMobile ? "w-36 text-xs" : "w-40 text-sm"
+                isMobile ? "w-36 text-xs" : "w-40 text-sm",
+                !isLocked && "cursor-move hover:scale-105",
+                isLocked && "cursor-default",
+                draggedNote === note.id && "shadow-2xl scale-105",
+                note.pinned && "border-yellow-400 sticky-note-pinned",
+                !note.pinned && "border-transparent",
+                draggedNote === note.id ? "sticky-note-dragging" : "sticky-note-default"
               )}
               style={{
-                left: isMobile ? `${(index % 2) * 150 + 12}px` : `${note.position.x}px`,
-                top: isMobile ? `${Math.floor(index / 2) * 90 + 12}px` : `${note.position.y}px`,
-                zIndex: note.pinned ? 10 : 1,
+                left: `${note.position.x}px`,
+                top: `${note.position.y}px`,
                 animationDelay: `${index * 100}ms`
               }}
+              onMouseDown={(e) => handleMouseDown(e, note.id)}
+              onTouchStart={(e) => handleTouchStart(e, note.id)}
             >
               <div className="flex items-start justify-between mb-2 min-h-[20px]">
                 <h5 className="font-medium line-clamp-1 pr-2">{note.title}</h5>
                 <div className="flex gap-1">
                   <button
                     onClick={() => togglePin(note.id)}
+                    title={note.pinned ? "Unpin note" : "Pin note"}
                     className={cn(
                       "p-1 rounded transition-colors min-w-[24px] min-h-[24px]",
                       note.pinned ? 'text-primary' : 'text-muted-foreground hover:text-primary'
@@ -353,12 +533,14 @@ export const StickyNotesWidget: React.FC<StickyNotesWidgetProps> = ({
                   </button>
                   <button
                     onClick={() => setEditingNote(note.id)}
+                    title="Edit note"
                     className="p-1 rounded text-muted-foreground hover:text-primary transition-colors min-w-[24px] min-h-[24px]"
                   >
                     <Edit className="w-3 h-3" />
                   </button>
                   <button
                     onClick={() => deleteNote(note.id)}
+                    title="Delete note"
                     className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors min-w-[24px] min-h-[24px]"
                   >
                     <X className="w-3 h-3" />

@@ -261,6 +261,62 @@ All colors MUST be HSL.
     @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
   }
 
+  /* Sticky Notes Positioning Classes */
+  .sticky-note-pinned {
+    z-index: 10;
+  }
+  
+  .sticky-note-dragging {
+    z-index: 30;
+    transform: rotate(5deg);
+  }
+  
+  .sticky-note-default {
+    z-index: 1;
+    transform: rotate(0deg);
+  }
+
+  /* Workflow Builder Classes */
+  .workflow-node-handle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #1a365d;
+    border: 2px solid #fff;
+  }
+
+  .workflow-edge-label {
+    position: absolute;
+    font-size: 12px;
+    pointer-events: all;
+  }
+
+  .workflow-preview-panel {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 200px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
+  .workflow-property-panel {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 250px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+
   /* High contrast mode support */
   @media (prefers-contrast: high) {
     :root {
