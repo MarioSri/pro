@@ -14,6 +14,7 @@ import Calendar from "./pages/Calendar";
 import Messages from "./pages/Messages";
 import WorkflowManagement from "./pages/Workflow";
 import Approvals from "./pages/Approvals";
+import ApprovalRouting from "./pages/ApprovalRouting";
 import Analytics from "./pages/Analytics";
 import AdvancedSignature from "./pages/AdvancedSignature";
 import Reminders from "./pages/Reminders";
@@ -63,6 +64,11 @@ const App = () => (
                 <Route path="/approvals" element={
                   <ProtectedRoute requiredPermissions={['canApprove']}>
                     <Approvals />
+                  </ProtectedRoute>
+                } />
+                <Route path="/approval-routing" element={
+                  <ProtectedRoute requiredPermissions={['canApprove']}>
+                    <ApprovalRouting />
                   </ProtectedRoute>
                 } />
                 <Route path="/analytics" element={

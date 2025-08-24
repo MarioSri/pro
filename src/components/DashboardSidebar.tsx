@@ -33,7 +33,8 @@ import {
   StickyNote,
   Bell,
   AlertTriangle,
-  Search
+  Search,
+  ArrowRightLeft
 } from "lucide-react";
 import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 import { cn } from "@/lib/utils";
@@ -116,6 +117,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     const adminItems = [
       { title: "Workflow Management", url: "/workflow", icon: GitBranch },
       { title: "Approvals", url: "/approvals", icon: CheckSquare },
+      { title: "Approval Routing", url: "/approval-routing", icon: ArrowRightLeft },
       { title: "Analytics", url: "/analytics", icon: BarChart3 },
     ];
 

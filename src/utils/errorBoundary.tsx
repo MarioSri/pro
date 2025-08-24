@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
     this.setState({ error, errorInfo });
     
     // Log error to console in development
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.DEV) {
       console.error('Error Boundary caught an error:', error, errorInfo);
     }
 
@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 We encountered an unexpected error. This has been logged and our team will investigate.
               </p>
               
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {import.meta.env.DEV && this.state.error && (
                 <details className="bg-muted p-3 rounded text-sm">
                   <summary className="cursor-pointer font-medium">Error Details</summary>
                   <pre className="mt-2 whitespace-pre-wrap text-xs">
@@ -108,7 +108,7 @@ export const useErrorHandler = () => {
     console.error('Application Error:', error, errorInfo);
     
     // In production, send to error reporting service
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta.env.PROD) {
       // Example: Sentry.captureException(error, { extra: errorInfo });
     }
   };

@@ -1,10 +1,11 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { DigitalSignature } from "@/components/DigitalSignature";
+import { DocumentApprovalDemo } from "@/components/DocumentApprovalDemo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, XCircle, Clock, FileText, User, Calendar } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, FileText, User, Calendar, MessageSquare, Video } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -126,8 +127,14 @@ const Approvals = () => {
         </div>
 
         <Tabs defaultValue="pending" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="pending">Pending Approvals</TabsTrigger>
+            <TabsTrigger value="live-requests" className="relative">
+              🔴 Live Requests
+              <Badge variant="destructive" className="ml-2 px-1 py-0 text-xs animate-pulse">
+                3
+              </Badge>
+            </TabsTrigger>
             <TabsTrigger value="signature">Digital Signature</TabsTrigger>
             <TabsTrigger value="history">Approval History</TabsTrigger>
           </TabsList>
@@ -176,12 +183,61 @@ const Approvals = () => {
                           Reject
                         </Button>
                         <Button size="sm" variant="outline">View Document</Button>
+                        {/* NEW: Live Meeting Request Button */}
+                        <Button size="sm" variant="outline" className="border-orange-500 text-orange-600 hover:bg-orange-50">
+                          <Video className="h-4 w-4 mr-1" />
+                          🔴 Request Meeting
+                        </Button>
                       </div>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="live-requests" className="space-y-6">
+            {/* Feature Highlight */}
+            <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  🔴 Live Meeting Request System
+                  <Badge variant="secondary" className="animate-pulse">NEW FEATURE</Badge>
+                </CardTitle>
+                <CardDescription>
+                  Request immediate clarification meetings during document review. Perfect for urgent decisions 
+                  or when you need real-time discussion with document submitters.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-red-600 text-lg">🔥</span>
+                    <div>
+                      <p className="font-medium">Immediate Response</p>
+                      <p className="text-gray-600">Within 15 minutes</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-blue-600 text-lg">💻</span>
+                    <div>
+                      <p className="font-medium">Auto-Generated Links</p>
+                      <p className="text-gray-600">Google Meet, Zoom, Teams</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-600 text-lg">📋</span>
+                    <div>
+                      <p className="font-medium">Context Preserved</p>
+                      <p className="text-gray-600">Document attached to meeting</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Document Approval with Live Meeting Integration */}
+            <DocumentApprovalDemo />
           </TabsContent>
           
           <TabsContent value="signature" className="space-y-6">

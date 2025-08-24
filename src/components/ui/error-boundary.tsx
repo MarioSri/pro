@@ -27,7 +27,7 @@ export const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, resetError 
             We encountered an unexpected error. This has been logged and our team will investigate.
           </p>
           
-          {process.env.NODE_ENV === 'development' && (
+          {import.meta.env.DEV && (
             <details className="bg-muted p-3 rounded text-sm">
               <summary className="cursor-pointer font-medium">Error Details</summary>
               <pre className="mt-2 whitespace-pre-wrap text-xs">
