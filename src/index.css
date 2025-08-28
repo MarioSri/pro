@@ -525,3 +525,35 @@ All colors MUST be HSL.
     }
   }
 }
+
+/* Smooth dragging improvements */
+.transform-gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.transition-none {
+  transition: none !important;
+}
+
+/* Sticky notes positioning */
+.sticky-note {
+  position: absolute;
+}
+
+/* Enhanced drag states for sticky notes */
+.sticky-note:hover {
+  transform: scale(1.02);
+}
+
+.sticky-note.dragging {
+  transform: scale(1.05) rotate(2deg);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 50 !important;
+}
+
+.sticky-note.transition-none {
+  -webkit-user-select: none;
+  user-select: none;
+}

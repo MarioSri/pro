@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,9 +61,101 @@ interface NotesRemindersProps {
   isMessagesPage?: boolean;
 }
 
+// Individual sticky note component to handle positioning without inline styles
+interface StickyNoteItemProps {
+  note: Note;
+  isMessagesPage: boolean;
+  isDragging: boolean;
+  draggedNoteId: number | null;
+  onMouseDown: (e: React.MouseEvent, note: Note) => void;
+  onTouchStart: (e: React.TouchEvent, note: Note) => void;
+  onTogglePin: (id: number) => void;
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+}
+
+function StickyNoteItem({ 
+  note, 
+  isMessagesPage, 
+  isDragging, 
+  draggedNoteId, 
+  onMouseDown, 
+  onTouchStart,
+  onTogglePin, 
+  onEdit, 
+  onDelete 
+}: StickyNoteItemProps) {
+  const noteRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (noteRef.current) {
+      noteRef.current.style.left = `${note.position.x}px`;
+      noteRef.current.style.top = `${note.position.y}px`;
+      noteRef.current.style.zIndex = note.pinned ? '10' : isDragging && draggedNoteId === note.id ? '50' : '1';
+      noteRef.current.style.willChange = isDragging && draggedNoteId === note.id ? 'transform' : 'auto';
+    }
+  }, [note.position.x, note.position.y, note.pinned, isDragging, draggedNoteId, note.id]);
+
+  return (
+    <div
+      ref={noteRef}
+      className={`sticky-note w-64 p-4 rounded-lg shadow-md hover:shadow-lg animate-scale-in ${note.color} ${isMessagesPage ? 'cursor-move' : 'cursor-default'} ${
+        isDragging && draggedNoteId === note.id 
+          ? 'transition-none transform-gpu scale-105 shadow-2xl' 
+          : 'transition-all duration-200'
+      }`}
+      onMouseDown={(e) => isMessagesPage && onMouseDown(e, note)}
+      onTouchStart={(e) => isMessagesPage && onTouchStart(e, note)}
+    >
+      <div className="flex items-start justify-between mb-2">
+        <h4 className="font-medium text-sm pr-2">{note.title}</h4>
+        <div className="flex gap-1">
+          <button
+            onClick={() => onTogglePin(note.id)}
+            title={note.pinned ? "Unpin note" : "Pin note"}
+            className={`p-1 rounded transition-colors ${
+              note.pinned ? 'text-primary' : 'text-muted-foreground hover:text-primary'
+            }`}
+          >
+            <Pin className="w-3 h-3" />
+          </button>
+          <button
+            onClick={() => onEdit(note.id)}
+            title="Edit note"
+            className="p-1 rounded text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Edit className="w-3 h-3" />
+          </button>
+          <button
+            onClick={() => onDelete(note.id)}
+            title="Delete note"
+            className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+      <p className="text-sm text-gray-700 mb-3">{note.content}</p>
+      <div className="flex items-center justify-between text-xs text-gray-600">
+        <Badge variant="outline" className="text-xs">
+          {note.category}
+        </Badge>
+        <span>{note.createdAt}</span>
+      </div>
+      {note.pinned && (
+        <div className="absolute -top-1 -right-1">
+          <Pin className="w-4 h-4 text-primary" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemindersProps) {
   const [draggedNoteId, setDraggedNoteId] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [notes, setNotes] = useState<Note[]>([
     {
       id: 1,
@@ -199,6 +291,117 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
     setNotes(notes.map(note => 
       note.id === id ? { ...note, pinned: !note.pinned } : note
     ));
+  };
+
+  // Advanced mouse-based drag functionality (from Dashboard)
+  const handleMouseDown = (e: React.MouseEvent, note: Note) => {
+    if (!isMessagesPage) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    
+    if (containerRect) {
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      });
+    }
+    
+    setDraggedNoteId(note.id);
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!draggedNoteId || !isDragging || !isMessagesPage) return;
+    
+    e.preventDefault();
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    
+    if (containerRect) {
+      const noteWidth = 256; // w-64 = 256px
+      const noteHeight = 200; // approximate height
+      
+      const newX = Math.max(0, Math.min(
+        containerRect.width - noteWidth,
+        e.clientX - containerRect.left - dragOffset.x
+      ));
+      const newY = Math.max(0, Math.min(
+        containerRect.height - noteHeight,
+        e.clientY - containerRect.top - dragOffset.y
+      ));
+
+      setNotes(prev => prev.map(note => 
+        note.id === draggedNoteId 
+          ? { ...note, position: { x: newX, y: newY } }
+          : note
+      ));
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (draggedNoteId && isDragging) {
+      setDraggedNoteId(null);
+      setIsDragging(false);
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent, note: Note) => {
+    if (!isMessagesPage) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const touch = e.touches[0];
+    const rect = e.currentTarget.getBoundingClientRect();
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    
+    if (containerRect) {
+      setDragOffset({
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+      });
+    }
+    
+    setDraggedNoteId(note.id);
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!draggedNoteId || !isDragging || !isMessagesPage) return;
+    
+    e.preventDefault();
+    const touch = e.touches[0];
+    const containerRect = containerRef.current?.getBoundingClientRect();
+    
+    if (containerRect) {
+      const noteWidth = 256;
+      const noteHeight = 200;
+      
+      const newX = Math.max(0, Math.min(
+        containerRect.width - noteWidth,
+        touch.clientX - containerRect.left - dragOffset.x
+      ));
+      const newY = Math.max(0, Math.min(
+        containerRect.height - noteHeight,
+        touch.clientY - containerRect.top - dragOffset.y
+      ));
+
+      setNotes(prev => prev.map(note => 
+        note.id === draggedNoteId 
+          ? { ...note, position: { x: newX, y: newY } }
+          : note
+      ));
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (draggedNoteId && isDragging) {
+      setDraggedNoteId(null);
+      setIsDragging(false);
+    }
   };
 
   const toggleReminder = (id: number) => {
@@ -365,6 +568,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
                       {noteColors.map(color => (
                         <button
                           key={color.class}
+                          title={`Select ${color.name.toLowerCase()} color`}
                           className={`w-8 h-8 rounded-full border-2 ${color.class} ${
                             newNote.color === color.class ? 'border-primary' : 'border-border'
                           }`}
@@ -423,80 +627,40 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
             </div>
           </CardHeader>
           <CardContent>
-            <div className="relative min-h-[500px] bg-gradient-subtle rounded-lg p-4 overflow-hidden">
-              {sortedNotes.map((note) => (
-                <div
-                  key={note.id}
-                  className={`absolute w-64 p-4 rounded-lg shadow-md transition-all hover:shadow-lg animate-scale-in ${note.color} ${isMessagesPage ? 'cursor-move' : 'cursor-default'}`}
-                  style={{
-                    left: `${note.position.x}px`,
-                    top: `${note.position.y}px`,
-                    zIndex: note.pinned ? 10 : 1
-                  }}
-                  draggable={isMessagesPage}
-                  onDragStart={(e) => {
-                    if (!isMessagesPage) return;
-                    setDraggedNoteId(note.id);
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    setDragOffset({
-                      x: e.clientX - rect.left,
-                      y: e.clientY - rect.top
-                    });
-                  }}
-                  onDragEnd={(e) => {
-                    if (!isMessagesPage || !draggedNoteId) return;
-                    const container = e.currentTarget.parentElement?.getBoundingClientRect();
-                    if (!container) return;
-                    
-                    const x = e.clientX - container.left - dragOffset.x;
-                    const y = e.clientY - container.top - dragOffset.y;
-                    
-                    setNotes(notes.map(n => 
-                      n.id === draggedNoteId
-                        ? { ...n, position: { x, y } }
-                        : n
-                    ));
-                    setDraggedNoteId(null);
-                  }}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <h4 className="font-medium text-sm pr-2">{note.title}</h4>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => togglePin(note.id)}
-                        className={`p-1 rounded transition-colors ${
-                          note.pinned ? 'text-primary' : 'text-muted-foreground hover:text-primary'
-                        }`}
-                      >
-                        <Pin className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => setEditingNote(note.id)}
-                        className="p-1 rounded text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        <Edit className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => deleteNote(note.id)}
-                        className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700 mb-3">{note.content}</p>
-                  <div className="flex items-center justify-between text-xs text-gray-600">
-                    <Badge variant="outline" className="text-xs">
-                      {note.category}
-                    </Badge>
-                    <span>{note.createdAt}</span>
-                  </div>
-                  {note.pinned && (
-                    <div className="absolute -top-1 -right-1">
-                      <Pin className="w-4 h-4 text-primary" />
-                    </div>
-                  )}
+            <div 
+              ref={containerRef}
+              className="relative min-h-[500px] bg-gradient-subtle rounded-lg p-4 overflow-hidden select-none"
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              {/* Drag instruction for Messages page */}
+              {isMessagesPage && sortedNotes.length > 0 && (
+                <div className="absolute top-2 left-2 z-20">
+                  <Badge variant="outline" className="text-xs bg-white/80">
+                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                    </svg>
+                    Drag to move
+                  </Badge>
                 </div>
+              )}
+              
+              {sortedNotes.map((note) => (
+                <StickyNoteItem
+                  key={note.id}
+                  note={note}
+                  isMessagesPage={isMessagesPage}
+                  isDragging={isDragging}
+                  draggedNoteId={draggedNoteId}
+                  onMouseDown={handleMouseDown}
+                  onTouchStart={handleTouchStart}
+                  onTogglePin={togglePin}
+                  onEdit={setEditingNote}
+                  onDelete={deleteNote}
+                />
               ))}
               
               {sortedNotes.length === 0 && (
@@ -533,6 +697,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
                     </Badge>
                     <button
                       onClick={() => toggleReminder(reminder.id)}
+                      title={reminder.completed ? "Mark as incomplete" : "Mark as complete"}
                       className="text-muted-foreground hover:text-success transition-colors"
                     >
                       <Clock className="w-4 h-4" />
