@@ -90,37 +90,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (role: string): Promise<void> => {
     setIsLoading(true);
     
-    // Simulate authentication delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    const mockUser: User = {
-      id: `user-${Date.now()}`,
-      name: role === 'principal' ? 'Dr. Robert Smith' :
-            role === 'registrar' ? 'Prof. Sarah Johnson' :
-            role === 'hod' ? 'Dr. Rajesh Kumar' :
-            role === 'program-head' ? 'Prof. Anita Sharma' :
-            'Mr. John Doe',
-      email: `${role}@hitam.org`,
-      role: role as User['role'],
-      department: role === 'hod' ? 'Computer Science & Engineering' : 
-                 role === 'program-head' ? 'Electronics & Communication' : undefined,
-      branch: role === 'hod' ? 'CSE' : 
-              role === 'program-head' ? 'ECE' : undefined,
-      permissions: getUserPermissions(role)
-    };
+    try {
+      // Simulate authentication delay with minimum loading time
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      
+      const mockUser: User = {
+        id: `user-${Date.now()}`,
+        name: role === 'principal' ? 'Dr. Robert Smith' :
+              role === 'registrar' ? 'Prof. Sarah Johnson' :
+              role === 'hod' ? 'Dr. Rajesh Kumar' :
+              role === 'program-head' ? 'Prof. Anita Sharma' :
+              'Mr. John Doe',
+        email: `${role}@hitam.org`,
+        role: role as User['role'],
+        department: role === 'hod' ? 'Computer Science & Engineering' : 
+                   role === 'program-head' ? 'Electronics & Communication' : undefined,
+        branch: role === 'hod' ? 'CSE' : 
+                role === 'program-head' ? 'ECE' : undefined,
+        permissions: getUserPermissions(role)
+      };
 
-    setUser(mockUser);
-    setIsLoading(false);
-    
-    // Store in localStorage for persistence
-    localStorage.setItem('iaoms-user', JSON.stringify(mockUser));
-    
-    // Success notification will be handled by the calling component
+      setUser(mockUser);
+      
+      // Store in localStorage for persistence
+      localStorage.setItem('iaoms-user', JSON.stringify(mockUser));
+      
+      // Success notification will be handled by the calling component
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    } finally {
+      // Ensure loading is always set to false
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {
     setUser(null);
+    setIsLoading(false); // Ensure loading state is reset
     localStorage.removeItem('iaoms-user');
+    // Clear any cached data that might persist
+    sessionStorage.clear();
     // Navigation will be handled by individual components
   };
 

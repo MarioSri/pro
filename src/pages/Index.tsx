@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { AuthenticationCard } from "@/components/AuthenticationCard";
 import { HITAMTreeLoading } from "@/components/ui/loading-animation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +8,14 @@ import { toast } from "sonner";
 const Index = () => {
   const { user, isAuthenticated, isLoading, login } = useAuth();
   const navigate = useNavigate();
+  const [loadingKey, setLoadingKey] = useState(0);
+
+  // Generate new loading key whenever isLoading changes to true
+  useEffect(() => {
+    if (isLoading) {
+      setLoadingKey(Date.now());
+    }
+  }, [isLoading]);
 
   const handleLogin = async (role: string) => {
     try {
@@ -39,7 +48,7 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
-        <HITAMTreeLoading size="lg" />
+        <HITAMTreeLoading key={loadingKey} size="lg" />
       </div>
     );
   }
