@@ -47,149 +47,78 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
 
   const recipientOptions = {
     employee: [
-      // CDC Department Employees
-      { id: "cdc-head", label: "CDC Head" },
-      { id: "cdc-coordinator", label: "CDC Coordinator" },
-      { id: "cdc-executive", label: "CDC Executive" },
+      // Individual HODs
+      { id: "hod-eee", label: "HOD EEE" },
+      { id: "hod-mech", label: "HOD MECH" },
+      { id: "hod-cse", label: "HOD CSE" },
+      { id: "hod-ece", label: "HOD ECE" },
+      { id: "hod-csm", label: "HOD CSM" },
+      { id: "hod-cso", label: "HOD CSO" },
+      { id: "hod-csd", label: "HOD CSD" },
+      { id: "hod-csc", label: "HOD CSC" },
       
-      // Leadership
-      { id: "dean", label: "Dean" },
-      { id: "chairman", label: "Chairman" },
-      { id: "director", label: "Director (For Information)" },
-      { id: "leadership", label: "Leadership" },
-      
-      // Administrative Roles
-      { id: "controller-examinations", label: "Controller of Examinations" },
-      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
-      { id: "head-operations", label: "Head Operations" },
-      { id: "librarian", label: "Librarian" },
-      { id: "ssg", label: "SSG" },
-      
-      // Faculty (All branches)
-      { id: "faculty-eee", label: "Faculty - EEE" },
-      { id: "faculty-mech", label: "Faculty - MECH" },
-      { id: "faculty-cse", label: "Faculty - CSE" },
-      { id: "faculty-ece", label: "Faculty - ECE" },
-      { id: "faculty-csm", label: "Faculty - CSM" },
-      { id: "faculty-cso", label: "Faculty - CSO" },
-      { id: "faculty-csd", label: "Faculty - CSD" },
-      { id: "faculty-csc", label: "Faculty - CSC" },
-      
-      // Program Department Heads
-      { id: "program-head-eee", label: "Program Department Head - EEE" },
-      { id: "program-head-mech", label: "Program Department Head - MECH" },
-      { id: "program-head-cse", label: "Program Department Head - CSE" },
-      { id: "program-head-ece", label: "Program Department Head - ECE" },
-      { id: "program-head-csm", label: "Program Department Head - CSM" },
-      { id: "program-head-cso", label: "Program Department Head - CSO" },
-      { id: "program-head-csd", label: "Program Department Head - CSD" },
-      { id: "program-head-csc", label: "Program Department Head - CSC" },
-      
-      // HODs
-      { id: "hod-eee", label: "HOD - EEE" },
-      { id: "hod-mech", label: "HOD - MECH" },
-      { id: "hod-cse", label: "HOD - CSE" },
-      { id: "hod-ece", label: "HOD - ECE" },
-      { id: "hod-csm", label: "HOD - CSM" },
-      { id: "hod-cso", label: "HOD - CSO" },
-      { id: "hod-csd", label: "HOD - CSD" },
-      { id: "hod-csc", label: "HOD - CSC" },
+      // Individual Program Department Heads
+      { id: "program-head-eee", label: "Program Department Head EEE" },
+      { id: "program-head-mech", label: "Program Department Head MECH" },
+      { id: "program-head-cse", label: "Program Department Head CSE" },
+      { id: "program-head-ece", label: "Program Department Head ECE" },
+      { id: "program-head-csm", label: "Program Department Head CSM" },
+      { id: "program-head-cso", label: "Program Department Head CSO" },
+      { id: "program-head-csd", label: "Program Department Head CSD" },
+      { id: "program-head-csc", label: "Program Department Head CSC" },
       
       { id: "registrar", label: "Registrar" },
       { id: "principal", label: "Principal" },
     ],
     hod: [
-      // CDC Department Employees
-      { id: "cdc-head", label: "CDC Head" },
-      { id: "cdc-coordinator", label: "CDC Coordinator" },
-      { id: "cdc-executive", label: "CDC Executive" },
-      
-      // Leadership
-      { id: "dean", label: "Dean" },
-      { id: "chairman", label: "Chairman" },
-      { id: "director", label: "Director (For Information)" },
-      { id: "leadership", label: "Leadership" },
-      
-      // Administrative Roles
-      { id: "controller-examinations", label: "Controller of Examinations" },
-      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
-      { id: "head-operations", label: "Head Operations" },
-      { id: "librarian", label: "Librarian" },
-      { id: "ssg", label: "SSG" },
-      
       { id: "registrar", label: "Registrar" },
       { id: "principal", label: "Principal" },
     ],
     registrar: [
-      // CDC Department Employees
-      { id: "cdc-head", label: "CDC Head" },
-      { id: "cdc-coordinator", label: "CDC Coordinator" },
-      { id: "cdc-executive", label: "CDC Executive" },
-      
-      // Leadership
-      { id: "dean", label: "Dean" },
-      { id: "chairman", label: "Chairman" },
-      { id: "director", label: "Director (For Information)" },
-      { id: "leadership", label: "Leadership" },
-      
-      // Administrative Roles
-      { id: "controller-examinations", label: "Controller of Examinations" },
-      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
-      { id: "head-operations", label: "Head Operations" },
-      { id: "librarian", label: "Librarian" },
-      { id: "ssg", label: "SSG" },
-      
       { id: "principal", label: "Principal" },
-      { id: "all-hods", label: "All HODs" },
-      { id: "all-program-heads", label: "All Program Department Heads" },
-      { id: "all-faculty", label: "All Faculty" },
+      // Individual HODs
+      { id: "hod-eee", label: "HOD EEE" },
+      { id: "hod-mech", label: "HOD MECH" },
+      { id: "hod-cse", label: "HOD CSE" },
+      { id: "hod-ece", label: "HOD ECE" },
+      { id: "hod-csm", label: "HOD CSM" },
+      { id: "hod-cso", label: "HOD CSO" },
+      { id: "hod-csd", label: "HOD CSD" },
+      { id: "hod-csc", label: "HOD CSC" },
+      // Individual Program Department Heads
+      { id: "program-head-eee", label: "Program Department Head EEE" },
+      { id: "program-head-mech", label: "Program Department Head MECH" },
+      { id: "program-head-cse", label: "Program Department Head CSE" },
+      { id: "program-head-ece", label: "Program Department Head ECE" },
+      { id: "program-head-csm", label: "Program Department Head CSM" },
+      { id: "program-head-cso", label: "Program Department Head CSO" },
+      { id: "program-head-csd", label: "Program Department Head CSD" },
+      { id: "program-head-csc", label: "Program Department Head CSC" },
     ],
     "program-head": [
-      // CDC Department Employees
-      { id: "cdc-head", label: "CDC Head" },
-      { id: "cdc-coordinator", label: "CDC Coordinator" },
-      { id: "cdc-executive", label: "CDC Executive" },
-      
-      // Leadership
-      { id: "dean", label: "Dean" },
-      { id: "chairman", label: "Chairman" },
-      { id: "director", label: "Director (For Information)" },
-      { id: "leadership", label: "Leadership" },
-      
-      // Administrative Roles
-      { id: "controller-examinations", label: "Controller of Examinations" },
-      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
-      { id: "head-operations", label: "Head Operations" },
-      { id: "librarian", label: "Librarian" },
-      { id: "ssg", label: "SSG" },
-      
       { id: "hod", label: "Head of Department" },
       { id: "registrar", label: "Registrar" },
       { id: "principal", label: "Principal" },
     ],
     principal: [
-      // CDC Department Employees
-      { id: "cdc-head", label: "CDC Head" },
-      { id: "cdc-coordinator", label: "CDC Coordinator" },
-      { id: "cdc-executive", label: "CDC Executive" },
-      
-      // Leadership
-      { id: "dean", label: "Dean" },
-      { id: "chairman", label: "Chairman" },
-      { id: "director", label: "Director (For Information)" },
-      { id: "leadership", label: "Leadership" },
-      
-      // Administrative Roles
-      { id: "controller-examinations", label: "Controller of Examinations" },
-      { id: "asst-dean-iiic", label: "Asst. Dean IIIC" },
-      { id: "head-operations", label: "Head Operations" },
-      { id: "librarian", label: "Librarian" },
-      { id: "ssg", label: "SSG" },
-      
-      { id: "all-hods", label: "All HODs" },
-      { id: "all-program-heads", label: "All Program Department Heads" },
-      { id: "all-faculty", label: "All Faculty" },
-      { id: "all-employees", label: "All Employees" },
+      // Individual HODs
+      { id: "hod-eee", label: "HOD EEE" },
+      { id: "hod-mech", label: "HOD MECH" },
+      { id: "hod-cse", label: "HOD CSE" },
+      { id: "hod-ece", label: "HOD ECE" },
+      { id: "hod-csm", label: "HOD CSM" },
+      { id: "hod-cso", label: "HOD CSO" },
+      { id: "hod-csd", label: "HOD CSD" },
+      { id: "hod-csc", label: "HOD CSC" },
+      // Individual Program Department Heads
+      { id: "program-head-eee", label: "Program Department Head EEE" },
+      { id: "program-head-mech", label: "Program Department Head MECH" },
+      { id: "program-head-cse", label: "Program Department Head CSE" },
+      { id: "program-head-ece", label: "Program Department Head ECE" },
+      { id: "program-head-csm", label: "Program Department Head CSM" },
+      { id: "program-head-cso", label: "Program Department Head CSO" },
+      { id: "program-head-csd", label: "Program Department Head CSD" },
+      { id: "program-head-csc", label: "Program Department Head CSC" },
       { id: "registrar", label: "Registrar" },
     ],
   };
@@ -275,6 +204,7 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
                 onChange={handleFileUpload}
                 className="hidden"
                 id="file-upload"
+                title="Upload document files"
               />
               <Label htmlFor="file-upload" className="cursor-pointer">
                 <div className="space-y-2">

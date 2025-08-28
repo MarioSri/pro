@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ErrorBoundary } from "@/utils/errorBoundary";
@@ -17,7 +18,6 @@ import Approvals from "./pages/Approvals";
 import ApprovalRouting from "./pages/ApprovalRouting";
 import Analytics from "./pages/Analytics";
 import AdvancedSignature from "./pages/AdvancedSignature";
-import Reminders from "./pages/Reminders";
 import Emergency from "./pages/Emergency";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
@@ -28,12 +28,13 @@ const queryClient = new QueryClient();
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <NotificationProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <AuthProvider>
+          <NotificationProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/dashboard" element={
@@ -81,11 +82,6 @@ const App = () => (
                     <AdvancedSignature />
                   </ProtectedRoute>
                 } />
-                <Route path="/reminders" element={
-                  <ProtectedRoute>
-                    <Reminders />
-                  </ProtectedRoute>
-                } />
                 <Route path="/emergency" element={
                   <ProtectedRoute>
                     <Emergency />
@@ -108,6 +104,7 @@ const App = () => (
           </TooltipProvider>
         </NotificationProvider>
       </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );

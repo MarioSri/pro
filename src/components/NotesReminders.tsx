@@ -58,9 +58,12 @@ interface Reminder {
 
 interface NotesRemindersProps {
   userRole: string;
+  isMessagesPage?: boolean;
 }
 
-export function NotesReminders({ userRole }: NotesRemindersProps) {
+export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemindersProps) {
+  const [draggedNoteId, setDraggedNoteId] = useState<number | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [notes, setNotes] = useState<Note[]>([
     {
       id: 1,
@@ -424,11 +427,36 @@ export function NotesReminders({ userRole }: NotesRemindersProps) {
               {sortedNotes.map((note) => (
                 <div
                   key={note.id}
-                  className={`absolute w-64 p-4 rounded-lg shadow-md cursor-move transition-all hover:shadow-lg animate-scale-in ${note.color}`}
+                  className={`absolute w-64 p-4 rounded-lg shadow-md transition-all hover:shadow-lg animate-scale-in ${note.color} ${isMessagesPage ? 'cursor-move' : 'cursor-default'}`}
                   style={{
                     left: `${note.position.x}px`,
                     top: `${note.position.y}px`,
                     zIndex: note.pinned ? 10 : 1
+                  }}
+                  draggable={isMessagesPage}
+                  onDragStart={(e) => {
+                    if (!isMessagesPage) return;
+                    setDraggedNoteId(note.id);
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setDragOffset({
+                      x: e.clientX - rect.left,
+                      y: e.clientY - rect.top
+                    });
+                  }}
+                  onDragEnd={(e) => {
+                    if (!isMessagesPage || !draggedNoteId) return;
+                    const container = e.currentTarget.parentElement?.getBoundingClientRect();
+                    if (!container) return;
+                    
+                    const x = e.clientX - container.left - dragOffset.x;
+                    const y = e.clientY - container.top - dragOffset.y;
+                    
+                    setNotes(notes.map(n => 
+                      n.id === draggedNoteId
+                        ? { ...n, position: { x, y } }
+                        : n
+                    ));
+                    setDraggedNoteId(null);
                   }}
                 >
                   <div className="flex items-start justify-between mb-2">

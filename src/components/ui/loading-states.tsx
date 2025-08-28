@@ -11,7 +11,7 @@ interface LoadingStateProps {
 
 export const LoadingState: React.FC<LoadingStateProps> = ({
   type = 'tree',
-  size = 'md',
+  size = 'lg',
   message,
   className
 }) => {

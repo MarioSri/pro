@@ -4,23 +4,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Workflow, GitBranch, Clock, CheckCircle2, XCircle, Users, Settings } from "lucide-react";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { WorkflowBuilder } from "@/components/WorkflowBuilder";
+import { useAuth } from "@/contexts/AuthContext";
 
 const WorkflowManagement = () => {
-  const [userRole] = useState("employee");
+  const { user, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    logout();
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
     navigate("/");
   };
+
+  if (!user) {
+    return null; // This should be handled by ProtectedRoute, but adding as safety
+  }
 
   const workflows = [
     {
@@ -50,7 +55,7 @@ const WorkflowManagement = () => {
   ];
 
   return (
-    <DashboardLayout userRole={userRole} onLogout={handleLogout}>
+    <DashboardLayout userRole={user.role} onLogout={handleLogout}>
       <div className="container mx-auto p-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">Workflow Management</h1>

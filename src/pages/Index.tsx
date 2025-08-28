@@ -1,7 +1,4 @@
-import { useState, useEffect } from "react";
 import { AuthenticationCard } from "@/components/AuthenticationCard";
-import { ResponsiveLayout } from "@/components/layout/ResponsiveLayout";
-import { ResponsiveDashboard } from "@/components/dashboard/ResponsiveDashboard";
 import { HITAMTreeLoading } from "@/components/ui/loading-animation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -38,13 +35,7 @@ const Index = () => {
     }
   };
 
-  // Redirect authenticated users to dashboard
-  useEffect(() => {
-    if (isAuthenticated && user) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, user, navigate]);
-
+  // Always show login page - no automatic redirect
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-subtle">
@@ -53,15 +44,8 @@ const Index = () => {
     );
   }
 
-  if (!isAuthenticated) {
-    return <AuthenticationCard onLogin={handleLogin} />;
-  }
-
-  return (
-    <ResponsiveLayout>
-      <ResponsiveDashboard />
-    </ResponsiveLayout>
-  );
+  // Always show authentication card first
+  return <AuthenticationCard onLogin={handleLogin} />;
 };
 
 export default Index;

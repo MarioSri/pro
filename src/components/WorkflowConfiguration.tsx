@@ -43,6 +43,7 @@ export const WorkflowConfiguration: React.FC<WorkflowConfigurationProps> = ({ cl
   const [isEditing, setIsEditing] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [editingStep, setEditingStep] = useState<WorkflowStep | null>(null);
+  const [activeTab, setActiveTab] = useState('workflows');
 
   // Form states
   const [workflowName, setWorkflowName] = useState('');
@@ -441,6 +442,7 @@ export const WorkflowConfiguration: React.FC<WorkflowConfigurationProps> = ({ cl
             setIsCreating(true);
             setIsEditing(true);
             setSelectedWorkflow(null);
+            setActiveTab('designer');
           }}
           className="flex items-center gap-2"
         >
@@ -449,10 +451,10 @@ export const WorkflowConfiguration: React.FC<WorkflowConfigurationProps> = ({ cl
         </Button>
       </div>
 
-      <Tabs defaultValue="workflows" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="workflows">Workflows</TabsTrigger>
-          {selectedWorkflow && (
+          {(selectedWorkflow || isCreating) && (
             <TabsTrigger value="designer">Workflow Designer</TabsTrigger>
           )}
         </TabsList>
@@ -472,6 +474,7 @@ export const WorkflowConfiguration: React.FC<WorkflowConfigurationProps> = ({ cl
                     setIsCreating(true);
                     setIsEditing(true);
                     setSelectedWorkflow(null);
+                    setActiveTab('designer');
                   }}
                 >
                   Create Workflow
@@ -489,7 +492,7 @@ export const WorkflowConfiguration: React.FC<WorkflowConfigurationProps> = ({ cl
           )}
         </TabsContent>
 
-        {selectedWorkflow && (
+        {(selectedWorkflow || isCreating) && (
           <TabsContent value="designer" className="space-y-6">
             {isEditing ? (
               /* Workflow Editor */

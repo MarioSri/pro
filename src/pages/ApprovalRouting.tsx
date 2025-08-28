@@ -5,7 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { BiDirectionalApprovalManager } from '@/components/BiDirectionalApprovalManager';
 import { WorkflowConfiguration } from '@/components/WorkflowConfiguration';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import {
   Settings,
@@ -23,7 +26,17 @@ import {
 
 const ApprovalRouting: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('manager');
+
+  const handleLogout = () => {
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+    navigate("/");
+  };
 
   // Mock statistics - in a real app, these would come from the workflow engine
   const stats = {
@@ -73,14 +86,15 @@ const ApprovalRouting: React.FC = () => {
     }
   ];
 
-  const isAdmin = user?.role === 'principal' || user?.role === 'registrar';
+  const isAdmin = user?.role === 'principal' || user?.role === 'registrar' || user?.role === 'hod' || user?.role === 'program-head';
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <DashboardLayout userRole={user?.role || 'employee'} onLogout={handleLogout}>
+      <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Approval Routing System</h1>
+          <h1 className="text-3xl font-bold">Bi-Directional Approval Routing</h1>
           <p className="text-muted-foreground mt-2">
             Bi-directional approval workflows with intelligent routing and escalation
           </p>
@@ -192,28 +206,118 @@ const ApprovalRouting: React.FC = () => {
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="manager" className="flex items-center gap-2">
             <FileText className="w-4 h-4" />
             Approval Manager
           </TabsTrigger>
+          <TabsTrigger value="example" className="flex items-center gap-2">
+            <ArrowRightLeft className="w-4 h-4" />
+            Example
+          </TabsTrigger>
           <TabsTrigger 
             value="configuration" 
             className="flex items-center gap-2"
-            disabled={!isAdmin}
           >
             <Settings className="w-4 h-4" />
             Configuration
-            {!isAdmin && (
-              <Badge variant="secondary" className="ml-2 text-xs">
-                Admin Only
-              </Badge>
-            )}
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="manager" className="space-y-4">
           <BiDirectionalApprovalManager />
+        </TabsContent>
+
+        <TabsContent value="example" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowRightLeft className="w-5 h-5 text-primary" />
+                Bi-Directional Approval Routing Example
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Example Scenario */}
+              <div className="bg-muted/30 p-4 rounded-lg">
+                <h4 className="font-medium mb-2">Example Scenario: Budget Request</h4>
+                <p className="text-sm text-muted-foreground">
+                  A department head submits a budget request that requires approval from multiple authorities in sequence.
+                </p>
+              </div>
+
+              {/* Flow Diagram */}
+              <div className="space-y-4">
+                <h4 className="font-medium">Approval Flow:</h4>
+                
+                <div className="flex flex-col space-y-4">
+                  {/* Step 1 */}
+                  <div className="flex items-center space-x-4 p-4 border rounded-lg">
+                    <div className="w-8 h-8 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center font-bold">1</div>
+                    <div className="flex-1">
+                      <h5 className="font-medium">Initial Submission</h5>
+                      <p className="text-sm text-muted-foreground">Department Head submits budget request</p>
+                    </div>
+                    <Badge variant="outline">Submitted</Badge>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="flex justify-center">
+                    <ArrowRightLeft className="w-6 h-6 text-muted-foreground" />
+                  </div>
+
+                  {/* Step 2 */}
+                  <div className="flex items-center space-x-4 p-4 border rounded-lg">
+                    <div className="w-8 h-8 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center font-bold">2</div>
+                    <div className="flex-1">
+                      <h5 className="font-medium">Dean Review</h5>
+                      <p className="text-sm text-muted-foreground">Dean reviews and provides feedback or approval</p>
+                    </div>
+                    <Badge variant="secondary">In Review</Badge>
+                  </div>
+
+                  {/* Bi-directional arrow */}
+                  <div className="flex justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <ArrowRightLeft className="w-6 h-6 text-primary" />
+                      <span className="text-xs text-primary font-medium">Bi-directional</span>
+                    </div>
+                  </div>
+
+                  {/* Step 3 */}
+                  <div className="flex items-center space-x-4 p-4 border rounded-lg">
+                    <div className="w-8 h-8 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-bold">3</div>
+                    <div className="flex-1">
+                      <h5 className="font-medium">Principal Approval</h5>
+                      <p className="text-sm text-muted-foreground">Principal provides final approval or sends back for modifications</p>
+                    </div>
+                    <Badge variant="default">Approved</Badge>
+                  </div>
+                </div>
+
+                {/* Key Features */}
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <h5 className="font-medium">Key Features:</h5>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Documents can be sent back for revisions</li>
+                      <li>• Multiple approval paths based on amount</li>
+                      <li>• Automatic escalation after timeout</li>
+                      <li>• Real-time status tracking</li>
+                    </ul>
+                  </div>
+                  <div className="space-y-2">
+                    <h5 className="font-medium">Benefits:</h5>
+                    <ul className="text-sm text-muted-foreground space-y-1">
+                      <li>• Flexible approval workflows</li>
+                      <li>• Reduced processing time</li>
+                      <li>• Clear audit trail</li>
+                      <li>• Automated notifications</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="configuration" className="space-y-4">
@@ -272,7 +376,8 @@ const ApprovalRouting: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 };
 

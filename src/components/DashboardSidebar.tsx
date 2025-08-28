@@ -90,10 +90,10 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
         };
       default:
         return { 
-          icon: UserCheck, 
-          title: "User", 
+          icon: Briefcase, 
+          title: "Employee", 
           color: "bg-gray-100 text-gray-700 border-gray-200",
-          description: "System User"
+          description: "Staff Member"
         };
     }
   };
@@ -110,14 +110,13 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
       { title: "Advanced Signature", url: "/advanced-signature", icon: AdvancedSignatureIcon },
-      { title: "Reminders", url: "/reminders", icon: Bell },
       { title: "Emergency", url: "/emergency", icon: AlertTriangle },
     ];
 
     const adminItems = [
       { title: "Workflow Management", url: "/workflow", icon: GitBranch },
       { title: "Approvals", url: "/approvals", icon: CheckSquare },
-      { title: "Approval Routing", url: "/approval-routing", icon: ArrowRightLeft },
+      { title: "Bi-Directional Routing", url: "/approval-routing", icon: ArrowRightLeft },
       { title: "Analytics", url: "/analytics", icon: BarChart3 },
     ];
 

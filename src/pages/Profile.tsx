@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useTheme } from "next-themes";
 import { 
   User, 
   Mail, 
@@ -24,15 +25,20 @@ import {
   Settings,
   Globe,
   Smartphone,
-  Monitor
+  Monitor,
+  Sun,
+  Moon
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Profile = () => {
-  const [userRole] = useState("hod");
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
+  const { theme, setTheme } = useTheme();
+  
   const [profileData, setProfileData] = useState({
     name: "Dr. Rajesh Kumar",
     email: "rajesh.kumar@hitam.org",
@@ -48,8 +54,6 @@ const Profile = () => {
     emailNotifications: true,
     pushNotifications: true,
     smsAlerts: false,
-    darkMode: false,
-    language: "english",
     timezone: "Asia/Kolkata",
     autoSave: true,
     twoFactorAuth: false
@@ -97,7 +101,7 @@ const Profile = () => {
   };
 
   return (
-    <DashboardLayout userRole={userRole} onLogout={handleLogout}>
+    <DashboardLayout userRole={user?.role || 'employee'} onLogout={handleLogout}>
       <div className="container mx-auto p-4 md:p-6 max-w-4xl">
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Profile Settings</h1>
@@ -309,36 +313,35 @@ const Profile = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-2">
                     <div className="flex items-center gap-3">
-                      <Monitor className="w-5 h-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-medium">Dark Mode</p>
-                        <p className="text-sm text-muted-foreground">Switch to dark theme</p>
+                      <div className="flex items-center gap-2">
+                        {theme === 'dark' ? (
+                          <Moon className="w-5 h-5 text-muted-foreground" />
+                        ) : (
+                          <Sun className="w-5 h-5 text-muted-foreground" />
+                        )}
+                        <div>
+                          <p className="font-medium">Dark Mode</p>
+                          <p className="text-sm text-muted-foreground">
+                            {theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <Switch
-                      checked={preferences.darkMode}
-                      onCheckedChange={(checked) => handlePreferenceChange('darkMode', checked)}
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="language">Language</Label>
-                    <select
-                      id="language"
-                      value={preferences.language}
-                      onChange={(e) => handlePreferenceChange('language', e.target.value)}
-                      className="w-full h-12 px-3 py-2 border border-input bg-background rounded-md text-base"
-                    >
-                      <option value="english">English</option>
-                      <option value="hindi">Hindi</option>
-                      <option value="telugu">Telugu</option>
-                    </select>
+                    <div className="flex items-center gap-2">
+                      <Sun className="w-4 h-4 text-muted-foreground" />
+                      <Switch
+                        checked={theme === 'dark'}
+                        onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                      />
+                      <Moon className="w-4 h-4 text-muted-foreground" />
+                    </div>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="timezone">Timezone</Label>
                     <select
                       id="timezone"
+                      title="Select timezone preference"
                       value={preferences.timezone}
                       onChange={(e) => handlePreferenceChange('timezone', e.target.value)}
                       className="w-full h-12 px-3 py-2 border border-input bg-background rounded-md text-base"

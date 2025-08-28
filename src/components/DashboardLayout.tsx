@@ -70,10 +70,10 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
         };
       default:
         return { 
-          icon: User, 
-          title: "User", 
+          icon: Briefcase, 
+          title: "Employee", 
           color: "bg-gray-100 text-gray-700 border-gray-200",
-          description: "System User"
+          description: "Staff Member"
         };
     }
   };
@@ -90,23 +90,13 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
           {/* Header */}
           <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div className="flex h-16 items-center justify-between px-4">
-              {/* Left Section - Toggle Sidebar & Main Navigation */}
+              {/* Left Section - IAOMS Title and Date */}
               <div className="flex items-center gap-4">
-                <SidebarTrigger className="hover:bg-muted rounded-md p-2 transition-colors" />
-                
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <RoleIcon className="w-5 h-5 text-primary" />
-                    <div>
-                      <h1 className="text-lg font-semibold text-foreground">IAOMS Dashboard</h1>
-                      <p className="text-xs text-muted-foreground">{currentDate}</p>
-                    </div>
+                <div className="flex items-center gap-2">
+                  <div>
+                    <h1 className="text-lg font-semibold text-foreground">IAOMS</h1>
+                    <p className="text-xs text-muted-foreground">{currentDate}</p>
                   </div>
-                  
-                  {/* Role Badge */}
-                  <Badge className={cn("text-xs font-medium border", roleInfo.color)}>
-                    {roleInfo.title}
-                  </Badge>
                 </div>
               </div>
 
@@ -114,16 +104,6 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
               <div className="flex items-center gap-3">
                 {/* Main Navigation Buttons */}
                 <div className="hidden md:flex items-center gap-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate("/dashboard")}
-                    title="Dashboard Home"
-                    className="text-sm"
-                  >
-                    Dashboard
-                  </Button>
-                  
                   <Button 
                     variant="ghost" 
                     size="sm"

@@ -3,22 +3,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, TrendingUp, Users, FileText, Clock, CheckCircle2, XCircle, Calendar } from "lucide-react";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Analytics = () => {
-  const [userRole] = useState("employee");
+  const { user, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    logout();
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
     navigate("/");
   };
+
+  if (!user) {
+    return null; // This should be handled by ProtectedRoute, but adding as safety
+  }
 
   const departmentStats = [
     { name: "Computer Science", submitted: 45, approved: 38, rejected: 7, pending: 0 },
@@ -36,7 +41,7 @@ const Analytics = () => {
   ];
 
   return (
-    <DashboardLayout userRole={userRole} onLogout={handleLogout}>
+    <DashboardLayout userRole={user.role} onLogout={handleLogout}>
       <div className="container mx-auto p-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">Analytics Dashboard</h1>

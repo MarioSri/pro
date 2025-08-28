@@ -13,9 +13,9 @@ export const HITAMTreeLoading: React.FC<LoadingAnimationProps> = ({
   showText = true 
 }) => {
   const sizeClasses = {
-    sm: 'w-24 h-24',
-    md: 'w-32 h-32', 
-    lg: 'w-48 h-48'
+    sm: 'w-32 h-32',
+    md: 'w-48 h-48', 
+    lg: 'w-64 h-64'
   };
 
   return (

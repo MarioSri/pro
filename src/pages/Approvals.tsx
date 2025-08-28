@@ -6,22 +6,27 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, XCircle, Clock, FileText, User, Calendar, MessageSquare, Video } from "lucide-react";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Approvals = () => {
-  const [userRole] = useState("employee");
+  const { user, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    logout();
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
     navigate("/");
   };
+
+  if (!user) {
+    return null; // This should be handled by ProtectedRoute, but adding as safety
+  }
 
   const pendingApprovals = [
     {
@@ -75,7 +80,7 @@ const Approvals = () => {
   ];
 
   return (
-    <DashboardLayout userRole={userRole} onLogout={handleLogout}>
+    <DashboardLayout userRole={user.role} onLogout={handleLogout}>
       <div className="container mx-auto p-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-foreground mb-2">Approval Center</h1>
@@ -241,7 +246,7 @@ const Approvals = () => {
           </TabsContent>
           
           <TabsContent value="signature" className="space-y-6">
-            <DigitalSignature userRole={userRole} />
+            <DigitalSignature userRole={user.role} />
           </TabsContent>
           
           <TabsContent value="history" className="space-y-6">
