@@ -75,9 +75,11 @@ export const DigitalSignature: React.FC<SignatureComponentProps> = ({
       isDrawingMode: true,
     });
 
-    // Configure brush settings
-    canvas.freeDrawingBrush.color = "#000000";
-    canvas.freeDrawingBrush.width = 2;
+    // Configure brush settings - check if freeDrawingBrush exists
+    if (canvas.freeDrawingBrush) {
+      canvas.freeDrawingBrush.color = "#000000";
+      canvas.freeDrawingBrush.width = 2;
+    }
 
     setFabricCanvas(canvas);
 
