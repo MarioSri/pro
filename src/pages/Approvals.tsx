@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { DigitalSignature } from "@/components/DigitalSignature";
+import { AdvancedDigitalSignature } from "@/components/AdvancedDigitalSignature";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -133,7 +133,7 @@ const Approvals = () => {
         <Tabs defaultValue="pending" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="pending">Pending Approvals</TabsTrigger>
-            <TabsTrigger value="signature">Digital Signature</TabsTrigger>
+            <TabsTrigger value="signature">Advanced Signature</TabsTrigger>
             <TabsTrigger value="history">Approval History</TabsTrigger>
           </TabsList>
           
@@ -195,7 +195,7 @@ const Approvals = () => {
           </TabsContent>
           
           <TabsContent value="signature" className="space-y-6">
-            <DigitalSignature userRole={user.role} />
+            <AdvancedDigitalSignature userRole={user.role} />
           </TabsContent>
           
           <TabsContent value="history" className="space-y-6">
