@@ -97,7 +97,11 @@ export const NavigationOverview: React.FC = () => {
       registrar: [...commonItems, ...adminItems],
       "program-head": [...commonItems, ...adminItems],
       hod: [...commonItems, ...adminItems],
-      employee: [...commonItems, { title: "Workflow Management", url: "/workflow", icon: GitBranch, category: "Management" }],
+      employee: [...commonItems, 
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch, category: "Management" },
+        { title: "Bi-Directional Routing", url: "/approval-routing", icon: CheckSquare, category: "Management" },
+        { title: "Analytics", url: "/analytics", icon: BarChart3, category: "Management" }
+      ],
     };
 
     return roleSpecificItems[user.role as keyof typeof roleSpecificItems] || commonItems;

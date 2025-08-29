@@ -13,7 +13,8 @@ import {
   User,
   Menu,
   X,
-  Search
+  Search,
+  GitBranch
 } from "lucide-react";
 import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 import { cn } from "@/lib/utils";
@@ -62,6 +63,8 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ userRole }) 
       ],
       employee: [
         ...commonItems,
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+        { title: "Bi-Directional Routing", url: "/approval-routing", icon: CheckSquare },
         { title: "Analytics", url: "/analytics", icon: BarChart3 },
       ],
     };

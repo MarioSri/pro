@@ -125,7 +125,11 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       registrar: [...commonItems, ...adminItems],
       "program-head": [...commonItems, ...adminItems],
       hod: [...commonItems, ...adminItems],
-      employee: [...commonItems, { title: "Workflow Management", url: "/workflow", icon: GitBranch }],
+      employee: [...commonItems, 
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+        { title: "Bi-Directional Routing", url: "/approval-routing", icon: ArrowRightLeft },
+        { title: "Analytics", url: "/analytics", icon: BarChart3 }
+      ],
     };
 
     return roleSpecificItems[userRole as keyof typeof roleSpecificItems] || commonItems;

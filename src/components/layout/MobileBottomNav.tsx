@@ -12,7 +12,9 @@ import {
   CheckSquare,
   Calendar,
   MessageSquare,
-  GitBranch
+  GitBranch,
+  BarChart3,
+  ArrowRightLeft
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
@@ -33,9 +35,11 @@ export const MobileBottomNav: React.FC = () => {
       { path: '/documents', icon: FileText, label: 'Docs' },
     ];
 
-    // Show Approvals for all except employees, Workflow for all roles
+    // Show Approvals for all except employees, Analytics and Workflow for employees
     if (user.permissions.canApprove) {
       baseItems.push({ path: '/approvals', icon: CheckSquare, label: 'Approve' });
+    } else if (user.role === 'employee') {
+      baseItems.push({ path: '/analytics', icon: BarChart3, label: 'Analytics' });
     } else {
       baseItems.push({ path: '/workflow', icon: GitBranch, label: 'Workflow' });
     }

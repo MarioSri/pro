@@ -68,7 +68,7 @@ const App = () => (
                   </ProtectedRoute>
                 } />
                 <Route path="/approval-routing" element={
-                  <ProtectedRoute requiredPermissions={['canApprove']}>
+                  <ProtectedRoute requiredPermissions={['canManageWorkflows']}>
                     <ApprovalRouting />
                   </ProtectedRoute>
                 } />

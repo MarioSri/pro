@@ -437,25 +437,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         </Card>
       )}
 
-      {/* Role-Specific Features Info */}
-      {!isCustomizing && (
-        <Card className="shadow-elegant">
-          <CardHeader>
-            <CardTitle className="text-lg">Available Features</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {Object.entries(dashboardConfig.features)
-                .filter(([_, enabled]) => enabled)
-                .map(([feature, _]) => (
-                  <Badge key={feature} variant="outline" className="justify-center py-2">
-                    {feature.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                  </Badge>
-                ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+
     </div>
   );
 };

@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         canApprove: false,
         canViewAllDepartments: false,
         canManageWorkflows: true,
-        canViewAnalytics: false,
+        canViewAnalytics: true,
         canManageUsers: false,
       },
     };

@@ -223,10 +223,10 @@ export const roleConfigs: Record<string, RoleConfig> = {
       canRejectDocuments: false,
       canMassDistribute: false,
       canManageRoles: false,
-      canViewAnalytics: false,
+      canViewAnalytics: true,
       canScheduleMeetings: true,
       canAccessEmergency: true,
-      canManageWorkflows: false,
+      canManageWorkflows: true,
       canViewAllDepartments: false,
       canEscalateDocuments: false,
       canOverrideApprovals: false,
@@ -256,11 +256,11 @@ export const roleConfigs: Record<string, RoleConfig> = {
       roleManagement: false,
       emergencyAccess: true,
       aiSummaries: true,
-      workflowBuilder: false,
+      workflowBuilder: true,
       realTimeChat: true,
       meetingScheduler: true,
       signatureDashboard: false,
-      analyticsAccess: false
+      analyticsAccess: true
     }
   }
 };

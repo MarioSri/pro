@@ -24,7 +24,8 @@ import {
   Upload,
   Download,
   Share,
-  Archive
+  Archive,
+  ArrowRightLeft
 } from 'lucide-react';
 
 interface QuickActionsWidgetProps {
@@ -248,6 +249,22 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
           color: "text-blue-600",
           bgColor: "bg-blue-50",
           description: "Track your submissions"
+        },
+        {
+          label: "Bi-Directional Routing",
+          icon: ArrowRightLeft,
+          path: "/approval-routing",
+          color: "text-purple-600",
+          bgColor: "bg-purple-50",
+          description: "Approval routing management"
+        },
+        {
+          label: "Analytics",
+          icon: BarChart3,
+          path: "/analytics",
+          color: "text-green-600",
+          bgColor: "bg-green-50",
+          description: "View analytics dashboard"
         }
       ]
     };
