@@ -263,12 +263,6 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
           )}>
             {dashboardConfig.displayName} Dashboard
           </h1>
-          <p className="text-muted-foreground">
-            {user.department && `${user.department} • `}
-            {user.branch && `${user.branch} • `}
-            {user.year && `${user.year} • `}
-            Personalized for your role
-          </p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -301,25 +295,6 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
             </>
           )}
         </div>
-      </div>
-
-      {/* Role Badge */}
-      <div className="flex items-center gap-2">
-        <Badge 
-          style={{ backgroundColor: dashboardConfig.color }}
-          className="text-white px-3 py-1"
-        >
-          {dashboardConfig.displayName}
-        </Badge>
-        {user.department && (
-          <Badge variant="outline">{user.department}</Badge>
-        )}
-        {user.branch && (
-          <Badge variant="outline">{user.branch}</Badge>
-        )}
-        {user.year && (
-          <Badge variant="outline">{user.year}</Badge>
-        )}
       </div>
 
       {/* Customization Instructions */}
