@@ -1,4 +1,4 @@
-// Live Meeting Request Types - Separate from regular meeting scheduler
+// LiveMeet+ Request Types - Separate from regular meeting scheduler
 export interface LiveMeetingRequest {
   id: string;
   type: 'live_communication_request';

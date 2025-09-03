@@ -62,7 +62,13 @@ export const AdvancedDigitalSignature: React.FC<AdvancedDigitalSignatureProps> =
   useEffect(() => {
     const savedSignatures = localStorage.getItem('advancedSignatures');
     if (savedSignatures) {
-      setSignatures(JSON.parse(savedSignatures));
+      const parsedSignatures = JSON.parse(savedSignatures);
+      // Convert createdAt strings back to Date objects
+      const convertedSignatures = parsedSignatures.map((sig: any) => ({
+        ...sig,
+        createdAt: new Date(sig.createdAt)
+      }));
+      setSignatures(convertedSignatures);
     }
   }, []);
 
@@ -599,7 +605,12 @@ export const AdvancedDigitalSignature: React.FC<AdvancedDigitalSignatureProps> =
                           </div>
                           <div className="flex justify-between">
                             <span>Created:</span>
-                            <span>{signature.createdAt.toLocaleDateString()}</span>
+                            <span>
+                              {signature.createdAt instanceof Date 
+                                ? signature.createdAt.toLocaleDateString()
+                                : new Date(signature.createdAt).toLocaleDateString()
+                              }
+                            </span>
                           </div>
                         </div>
                         

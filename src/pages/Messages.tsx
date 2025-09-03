@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { ChatInterface } from "@/components/ChatInterface";
 import { PollManager } from "@/components/PollManager";
 import { SignatureManager } from "@/components/SignatureManager";
-import { WorkflowDemo } from "@/components/WorkflowDemo";
-import { LiveMeetingRequestManager } from "@/components/LiveMeetingRequestManager";
 import { DecentralizedChatService } from "@/services/DecentralizedChatService";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
@@ -46,8 +44,7 @@ const Messages = () => {
     activePolls: 1,
     onlineUsers: 23,
     totalChannels: 5,
-    notifications: 4,
-    liveMeetingRequests: 3 // NEW: Live meeting requests
+    notifications: 4
   });
 
   useEffect(() => {
@@ -89,21 +86,13 @@ const Messages = () => {
         </div>
 
         <Tabs defaultValue="notes" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="notes">Notes & Reminders</TabsTrigger>
             <TabsTrigger value="chat" className="relative">
               Department Chat
               {stats.unreadMessages > 0 && (
                 <Badge variant="destructive" className="ml-2 px-1 py-0 text-xs">
                   {stats.unreadMessages}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="live-requests" className="relative">
-              🔴 Live Requests
-              {stats.liveMeetingRequests > 0 && (
-                <Badge variant="destructive" className="ml-2 px-1 py-0 text-xs animate-pulse">
-                  {stats.liveMeetingRequests}
                 </Badge>
               )}
             </TabsTrigger>
@@ -135,10 +124,6 @@ const Messages = () => {
           
           <TabsContent value="notes" className="space-y-6">
             <NotesReminders userRole={user.role} isMessagesPage={true} />
-          </TabsContent>
-
-          <TabsContent value="live-requests" className="space-y-6">
-            <LiveMeetingRequestManager />
           </TabsContent>
           
           <TabsContent value="chat" className="space-y-6">
@@ -235,22 +220,6 @@ const Messages = () => {
                 <div className="h-[600px]">
                   <ChatInterface />
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Workflow Integration Demo */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-yellow-500" />
-                  Document Workflow Integration
-                </CardTitle>
-                <CardDescription>
-                  See how document workflows integrate with the communication system
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <WorkflowDemo />
               </CardContent>
             </Card>
           </TabsContent>
@@ -390,60 +359,6 @@ const Messages = () => {
                           <Badge variant="secondary">2 hours ago</Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">Annual report has been approved by all stakeholders</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Notification Settings */}
-                <div className="pt-4 border-t">
-                  <h3 className="text-lg font-semibold mb-4">Notification Settings</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Message Notifications</p>
-                          <p className="text-sm text-muted-foreground">Get notified of new messages</p>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          <CheckCircle2 className="w-4 h-4 mr-1" />
-                          Enabled
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Signature Requests</p>
-                          <p className="text-sm text-muted-foreground">Alert for signature requests</p>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          <CheckCircle2 className="w-4 h-4 mr-1" />
-                          Enabled
-                        </Button>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Poll Notifications</p>
-                          <p className="text-sm text-muted-foreground">Notify about new polls</p>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          <CheckCircle2 className="w-4 h-4 mr-1" />
-                          Enabled
-                        </Button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Document Updates</p>
-                          <p className="text-sm text-muted-foreground">Updates on document workflows</p>
-                        </div>
-                        <Button variant="outline" size="sm">
-                          <Clock className="w-4 h-4 mr-1" />
-                          Delayed
-                        </Button>
                       </div>
                     </div>
                   </div>

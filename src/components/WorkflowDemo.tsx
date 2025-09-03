@@ -298,44 +298,6 @@ export const WorkflowDemo: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Instructions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>How It Works</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-medium mb-2">🚀 Getting Started</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Configure your document details above</li>
-                <li>• Click "Simulate" on any workflow step</li>
-                <li>• Check the Chat tab to see generated channels</li>
-                <li>• View automatic notifications and messages</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="font-medium mb-2">⚡ Features Demonstrated</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Automatic channel creation for documents</li>
-                <li>• Approval workflow integration</li>
-                <li>• Real-time notifications</li>
-                <li>• Document sharing via chat</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <p className="text-sm">
-              <strong>💡 Pro Tip:</strong> In a real implementation, these workflow events would be 
-              triggered automatically by the document management system when users create, share, 
-              or request approvals for documents.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };

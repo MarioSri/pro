@@ -113,17 +113,17 @@ export const LiveMeetingRequestModal: React.FC<LiveMeetingRequestModalProps> = (
 
       toast({
         title: "Request Sent!",
-        description: `Live meeting request sent successfully. ${URGENCY_CONFIGS[urgency].description} response expected.`,
+        description: `LiveMeet+ request sent successfully. ${URGENCY_CONFIGS[urgency].description} response expected.`,
         variant: "default"
       });
 
       // Reset form and close modal
       handleClose();
     } catch (error) {
-      console.error('Error creating live meeting request:', error);
+      console.error('Error creating LiveMeet+ request:', error);
       toast({
         title: "Error",
-        description: "Failed to send live meeting request. Please try again.",
+        description: "Failed to send LiveMeet+ request. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -151,7 +151,7 @@ export const LiveMeetingRequestModal: React.FC<LiveMeetingRequestModalProps> = (
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            🔴 Request Live Meeting
+            🔴 LiveConnect+
             <Badge variant="outline" className="text-xs">
               {documentType.toUpperCase()}: {documentTitle}
             </Badge>
@@ -334,17 +334,6 @@ export const LiveMeetingRequestModal: React.FC<LiveMeetingRequestModalProps> = (
                 rows={4}
                 className="resize-none"
               />
-            </div>
-
-            {/* Request Summary */}
-            <div className="bg-blue-50 p-4 rounded-lg space-y-2">
-              <h4 className="font-medium text-blue-900">Request Summary</h4>
-              <div className="space-y-1 text-sm">
-                <p><span className="font-medium">Urgency:</span> {urgencyConfig.icon} {urgencyConfig.label}</p>
-                <p><span className="font-medium">Format:</span> {meetingFormat === 'online' ? '💻' : meetingFormat === 'in_person' ? '🏢' : '🔄'} {meetingFormat.replace('_', ' ')}</p>
-                <p><span className="font-medium">Purpose:</span> {purposeConfig.icon} {purposeConfig.label}</p>
-                <p><span className="font-medium">Expected Response:</span> {urgencyConfig.description}</p>
-              </div>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RecipientSelector } from "@/components/RecipientSelector";
 import {
   Upload,
   FileText,
@@ -35,7 +36,7 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
   const [documentTypes, setDocumentTypes] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [recipients, setRecipients] = useState<string[]>([]);
+  const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("normal");
 
@@ -44,84 +45,6 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
     { id: "circular", label: "Circular", icon: File },
     { id: "report", label: "Report", icon: FileText },
   ];
-
-  const recipientOptions = {
-    employee: [
-      // Individual HODs
-      { id: "hod-eee", label: "HOD EEE" },
-      { id: "hod-mech", label: "HOD MECH" },
-      { id: "hod-cse", label: "HOD CSE" },
-      { id: "hod-ece", label: "HOD ECE" },
-      { id: "hod-csm", label: "HOD CSM" },
-      { id: "hod-cso", label: "HOD CSO" },
-      { id: "hod-csd", label: "HOD CSD" },
-      { id: "hod-csc", label: "HOD CSC" },
-      
-      // Individual Program Department Heads
-      { id: "program-head-eee", label: "Program Department Head EEE" },
-      { id: "program-head-mech", label: "Program Department Head MECH" },
-      { id: "program-head-cse", label: "Program Department Head CSE" },
-      { id: "program-head-ece", label: "Program Department Head ECE" },
-      { id: "program-head-csm", label: "Program Department Head CSM" },
-      { id: "program-head-cso", label: "Program Department Head CSO" },
-      { id: "program-head-csd", label: "Program Department Head CSD" },
-      { id: "program-head-csc", label: "Program Department Head CSC" },
-      
-      { id: "registrar", label: "Registrar" },
-      { id: "principal", label: "Principal" },
-    ],
-    hod: [
-      { id: "registrar", label: "Registrar" },
-      { id: "principal", label: "Principal" },
-    ],
-    registrar: [
-      { id: "principal", label: "Principal" },
-      // Individual HODs
-      { id: "hod-eee", label: "HOD EEE" },
-      { id: "hod-mech", label: "HOD MECH" },
-      { id: "hod-cse", label: "HOD CSE" },
-      { id: "hod-ece", label: "HOD ECE" },
-      { id: "hod-csm", label: "HOD CSM" },
-      { id: "hod-cso", label: "HOD CSO" },
-      { id: "hod-csd", label: "HOD CSD" },
-      { id: "hod-csc", label: "HOD CSC" },
-      // Individual Program Department Heads
-      { id: "program-head-eee", label: "Program Department Head EEE" },
-      { id: "program-head-mech", label: "Program Department Head MECH" },
-      { id: "program-head-cse", label: "Program Department Head CSE" },
-      { id: "program-head-ece", label: "Program Department Head ECE" },
-      { id: "program-head-csm", label: "Program Department Head CSM" },
-      { id: "program-head-cso", label: "Program Department Head CSO" },
-      { id: "program-head-csd", label: "Program Department Head CSD" },
-      { id: "program-head-csc", label: "Program Department Head CSC" },
-    ],
-    "program-head": [
-      { id: "hod", label: "Head of Department" },
-      { id: "registrar", label: "Registrar" },
-      { id: "principal", label: "Principal" },
-    ],
-    principal: [
-      // Individual HODs
-      { id: "hod-eee", label: "HOD EEE" },
-      { id: "hod-mech", label: "HOD MECH" },
-      { id: "hod-cse", label: "HOD CSE" },
-      { id: "hod-ece", label: "HOD ECE" },
-      { id: "hod-csm", label: "HOD CSM" },
-      { id: "hod-cso", label: "HOD CSO" },
-      { id: "hod-csd", label: "HOD CSD" },
-      { id: "hod-csc", label: "HOD CSC" },
-      // Individual Program Department Heads
-      { id: "program-head-eee", label: "Program Department Head EEE" },
-      { id: "program-head-mech", label: "Program Department Head MECH" },
-      { id: "program-head-cse", label: "Program Department Head CSE" },
-      { id: "program-head-ece", label: "Program Department Head ECE" },
-      { id: "program-head-csm", label: "Program Department Head CSM" },
-      { id: "program-head-cso", label: "Program Department Head CSO" },
-      { id: "program-head-csd", label: "Program Department Head CSD" },
-      { id: "program-head-csc", label: "Program Department Head CSC" },
-      { id: "registrar", label: "Registrar" },
-    ],
-  };
 
   const handleDocumentTypeChange = (typeId: string, checked: boolean) => {
     if (checked) {
@@ -148,7 +71,7 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
       const data = {
         documentTypes,
         files: uploadedFiles,
-        recipients,
+        recipients: selectedRecipients,
         description,
         priority,
         timestamp: new Date().toISOString(),
@@ -158,7 +81,7 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
     }, 2000);
   };
 
-  const isSubmitDisabled = documentTypes.length === 0 || uploadedFiles.length === 0 || recipients.length === 0;
+  const isSubmitDisabled = documentTypes.length === 0 || uploadedFiles.length === 0 || selectedRecipients.length === 0;
 
   return (
     <div className="space-y-6">
@@ -246,52 +169,14 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
             )}
           </div>
 
-          {/* Recipients */}
+          {/* Document Management Recipients */}
           <div className="space-y-3">
-            <Label className="text-base font-medium">Recipients</Label>
-            <div className="border rounded-lg p-4 max-h-64 overflow-y-auto">
-              <div className="grid grid-cols-1 gap-3">
-                {(recipientOptions[userRole as keyof typeof recipientOptions] || []).map((recipient) => (
-                  <div key={recipient.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={recipient.id}
-                      checked={recipients.includes(recipient.id)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setRecipients([...recipients, recipient.id]);
-                        } else {
-                          setRecipients(recipients.filter(id => id !== recipient.id));
-                        }
-                      }}
-                    />
-                    <Label htmlFor={recipient.id} className="text-sm font-normal cursor-pointer">
-                      {recipient.label}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {recipients.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {recipients.map((recipientId) => {
-                  const recipient = (recipientOptions[userRole as keyof typeof recipientOptions] || [])
-                    .find(r => r.id === recipientId);
-                  return recipient ? (
-                    <Badge key={recipientId} variant="secondary" className="text-xs">
-                      {recipient.label}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-4 w-4 ml-1 hover:bg-destructive hover:text-destructive-foreground"
-                        onClick={() => setRecipients(recipients.filter(id => id !== recipientId))}
-                      >
-                        <X className="w-3 h-3" />
-                      </Button>
-                    </Badge>
-                  ) : null;
-                })}
-              </div>
-            )}
+            <Label className="text-base font-medium">Document Management Recipients</Label>
+            <RecipientSelector
+              userRole={userRole}
+              selectedRecipients={selectedRecipients}
+              onRecipientsChange={setSelectedRecipients}
+            />
           </div>
 
           {/* Priority */}

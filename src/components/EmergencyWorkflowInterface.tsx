@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { RecipientSelector } from "@/components/RecipientSelector";
 import { 
@@ -20,7 +21,10 @@ import {
   CheckCircle2,
   XCircle,
   Eye,
-  History
+  History,
+  Upload,
+  File,
+  X
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -52,6 +56,12 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
     urgencyLevel: 'high' as const,
     attachments: [] as File[]
   });
+  
+  // Document Management Integration State
+  const [documentTitle, setDocumentTitle] = useState('');
+  const [documentTypes, setDocumentTypes] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [documentDescription, setDocumentDescription] = useState('');
   const [emergencyHistory, setEmergencyHistory] = useState<EmergencySubmission[]>([
     {
       id: '1',
@@ -101,6 +111,33 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
     }
   };
 
+  // Document Management Integration - Document Type Options
+  const documentTypeOptions = [
+    { id: "letter", label: "Letter", icon: FileText },
+    { id: "circular", label: "Circular", icon: File },
+    { id: "report", label: "Report", icon: FileText },
+    { id: "emergency-protocol", label: "Emergency Protocol", icon: Shield },
+    { id: "incident-report", label: "Incident Report", icon: AlertTriangle }
+  ];
+
+  // Document Management Helper Functions
+  const handleDocumentTypeChange = (typeId: string, checked: boolean) => {
+    if (checked) {
+      setDocumentTypes([...documentTypes, typeId]);
+    } else {
+      setDocumentTypes(documentTypes.filter(id => id !== typeId));
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    setUploadedFiles([...uploadedFiles, ...files]);
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
+  };
+
   const emergencyReasons = [
     'Infrastructure failure',
     'Safety hazard',
@@ -148,6 +185,12 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
       attachments: []
     });
     setSelectedRecipients([]);
+    // Reset document fields
+    setDocumentTitle('');
+    setDocumentTypes([]);
+    setUploadedFiles([]);
+    setDocumentDescription('');
+    
     setIsEmergencyMode(false);
 
     // Simulate immediate notifications
@@ -319,6 +362,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
                 <Label htmlFor="urgency-level">Urgency Level *</Label>
                 <select
                   id="urgency-level"
+                  title="Select emergency urgency level"
                   value={emergencyData.urgencyLevel}
                   onChange={(e) => setEmergencyData({...emergencyData, urgencyLevel: e.target.value as any})}
                   className="w-full h-10 px-3 py-2 border border-destructive bg-background rounded-md text-sm focus:ring-destructive"
@@ -329,6 +373,112 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+
+            {/* Document Submission Section */}
+            <div className="border-t-2 border-destructive/20 pt-6">
+              <div className="mb-4">
+                <Label className="text-lg font-semibold text-destructive">Document Submission (Optional)</Label>
+                <p className="text-sm text-muted-foreground mt-1">Attach relevant documents to support your emergency submission</p>
+              </div>
+
+              {/* Document Title */}
+              <div className="space-y-2 mb-4">
+                <Label htmlFor="document-title">Document Title</Label>
+                <Input
+                  id="document-title"
+                  value={documentTitle}
+                  onChange={(e) => setDocumentTitle(e.target.value)}
+                  placeholder="Enter document title"
+                  className="border-destructive/30 focus:ring-destructive"
+                />
+              </div>
+
+              {/* Document Type Selection */}
+              <div className="space-y-3 mb-4">
+                <Label className="text-base font-medium">Document Type</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {documentTypeOptions.map((option) => (
+                    <div key={option.id} className="flex items-center space-x-2 p-3 border border-destructive/30 rounded-lg hover:bg-destructive/5 transition-colors">
+                      <Checkbox
+                        id={option.id}
+                        checked={documentTypes.includes(option.id)}
+                        onCheckedChange={(checked) => handleDocumentTypeChange(option.id, !!checked)}
+                      />
+                      <Label htmlFor={option.id} className="flex items-center gap-2 cursor-pointer">
+                        <option.icon className="w-4 h-4" />
+                        {option.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* File Upload */}
+              <div className="space-y-3 mb-4">
+                <Label className="text-base font-medium">Upload Documents</Label>
+                <div className="border-2 border-dashed border-destructive/30 rounded-lg p-6 text-center hover:border-destructive transition-colors">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.xlsx,.xls,.png,.jpg,.jpeg"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                    id="emergency-file-upload"
+                    title="Upload emergency document files"
+                  />
+                  <Label htmlFor="emergency-file-upload" className="cursor-pointer">
+                    <div className="space-y-2">
+                      <Upload className="w-8 h-8 mx-auto text-destructive" />
+                      <p className="text-sm text-muted-foreground">
+                        Drag and drop emergency files here, or click to browse
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Supports: PDF, DOC, DOCX, XLS, XLSX, PNG, JPG, JPEG
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+
+                {/* Uploaded Files Display */}
+                {uploadedFiles.length > 0 && (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Uploaded Emergency Files</Label>
+                    {uploadedFiles.map((file, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-destructive/5 rounded-md border border-destructive/20">
+                        <div className="flex items-center gap-2">
+                          <File className="w-4 h-4 text-destructive" />
+                          <span className="text-sm">{file.name}</span>
+                          <Badge variant="secondary" className="text-xs">
+                            {(file.size / 1024 / 1024).toFixed(1)} MB
+                          </Badge>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeFile(index)}
+                          className="h-6 w-6 text-destructive hover:text-destructive"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Document Description */}
+              <div className="space-y-2 mb-6">
+                <Label htmlFor="document-description">Document Description / Comments</Label>
+                <Textarea
+                  id="document-description"
+                  value={documentDescription}
+                  onChange={(e) => setDocumentDescription(e.target.value)}
+                  placeholder="Provide additional context about the attached documents..."
+                  rows={3}
+                  className="border-destructive/30 focus:ring-destructive"
+                />
               </div>
             </div>
 
@@ -348,6 +498,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
               <Label htmlFor="emergency-reason">Emergency Reason</Label>
               <select
                 id="emergency-reason"
+                title="Select emergency reason"
                 value={emergencyData.reason}
                 onChange={(e) => setEmergencyData({...emergencyData, reason: e.target.value})}
                 className="w-full h-10 px-3 py-2 border border-input bg-background rounded-md text-sm"
@@ -369,21 +520,6 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
               />
             </div>
 
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div className="text-red-800">
-                  <p className="font-semibold mb-2">Emergency Submission Warning</p>
-                  <ul className="text-sm space-y-1 list-disc list-inside">
-                    <li>This will bypass all normal approval workflows</li>
-                    <li>All selected recipients will be notified immediately</li>
-                    <li>Emergency audit log will be created</li>
-                    <li>Automatic escalation will occur if no response within time limits</li>
-                    <li>False emergency submissions may result in disciplinary action</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
 
             <div className="flex justify-end gap-2 pt-4">
               <Button
@@ -405,14 +541,15 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
         </Card>
       )}
 
-      {/* Emergency History */}
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <History className="w-5 h-5 text-primary" />
-            Emergency History
-          </CardTitle>
-        </CardHeader>
+      {/* Emergency History - Only show when emergency mode is NOT active */}
+      {!isEmergencyMode && (
+        <Card className="shadow-elegant">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <History className="w-5 h-5 text-primary" />
+              Emergency History
+            </CardTitle>
+          </CardHeader>
         <CardContent>
           <ScrollArea className="h-96">
             <div className="space-y-4">
@@ -501,15 +638,17 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
           </ScrollArea>
         </CardContent>
       </Card>
+      )}
 
-      {/* Emergency Contacts */}
-      <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" />
-            Emergency Contacts
-          </CardTitle>
-        </CardHeader>
+      {/* Emergency Contacts - Only show when emergency mode is NOT active */}
+      {!isEmergencyMode && (
+        <Card className="shadow-elegant">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary" />
+              Emergency Contacts
+            </CardTitle>
+          </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
@@ -545,6 +684,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
           </div>
         </CardContent>
       </Card>
+      )}
     </div>
   );
 };

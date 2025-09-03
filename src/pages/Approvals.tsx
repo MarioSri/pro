@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CheckCircle2, XCircle, Clock, FileText, User, Calendar, MessageSquare, Video } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, FileText, User, Calendar, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -181,10 +181,9 @@ const Approvals = () => {
                           Reject
                         </Button>
                         <Button size="sm" variant="outline">View Document</Button>
-                        {/* NEW: Live Meeting Request Button */}
+                        {/* NEW: LiveConnect+ Request Button */}
                         <Button size="sm" variant="outline" className="border-orange-500 text-orange-600 hover:bg-orange-50">
-                          <Video className="h-4 w-4 mr-1" />
-                          🔴 Request Meeting
+                          🔴 LiveConnect+
                         </Button>
                       </div>
                     </div>

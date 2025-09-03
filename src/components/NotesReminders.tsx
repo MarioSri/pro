@@ -16,7 +16,10 @@ import {
   Pin,
   Palette,
   Search,
-  Filter
+  Filter,
+  Lock,
+  Unlock,
+  Move
 } from "lucide-react";
 import {
   Select,
@@ -67,6 +70,7 @@ interface StickyNoteItemProps {
   isMessagesPage: boolean;
   isDragging: boolean;
   draggedNoteId: number | null;
+  isLocked: boolean;
   onMouseDown: (e: React.MouseEvent, note: Note) => void;
   onTouchStart: (e: React.TouchEvent, note: Note) => void;
   onTogglePin: (id: number) => void;
@@ -78,7 +82,8 @@ function StickyNoteItem({
   note, 
   isMessagesPage, 
   isDragging, 
-  draggedNoteId, 
+  draggedNoteId,
+  isLocked,
   onMouseDown, 
   onTouchStart,
   onTogglePin, 
@@ -99,13 +104,13 @@ function StickyNoteItem({
   return (
     <div
       ref={noteRef}
-      className={`sticky-note w-64 p-4 rounded-lg shadow-md hover:shadow-lg animate-scale-in ${note.color} ${isMessagesPage ? 'cursor-move' : 'cursor-default'} ${
+      className={`sticky-note w-64 p-4 rounded-lg shadow-md hover:shadow-lg animate-scale-in ${note.color} ${isMessagesPage && !isLocked ? 'cursor-move' : 'cursor-default'} ${
         isDragging && draggedNoteId === note.id 
           ? 'transition-none transform-gpu scale-105 shadow-2xl' 
           : 'transition-all duration-200'
       }`}
-      onMouseDown={(e) => isMessagesPage && onMouseDown(e, note)}
-      onTouchStart={(e) => isMessagesPage && onTouchStart(e, note)}
+      onMouseDown={(e) => isMessagesPage && !isLocked && onMouseDown(e, note)}
+      onTouchStart={(e) => isMessagesPage && !isLocked && onTouchStart(e, note)}
     >
       <div className="flex items-start justify-between mb-2">
         <h4 className="font-medium text-sm pr-2">{note.title}</h4>
@@ -155,6 +160,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
   const [draggedNoteId, setDraggedNoteId] = useState<number | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [notes, setNotes] = useState<Note[]>([
     {
@@ -229,12 +235,19 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
     category: "general"
   });
 
-  const [newReminder, setNewReminder] = useState({
+  const [newReminder, setNewReminder] = useState<{
+    title: string;
+    description: string;
+    dueDate: string;
+    dueTime: string;
+    priority: 'low' | 'medium' | 'high';
+    category: string;
+  }>({
     title: "",
     description: "",
     dueDate: "",
     dueTime: "",
-    priority: "medium" as const,
+    priority: "medium",
     category: "general"
   });
 
@@ -295,7 +308,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
 
   // Advanced mouse-based drag functionality (from Dashboard)
   const handleMouseDown = (e: React.MouseEvent, note: Note) => {
-    if (!isMessagesPage) return;
+    if (!isMessagesPage || isLocked) return;
     
     e.preventDefault();
     e.stopPropagation();
@@ -315,7 +328,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!draggedNoteId || !isDragging || !isMessagesPage) return;
+    if (!draggedNoteId || !isDragging || !isMessagesPage || isLocked) return;
     
     e.preventDefault();
     const containerRect = containerRef.current?.getBoundingClientRect();
@@ -349,7 +362,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
   };
 
   const handleTouchStart = (e: React.TouchEvent, note: Note) => {
-    if (!isMessagesPage) return;
+    if (!isMessagesPage || isLocked) return;
     
     e.preventDefault();
     e.stopPropagation();
@@ -370,7 +383,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!draggedNoteId || !isDragging || !isMessagesPage) return;
+    if (!draggedNoteId || !isDragging || !isMessagesPage || isLocked) return;
     
     e.preventDefault();
     const touch = e.touches[0];
@@ -408,6 +421,10 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
     setReminders(reminders.map(reminder => 
       reminder.id === id ? { ...reminder, completed: !reminder.completed } : reminder
     ));
+  };
+
+  const toggleLock = () => {
+    setIsLocked(!isLocked);
   };
 
   const getPriorityColor = (priority: string) => {
@@ -493,7 +510,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Priority</label>
-                    <Select value={newReminder.priority} onValueChange={(value: any) => setNewReminder({...newReminder, priority: value})}>
+                    <Select value={newReminder.priority} onValueChange={(value) => setNewReminder({...newReminder, priority: value as 'low' | 'medium' | 'high'})}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
@@ -615,34 +632,59 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
                 <StickyNote className="w-5 h-5 text-primary" />
                 Sticky Notes
               </CardTitle>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
+              <div className="flex items-center gap-2">
+                {isMessagesPage && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={toggleLock}
+                    title={isLocked ? "Unlock notes for moving" : "Lock notes in place"}
+                    className={`p-2 ${
+                      isLocked ? "text-red-600 border-red-300" : "text-green-600 border-green-300"
+                    }`}
+                  >
+                    {isLocked ? <Lock className="w-4 h-4" /> : <Unlock className="w-4 h-4" />}
+                  </Button>
+                )}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
                   placeholder="Search notes..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 w-64"
                 />
+                </div>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div 
               ref={containerRef}
-              className="relative min-h-[500px] bg-gradient-subtle rounded-lg p-4 overflow-hidden select-none"
+              className={`relative min-h-[500px] bg-gradient-subtle rounded-lg p-4 overflow-hidden select-none ${
+                !isLocked && isMessagesPage ? "cursor-move" : "cursor-default"
+              }`}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
+              {/* Lock indicator */}
+              {isLocked && isMessagesPage && (
+                <div className="absolute top-2 right-2 z-20">
+                  <Badge variant="secondary" className="text-xs bg-red-100 text-red-700">
+                    <Lock className="w-3 h-3 mr-1" />
+                    Locked
+                  </Badge>
+                </div>
+              )}
+              
               {/* Drag instruction for Messages page */}
-              {isMessagesPage && sortedNotes.length > 0 && (
+              {isMessagesPage && !isLocked && sortedNotes.length > 0 && (
                 <div className="absolute top-2 left-2 z-20">
                   <Badge variant="outline" className="text-xs bg-white/80">
-                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                    </svg>
+                    <Move className="w-3 h-3 mr-1" />
                     Drag to move
                   </Badge>
                 </div>
@@ -655,6 +697,7 @@ export function NotesReminders({ userRole, isMessagesPage = false }: NotesRemind
                   isMessagesPage={isMessagesPage}
                   isDragging={isDragging}
                   draggedNoteId={draggedNoteId}
+                  isLocked={isLocked}
                   onMouseDown={handleMouseDown}
                   onTouchStart={handleTouchStart}
                   onTogglePin={togglePin}

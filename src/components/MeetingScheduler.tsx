@@ -163,7 +163,7 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
   const [showAISuggestionsDialog, setShowAISuggestionsDialog] = useState(false);
   const [showLiveMeetingModal, setShowLiveMeetingModal] = useState(false);
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
-  const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'analytics' | 'live-requests'>('calendar');
+  const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'analytics'>('calendar');
   const [filterBy, setFilterBy] = useState<'all' | 'today' | 'week' | 'month'>('all');
   
   // New Meeting Form State
@@ -671,7 +671,7 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
               onClick={() => setShowLiveMeetingModal(true)}
               className="border-orange-500 text-orange-600 hover:bg-orange-50 animate-scale-in"
             >
-              🔴 Live Requests
+              🔴 LiveConnect+
             </Button>
           </div>
         </div>
@@ -679,7 +679,7 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
         {/* View Mode Tabs */}
         <Tabs value={viewMode} onValueChange={(value: any) => setViewMode(value)} className="w-full">
           <div className="flex items-center justify-between">
-            <TabsList className="grid w-fit grid-cols-4">
+            <TabsList className="grid w-fit grid-cols-3">
               <TabsTrigger value="calendar" className="gap-2">
                 <CalendarIcon className="w-4 h-4" />
                 Calendar
@@ -687,12 +687,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
               <TabsTrigger value="list" className="gap-2">
                 <Users className="w-4 h-4" />
                 List View
-              </TabsTrigger>
-              <TabsTrigger value="live-requests" className="gap-2 relative">
-                🔴 Live Requests
-                <Badge variant="destructive" className="ml-1 px-1 py-0 text-xs animate-pulse">
-                  3
-                </Badge>
               </TabsTrigger>
               <TabsTrigger value="analytics" className="gap-2">
                 <BarChart3 className="w-4 h-4" />
@@ -975,13 +969,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
                               Join Meeting
                             </Button>
                           )}
-                          
-                          {meeting.documents && meeting.documents.length > 0 && (
-                            <Button variant="outline" size="sm">
-                              <FileText className="w-4 h-4 mr-2" />
-                              Documents ({meeting.documents.length})
-                            </Button>
-                          )}
                         </div>
                         
                         <div className="flex gap-1">
@@ -997,123 +984,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
                       </div>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Live Requests View */}
-          <TabsContent value="live-requests" className="space-y-6">
-            <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  🔴 Live Meeting Requests
-                  <Badge variant="secondary" className="animate-pulse">REAL-TIME</Badge>
-                </CardTitle>
-                <CardDescription>
-                  Request immediate clarification meetings during document workflows
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="flex items-center gap-2">
-                    <span className="text-red-600 text-lg">🔥</span>
-                    <div>
-                      <p className="font-medium">Immediate Response</p>
-                      <p className="text-sm text-gray-600">Within 15 minutes</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-blue-600 text-lg">💻</span>
-                    <div>
-                      <p className="font-medium">Auto-Generated Links</p>
-                      <p className="text-sm text-gray-600">Google Meet, Zoom, Teams</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-green-600 text-lg">📋</span>
-                    <div>
-                      <p className="font-medium">Context Preserved</p>
-                      <p className="text-sm text-gray-600">Document attached to meeting</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button 
-                      onClick={() => setShowLiveMeetingModal(true)}
-                      className="bg-orange-600 hover:bg-orange-700 text-white flex-1"
-                    >
-                      🔴 Request Live Meeting
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => window.open('/messages', '_blank')}
-                      className="flex-1"
-                    >
-                      📱 View All Requests
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => window.open('/approvals', '_blank')}
-                      className="flex-1"
-                    >
-                      📄 Document Approvals
-                    </Button>
-                  </div>
-
-                  <Separator />
-
-                  <div>
-                    <h4 className="font-medium mb-3">How Live Meeting Requests Work:</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-2">
-                          <span className="text-orange-600">1.</span>
-                          <div>
-                            <p className="font-medium">Request from Document Workflow</p>
-                            <p className="text-gray-600">Click "🔴 Request Meeting" while reviewing documents</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <span className="text-orange-600">2.</span>
-                          <div>
-                            <p className="font-medium">Select Urgency & Participants</p>
-                            <p className="text-gray-600">Choose immediate, urgent, or normal priority</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-2">
-                          <span className="text-orange-600">3.</span>
-                          <div>
-                            <p className="font-medium">Real-time Notifications Sent</p>
-                            <p className="text-gray-600">Email, dashboard, and mobile alerts</p>
-                          </div>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <span className="text-orange-600">4.</span>
-                          <div>
-                            <p className="font-medium">Instant Meeting Access</p>
-                            <p className="text-gray-600">Auto-generated links for immediate discussion</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-blue-50 p-4 rounded-lg">
-                    <h4 className="font-medium text-blue-900 mb-2">🎯 Perfect for:</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-blue-800">
-                      <div>• Document clarifications</div>
-                      <div>• Urgent approvals</div>
-                      <div>• Policy discussions</div>
-                      <div>• Budget reviews</div>
-                      <div>• Emergency decisions</div>
-                      <div>• Real-time collaboration</div>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -1181,55 +1051,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
                 </CardContent>
               </Card>
             </div>
-
-            {/* Live Meeting Requests Quick Access */}
-            <Card className="mt-6 bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  🔴 Live Meeting Requests
-                  <Badge variant="secondary" className="animate-pulse">QUICK ACCESS</Badge>
-                </CardTitle>
-                <CardDescription>
-                  Request immediate clarification meetings for urgent discussions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-red-600 text-lg">🔥</span>
-                    <div>
-                      <p className="font-medium">Immediate</p>
-                      <p className="text-sm text-gray-600">Within 15 minutes</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-orange-600 text-lg">⚡</span>
-                    <div>
-                      <p className="font-medium">Urgent</p>
-                      <p className="text-sm text-gray-600">Within 1 hour</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-blue-600 text-lg">💻</span>
-                    <div>
-                      <p className="font-medium">Auto-Generated Links</p>
-                      <p className="text-sm text-gray-600">Google Meet, Zoom, Teams</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <Button 
-                    onClick={() => setShowLiveMeetingModal(true)}
-                    className="bg-orange-600 hover:bg-orange-700 text-white"
-                  >
-                    🔴 Request Live Meeting
-                  </Button>
-                  <Button variant="outline" onClick={() => window.open('/messages', '_blank')}>
-                    📱 View All Requests
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
         </Tabs>
 
@@ -1744,13 +1565,13 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
           </DialogContent>
         </Dialog>
 
-        {/* Live Meeting Request Modal */}
+        {/* LiveMeet+ Request Modal */}
         <LiveMeetingRequestModal
           isOpen={showLiveMeetingModal}
           onClose={() => setShowLiveMeetingModal(false)}
           documentId="meeting-scheduler"
           documentType="report"
-          documentTitle="Meeting Scheduler Request"
+          documentTitle=""
         />
       </div>
     </TooltipProvider>

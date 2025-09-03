@@ -61,10 +61,10 @@ export const LiveMeetingRequestManager: React.FC = () => {
       const requests = await liveMeetingService.getMyRequests();
       setActiveRequests(requests);
     } catch (error) {
-      console.error('Error loading live meeting requests:', error);
+      console.error('Error loading LiveMeet+ requests:', error);
       toast({
         title: "Error",
-        description: "Failed to load live meeting requests",
+        description: "Failed to load LiveMeet+ requests",
         variant: "destructive"
       });
     } finally {
@@ -87,7 +87,7 @@ export const LiveMeetingRequestManager: React.FC = () => {
     setRefreshing(false);
     toast({
       title: "Refreshed",
-      description: "Live meeting requests updated",
+      description: "LiveMeet+ requests updated",
       variant: "default"
     });
   };
@@ -147,14 +147,14 @@ export const LiveMeetingRequestManager: React.FC = () => {
 
       toast({
         title: "Meeting Accepted",
-        description: "Meeting request accepted successfully. Meeting link will be generated.",
+        description: "LiveMeet+ request accepted successfully. Meeting link will be generated.",
         variant: "default"
       });
     } catch (error) {
-      console.error('Error accepting meeting request:', error);
+      console.error('Error accepting LiveMeet+ request:', error);
       toast({
         title: "Error",
-        description: "Failed to accept meeting request",
+        description: "Failed to accept LiveMeet+ request",
         variant: "destructive"
       });
     }
@@ -181,14 +181,14 @@ export const LiveMeetingRequestManager: React.FC = () => {
 
       toast({
         title: "Meeting Declined",
-        description: "Meeting request declined successfully.",
+        description: "LiveMeet+ request declined successfully.",
         variant: "default"
       });
     } catch (error) {
-      console.error('Error declining meeting request:', error);
+      console.error('Error declining LiveMeet+ request:', error);
       toast({
         title: "Error",
-        description: "Failed to decline meeting request",
+        description: "Failed to decline LiveMeet+ request",
         variant: "destructive"
       });
     }
@@ -210,7 +210,7 @@ export const LiveMeetingRequestManager: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            🔴 Live Meeting Requests
+            🔴 LiveMeet+
             {filteredRequests.filter(r => r.status === 'pending').length > 0 && (
               <Badge variant="destructive" className="animate-pulse">
                 {filteredRequests.filter(r => r.status === 'pending').length} pending
@@ -237,7 +237,7 @@ export const LiveMeetingRequestManager: React.FC = () => {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard
-            title="Pending Requests"
+            title="Pending LiveMeet+"
             value={stats.pendingRequests}
             icon={<Clock className="h-5 w-5 text-yellow-600" />}
             color="yellow"
@@ -251,7 +251,7 @@ export const LiveMeetingRequestManager: React.FC = () => {
             description="Within 15 minutes"
           />
           <StatsCard
-            title="Today's Meetings"
+            title="Today's LiveMeet+"
             value={stats.todaysMeetings}
             icon={<Users className="h-5 w-5 text-blue-600" />}
             color="blue"
@@ -303,11 +303,11 @@ export const LiveMeetingRequestManager: React.FC = () => {
             <CardContent className="p-8 text-center">
               <div className="space-y-2">
                 <div className="text-4xl">📭</div>
-                <h3 className="text-lg font-medium text-gray-900">No live meeting requests</h3>
+                <h3 className="text-lg font-medium text-gray-900">No LiveMeet+ requests</h3>
                 <p className="text-gray-500">
                   {searchTerm || filter !== 'all' 
                     ? 'No requests match your current filters' 
-                    : 'No active live meeting requests at the moment'}
+                    : 'No active LiveMeet+ requests at the moment'}
                 </p>
               </div>
             </CardContent>
