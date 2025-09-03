@@ -53,49 +53,49 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
         label: "Universal Search",
         icon: Search,
         path: "/search",
-        color: "text-primary",
-        bgColor: "bg-primary/10",
+        color: "text-blue-600",
+        bgColor: "bg-blue-50",
         description: "Search documents, users, departments"
       },
       {
         label: "Submit Document",
         icon: Plus,
         path: "/documents",
-        color: "text-success",
-        bgColor: "bg-success/10",
+        color: "text-green-600",
+        bgColor: "bg-green-50",
         description: "Upload new documents"
       },
       {
         label: "Calendar",
         icon: Calendar,
         path: "/calendar",
-        color: "text-blue-500",
-        bgColor: "bg-blue-50",
+        color: "text-purple-600",
+        bgColor: "bg-purple-50",
         description: "Schedule meetings and events"
       },
       {
         label: "Emergency",
         icon: AlertTriangle,
         path: "/emergency",
-        color: "text-destructive",
-        bgColor: "bg-destructive/10",
+        color: "text-red-600",
+        bgColor: "bg-red-50",
         description: "Emergency submissions"
-      },
-      {
-        label: "Reminders",
-        icon: Bell,
-        path: "/reminders",
-        color: "text-purple-500",
-        bgColor: "bg-purple-50",
-        description: "Personal reminders"
       },
       {
         label: "Messages",
         icon: MessageSquare,
         path: "/messages",
-        color: "text-indigo-500",
+        color: "text-indigo-600",
         bgColor: "bg-indigo-50",
         description: "Communication center"
+      },
+      {
+        label: "Reminders",
+        icon: Bell,
+        path: "/reminders",
+        color: "text-orange-600",
+        bgColor: "bg-orange-50",
+        description: "Personal reminders"
       }
     ];
 
@@ -106,41 +106,41 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
           label: "Mass Distribution",
           icon: Share,
           path: "/mass-distribution",
-          color: "text-orange-500",
-          bgColor: "bg-orange-50",
+          color: "text-cyan-600",
+          bgColor: "bg-cyan-50",
           description: "Distribute to multiple recipients"
         },
         {
           label: "Role Management",
           icon: Users,
           path: "/role-management",
-          color: "text-cyan-500",
-          bgColor: "bg-cyan-50",
-          description: "Manage user roles and permissions"
+          color: "text-pink-600",
+          bgColor: "bg-pink-50",
+          description: "Manage user roles"
         },
         {
           label: "Workflow Builder",
           icon: GitBranch,
           path: "/workflow",
-          color: "text-pink-500",
-          bgColor: "bg-pink-50",
-          description: "Design approval workflows"
+          color: "text-violet-600",
+          bgColor: "bg-violet-50",
+          description: "Design workflows"
         },
         {
           label: "Analytics",
           icon: BarChart3,
           path: "/analytics",
-          color: "text-green-600",
-          bgColor: "bg-green-50",
-          description: "System analytics and reports"
+          color: "text-emerald-600",
+          bgColor: "bg-emerald-50",
+          description: "System analytics"
         },
         {
           label: "Approvals",
           icon: CheckSquare,
           path: "/approvals",
-          color: "text-warning",
-          bgColor: "bg-yellow-50",
-          description: "Review pending approvals"
+          color: "text-amber-600",
+          bgColor: "bg-amber-50",
+          description: "Review approvals"
         },
         {
           label: "System Settings",
@@ -157,25 +157,25 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
           label: "Approvals",
           icon: CheckSquare,
           path: "/approvals",
-          color: "text-warning",
-          bgColor: "bg-yellow-50",
-          description: "Review pending approvals"
+          color: "text-amber-600",
+          bgColor: "bg-amber-50",
+          description: "Review approvals"
         },
         {
           label: "Analytics",
           icon: BarChart3,
           path: "/analytics",
-          color: "text-green-600",
-          bgColor: "bg-green-50",
+          color: "text-emerald-600",
+          bgColor: "bg-emerald-50",
           description: "Department analytics"
         },
         {
           label: "Workflow Management",
           icon: GitBranch,
           path: "/workflow",
-          color: "text-pink-500",
-          bgColor: "bg-pink-50",
-          description: "Manage approval workflows"
+          color: "text-violet-600",
+          bgColor: "bg-violet-50",
+          description: "Manage workflows"
         },
         {
           label: "Archive",
@@ -192,16 +192,16 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
           label: "Approvals",
           icon: CheckSquare,
           path: "/approvals",
-          color: "text-warning",
-          bgColor: "bg-yellow-50",
+          color: "text-amber-600",
+          bgColor: "bg-amber-50",
           description: "Review program documents"
         },
         {
           label: "Analytics",
           icon: BarChart3,
           path: "/analytics",
-          color: "text-green-600",
-          bgColor: "bg-green-50",
+          color: "text-emerald-600",
+          bgColor: "bg-emerald-50",
           description: "Program analytics"
         },
         {
@@ -219,16 +219,16 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
           label: "Approvals",
           icon: CheckSquare,
           path: "/approvals",
-          color: "text-warning",
-          bgColor: "bg-yellow-50",
+          color: "text-amber-600",
+          bgColor: "bg-amber-50",
           description: "Review department documents"
         },
         {
           label: "Analytics",
           icon: BarChart3,
           path: "/analytics",
-          color: "text-green-600",
-          bgColor: "bg-green-50",
+          color: "text-emerald-600",
+          bgColor: "bg-emerald-50",
           description: "Department analytics"
         },
         {
@@ -237,18 +237,18 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
           path: "/faculty",
           color: "text-purple-600",
           bgColor: "bg-purple-50",
-          description: "Manage faculty activities"
+          description: "Manage faculty"
         }
       ],
       employee: [
-        ...baseActions.slice(0, 6), // Remove some actions for employees
+        ...baseActions.slice(0, 6),
         {
           label: "Track Documents",
           icon: FileText,
-          path: "/documents",
+          path: "/track-documents",
           color: "text-blue-600",
           bgColor: "bg-blue-50",
-          description: "Track your submissions"
+          description: "Track submissions"
         },
         {
           label: "Bi-Directional Routing",
@@ -256,15 +256,15 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
           path: "/approval-routing",
           color: "text-purple-600",
           bgColor: "bg-purple-50",
-          description: "Approval routing management"
+          description: "Approval routing"
         },
         {
           label: "Analytics",
           icon: BarChart3,
           path: "/analytics",
-          color: "text-green-600",
-          bgColor: "bg-green-50",
-          description: "View analytics dashboard"
+          color: "text-emerald-600",
+          bgColor: "bg-emerald-50",
+          description: "View analytics"
         }
       ]
     };
@@ -276,60 +276,57 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
 
   return (
     <Card className={cn(
-      "shadow-elegant hover:shadow-glow transition-all duration-300",
+      "shadow-elegant hover:shadow-glow transition-all duration-300 h-full",
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className={cn(isMobile && "pb-3")}>
-        <CardTitle className={cn(
-          "flex items-center gap-2",
-          isMobile ? "text-lg" : "text-xl"
-        )}>
-          <Zap className="w-5 h-5 text-primary" />
-          Quick Actions
-          <Badge variant="outline" className="ml-auto">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center justify-between text-lg">
+          <div className="flex items-center gap-2">
+            <Zap className="w-5 h-5 text-primary" />
+            Quick Actions
+          </div>
+          <Badge variant="outline" className="text-xs">
             {actions.length}
           </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn(
-          "grid gap-3",
-          isMobile ? "grid-cols-2" : "grid-cols-3 lg:grid-cols-4"
-        )}>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {actions.map((action, index) => (
             <Button
               key={action.path}
               variant="outline"
               onClick={() => navigate(action.path)}
               className={cn(
-                "flex flex-col gap-2 transition-all duration-200 hover:shadow-md animate-scale-in",
-                isMobile ? "h-20 p-3" : "h-24 p-4"
+                "flex flex-col gap-2 h-20 p-3 transition-all duration-200 hover:shadow-md animate-scale-in border-gray-200 hover:border-gray-300",
+                "group relative overflow-hidden"
               )}
               style={{ animationDelay: `${index * 50}ms` }}
             >
+              {/* Background Gradient on Hover */}
               <div className={cn(
-                "rounded-full flex items-center justify-center",
-                action.bgColor,
-                isMobile ? "p-2" : "p-3"
-              )}>
-                <action.icon className={cn(
-                  action.color,
-                  isMobile ? "w-4 h-4" : "w-5 h-5"
-                )} />
-              </div>
-              <div className="text-center">
-                <span className={cn(
-                  "font-medium",
-                  isMobile ? "text-xs" : "text-sm"
+                "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
+                action.bgColor
+              )} />
+              
+              {/* Content */}
+              <div className="relative z-10 flex flex-col items-center gap-2">
+                <div className={cn(
+                  "p-2 rounded-lg transition-colors duration-200",
+                  action.bgColor,
+                  "group-hover:bg-white group-hover:shadow-sm"
                 )}>
-                  {action.label}
-                </span>
-                {!isMobile && (
-                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                    {action.description}
-                  </p>
-                )}
+                  <action.icon className={cn(
+                    "w-4 h-4 transition-colors duration-200",
+                    action.color
+                  )} />
+                </div>
+                <div className="text-center">
+                  <span className="text-xs font-medium text-gray-900 group-hover:text-gray-900">
+                    {action.label}
+                  </span>
+                </div>
               </div>
             </Button>
           ))}
@@ -339,47 +336,23 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
         {(userRole === 'principal' || userRole === 'registrar') && (
           <div className="mt-4 pt-4 border-t">
             <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="p-2 bg-muted/30 rounded">
-                <p className={cn(
-                  "font-bold text-primary",
-                  isMobile ? "text-lg" : "text-xl"
-                )}>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-xl font-bold text-red-600">
                   {userRole === 'principal' ? '8' : '5'}
                 </p>
-                <p className={cn(
-                  "text-muted-foreground",
-                  isMobile ? "text-xs" : "text-sm"
-                )}>
-                  Urgent
-                </p>
+                <p className="text-xs text-gray-600 font-medium">Urgent</p>
               </div>
-              <div className="p-2 bg-muted/30 rounded">
-                <p className={cn(
-                  "font-bold text-warning",
-                  isMobile ? "text-lg" : "text-xl"
-                )}>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-xl font-bold text-orange-600">
                   {userRole === 'principal' ? '23' : '12'}
                 </p>
-                <p className={cn(
-                  "text-muted-foreground",
-                  isMobile ? "text-xs" : "text-sm"
-                )}>
-                  Today
-                </p>
+                <p className="text-xs text-gray-600 font-medium">Today</p>
               </div>
-              <div className="p-2 bg-muted/30 rounded">
-                <p className={cn(
-                  "font-bold text-success",
-                  isMobile ? "text-lg" : "text-xl"
-                )}>
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <p className="text-xl font-bold text-green-600">
                   {userRole === 'principal' ? '156' : '89'}
                 </p>
-                <p className={cn(
-                  "text-muted-foreground",
-                  isMobile ? "text-xs" : "text-sm"
-                )}>
-                  This Week
-                </p>
+                <p className="text-xs text-gray-600 font-medium">This Week</p>
               </div>
             </div>
           </div>

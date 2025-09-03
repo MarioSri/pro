@@ -83,7 +83,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
           description: 'Authorization for hiring 3 new faculty members to address growing enrollment',
           requiresAction: userRole === 'principal' || userRole === 'registrar',
           escalationLevel: 0,
-          aiSummary: 'Request for 3 CSE faculty positions due to 25% enrollment increase. Budget approved, positions justified.'
+          aiSummary: 'Request for 3 CSE faculty positions due to 25% enrollment increase. Budget approved.'
         },
         {
           id: 'DOC-2024-002',
@@ -113,40 +113,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
           description: 'Critical electrical system failure in Block A requiring immediate attention',
           requiresAction: true,
           escalationLevel: 2,
-          aiSummary: 'Critical electrical failure affecting 200+ students. Immediate repair needed, estimated cost ₹2.5L.'
-        },
-        {
-          id: 'DOC-2024-004',
-          title: 'Monthly Academic Performance Analysis - EEE',
-          type: 'Report',
-          status: 'in-review',
-          submittedBy: 'Dr. Mohammed Ali',
-          submittedByRole: 'HOD',
-          department: 'Electrical Engineering',
-          branch: 'EEE',
-          year: '2nd Year',
-          date: '2024-01-13',
-          priority: 'medium',
-          description: 'Comprehensive analysis of student performance and faculty effectiveness',
-          requiresAction: userRole === 'registrar' || userRole === 'principal',
-          escalationLevel: 0,
-          aiSummary: 'Overall performance improved by 12%. Identified 3 areas for improvement in lab practicals.'
-        },
-        {
-          id: 'DOC-2024-005',
-          title: 'Research Grant Application - AI Lab Setup',
-          type: 'Letter',
-          status: 'rejected',
-          submittedBy: 'Dr. Priya Patel',
-          submittedByRole: 'Employee',
-          department: 'Computer Science & Engineering',
-          branch: 'CSE',
-          date: '2024-01-12',
-          priority: 'low',
-          description: 'Proposal for establishing AI research laboratory with modern equipment',
-          requiresAction: false,
-          escalationLevel: 0,
-          aiSummary: 'Research lab proposal for ₹15L. Rejected due to budget constraints. Resubmission suggested with phased approach.'
+          aiSummary: 'Critical electrical failure affecting 200+ students. Immediate repair needed, cost ₹2.5L.'
         }
       ];
 
@@ -167,7 +134,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
       setTimeout(() => {
         setDocuments(filteredDocs);
         setLoading(false);
-      }, 800);
+      }, 600);
     };
 
     fetchDocuments();
@@ -188,33 +155,33 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'approved': return <CheckCircle className="w-4 h-4 text-success" />;
-      case 'rejected': return <XCircle className="w-4 h-4 text-destructive" />;
-      case 'pending': return <Clock className="w-4 h-4 text-warning" />;
-      case 'in-review': return <Eye className="w-4 h-4 text-blue-500" />;
-      case 'emergency': return <AlertTriangle className="w-4 h-4 text-destructive animate-pulse" />;
-      default: return <FileText className="w-4 h-4 text-muted-foreground" />;
+      case 'approved': return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case 'rejected': return <XCircle className="w-4 h-4 text-red-600" />;
+      case 'pending': return <Clock className="w-4 h-4 text-orange-600" />;
+      case 'in-review': return <Eye className="w-4 h-4 text-blue-600" />;
+      case 'emergency': return <AlertTriangle className="w-4 h-4 text-red-600 animate-pulse" />;
+      default: return <FileText className="w-4 h-4 text-gray-600" />;
     }
   };
 
   const getStatusBadge = (status: string) => {
     const variants = {
-      approved: { variant: "success" as const, text: "Approved" },
-      rejected: { variant: "destructive" as const, text: "Rejected" },
-      pending: { variant: "warning" as const, text: "Pending" },
-      'in-review': { variant: "default" as const, text: "In Review" },
-      emergency: { variant: "destructive" as const, text: "EMERGENCY" }
+      approved: { variant: "default" as const, text: "Approved", color: "bg-green-100 text-green-800" },
+      rejected: { variant: "destructive" as const, text: "Rejected", color: "bg-red-100 text-red-800" },
+      pending: { variant: "secondary" as const, text: "Pending", color: "bg-orange-100 text-orange-800" },
+      'in-review': { variant: "outline" as const, text: "In Review", color: "bg-blue-100 text-blue-800" },
+      emergency: { variant: "destructive" as const, text: "EMERGENCY", color: "bg-red-200 text-red-900" }
     };
-    return variants[status as keyof typeof variants] || { variant: "default" as const, text: status };
+    return variants[status as keyof typeof variants] || { variant: "outline" as const, text: status, color: "bg-gray-100 text-gray-800" };
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'emergency': return 'text-red-600 animate-pulse';
-      case 'high': return 'text-orange-600';
-      case 'medium': return 'text-yellow-600';
-      case 'low': return 'text-green-600';
-      default: return 'text-muted-foreground';
+      case 'emergency': return 'text-red-700 font-bold animate-pulse';
+      case 'high': return 'text-orange-700 font-semibold';
+      case 'medium': return 'text-yellow-700';
+      case 'low': return 'text-green-700';
+      default: return 'text-gray-600';
     }
   };
 
@@ -224,12 +191,12 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
   if (loading) {
     return (
       <Card className={cn(
-        "shadow-elegant",
+        "shadow-elegant h-full",
         isSelected && "border-primary",
         isCustomizing && "cursor-pointer"
       )} onClick={onSelect}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <FileText className="w-5 h-5 text-primary" />
             Recent Documents
           </CardTitle>
@@ -249,20 +216,17 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
   return (
     <Card className={cn(
-      "shadow-elegant hover:shadow-glow transition-all duration-300",
+      "shadow-elegant hover:shadow-glow transition-all duration-300 h-full",
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className={cn(isMobile && "pb-3")}>
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className={cn(
-            "flex items-center gap-2",
-            isMobile ? "text-lg" : "text-xl"
-          )}>
+          <CardTitle className="flex items-center gap-2 text-lg">
             <FileText className="w-5 h-5 text-primary" />
             Recent Documents
             {urgentCount > 0 && (
-              <Badge variant="destructive" className="animate-pulse">
+              <Badge className="bg-red-100 text-red-800 animate-pulse text-xs">
                 {urgentCount} urgent
               </Badge>
             )}
@@ -276,7 +240,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
                   variant={filter === filterType ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setFilter(filterType)}
-                  className={cn(isMobile && "text-xs px-2")}
+                  className="h-7 px-2 text-xs"
                 >
                   {filterType === 'all' ? 'All' : 
                    filterType === 'pending' ? 'Pending' :
@@ -289,9 +253,9 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
               variant="outline" 
               size="sm" 
               onClick={() => navigate("/documents")}
-              className={cn(isMobile && "text-xs")}
+              className="h-7 px-3 text-xs"
             >
-              <Eye className="w-4 h-4 mr-1" />
+              <Eye className="w-3 h-3 mr-1" />
               View All
             </Button>
           </div>
@@ -299,56 +263,49 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
       </CardHeader>
       
       <CardContent>
-        <ScrollArea className={cn(isMobile ? "h-64" : "h-80")}>
+        <ScrollArea className="h-64">
           <div className="space-y-3">
-            {filteredDocuments.slice(0, isMobile ? 5 : 8).map((doc, index) => (
+            {filteredDocuments.slice(0, 5).map((doc, index) => (
               <div
                 key={doc.id}
                 className={cn(
-                  "p-4 border rounded-lg hover:bg-accent transition-all cursor-pointer animate-fade-in",
-                  doc.status === 'emergency' && "border-destructive bg-red-50",
-                  doc.requiresAction && "border-l-4 border-l-warning"
+                  "p-4 border rounded-lg hover:bg-gray-50 transition-all cursor-pointer animate-fade-in",
+                  doc.status === 'emergency' && "border-red-200 bg-red-50",
+                  doc.requiresAction && "border-l-4 border-l-orange-500"
                 )}
                 style={{ animationDelay: `${index * 100}ms` }}
                 onClick={() => navigate(`/documents/${doc.id}`)}
               >
+                {/* Header Row */}
                 <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1 min-w-0">
-                    <h4 className={cn(
-                      "font-medium line-clamp-2",
-                      isMobile ? "text-sm" : "text-base"
-                    )}>
+                  <div className="flex-1 min-w-0 pr-3">
+                    <h4 className="font-medium text-sm line-clamp-2 text-gray-900">
                       {doc.title}
                     </h4>
                     {doc.aiSummary && (
-                      <p className={cn(
-                        "text-muted-foreground mt-1 line-clamp-2",
-                        isMobile ? "text-xs" : "text-sm"
-                      )}>
+                      <p className="text-xs text-gray-600 mt-1 line-clamp-2">
                         🤖 {doc.aiSummary}
                       </p>
                     )}
                   </div>
                   
-                  <div className="flex items-center gap-2 ml-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     {getStatusIcon(doc.status)}
-                    <Badge variant={getStatusBadge(doc.status).variant} className="text-xs">
+                    <Badge className={cn("text-xs", getStatusBadge(doc.status).color)}>
                       {getStatusBadge(doc.status).text}
                     </Badge>
                   </div>
                 </div>
                 
-                <div className={cn(
-                  "grid gap-2 text-xs text-muted-foreground",
-                  isMobile ? "grid-cols-1" : "grid-cols-2 md:grid-cols-4"
-                )}>
+                {/* Info Grid */}
+                <div className="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-2">
                   <div className="flex items-center gap-1">
                     <User className="w-3 h-3" />
-                    <span>{doc.submittedBy}</span>
+                    <span className="truncate">{doc.submittedBy}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Building className="w-3 h-3" />
-                    <span>{doc.department}</span>
+                    <span className="truncate">{doc.department}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
@@ -362,16 +319,16 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
                   </div>
                 </div>
 
-                {/* Branch and Year info for Program Heads */}
+                {/* Branch and Year info */}
                 {(userRole === 'program-head' || userRole === 'hod') && (doc.branch || doc.year) && (
-                  <div className="flex items-center gap-2 mt-2">
+                  <div className="flex items-center gap-2 mb-2">
                     {doc.branch && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs px-2 py-0">
                         {doc.branch}
                       </Badge>
                     )}
                     {doc.year && (
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-xs px-2 py-0">
                         {doc.year}
                       </Badge>
                     )}
@@ -380,13 +337,13 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
                 {/* Action Required Indicator */}
                 {doc.requiresAction && (
-                  <div className="flex items-center gap-2 mt-2 p-2 bg-warning/10 rounded border border-warning/20">
-                    <Zap className="w-4 h-4 text-warning" />
-                    <span className="text-sm font-medium text-warning">
+                  <div className="flex items-center gap-2 p-2 bg-orange-50 rounded border border-orange-200">
+                    <Zap className="w-4 h-4 text-orange-600" />
+                    <span className="text-xs font-medium text-orange-800">
                       Action Required
                     </span>
                     {doc.escalationLevel > 0 && (
-                      <Badge variant="destructive" className="text-xs">
+                      <Badge className="bg-red-100 text-red-800 text-xs">
                         Escalated {doc.escalationLevel}x
                       </Badge>
                     )}
@@ -396,17 +353,16 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
                 {/* Quick Actions for Approvers */}
                 {doc.requiresAction && (userRole === 'principal' || userRole === 'registrar' || userRole === 'hod') && (
                   <div className="flex gap-2 mt-3">
-                    <Button size="sm" variant="default" className="flex-1">
+                    <Button size="sm" className="flex-1 h-8 text-xs bg-green-600 hover:bg-green-700">
                       <CheckCircle className="w-3 h-3 mr-1" />
                       Approve
                     </Button>
-                    <Button size="sm" variant="destructive" className="flex-1">
+                    <Button size="sm" variant="destructive" className="flex-1 h-8 text-xs">
                       <XCircle className="w-3 h-3 mr-1" />
                       Reject
                     </Button>
-                    <Button size="sm" variant="outline">
-                      <ArrowRight className="w-3 h-3 mr-1" />
-                      Escalate
+                    <Button size="sm" variant="outline" className="h-8 px-2">
+                      <ArrowRight className="w-3 h-3" />
                     </Button>
                   </div>
                 )}
@@ -414,11 +370,9 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
             ))}
             
             {filteredDocuments.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-gray-500">
                 <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p className={cn(isMobile ? "text-sm" : "text-base")}>
-                  No documents found
-                </p>
+                <p className="text-sm font-medium">No documents found</p>
                 <p className="text-xs">
                   {filter === 'all' ? 'No documents available' : `No ${filter} documents`}
                 </p>
@@ -429,10 +383,10 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
         {/* Widget Footer */}
         <div className="flex items-center justify-between pt-4 border-t mt-4">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-4 text-sm text-gray-600">
             <span>{filteredDocuments.length} documents</span>
             {urgentCount > 0 && (
-              <span className="text-warning font-medium">
+              <span className="text-orange-600 font-medium">
                 {urgentCount} require action
               </span>
             )}
@@ -442,9 +396,10 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
             variant="ghost" 
             size="sm"
             onClick={() => navigate("/documents")}
+            className="h-8 text-xs"
           >
             View All
-            <ArrowRight className="w-4 h-4 ml-1" />
+            <ArrowRight className="w-3 h-3 ml-1" />
           </Button>
         </div>
       </CardContent>
