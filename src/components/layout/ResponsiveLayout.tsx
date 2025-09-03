@@ -26,7 +26,7 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
     return (
       <div className="min-h-screen bg-background overflow-x-hidden">
         <MobileHeader />
-        <main className="pb-24 px-4 py-6 pt-20 min-h-screen">
+        <main className="pb-24 px-4 py-6 pt-20 min-h-screen space-y-6">
           {children}
         </main>
         <MobileBottomNav />
@@ -36,7 +36,9 @@ export const ResponsiveLayout: React.FC<ResponsiveLayoutProps> = ({ children }) 
 
   return (
     <DashboardLayout userRole={user.role} onLogout={handleLogout}>
-      {children}
+      <div className="space-y-6">
+        {children}
+      </div>
     </DashboardLayout>
   );
 };

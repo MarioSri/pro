@@ -170,7 +170,7 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-6 space-y-6">
             {children}
           </main>
         </SidebarInset>
