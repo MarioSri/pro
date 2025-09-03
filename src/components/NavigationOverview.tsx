@@ -18,6 +18,8 @@ import {
   Shield,
   Users,
   Briefcase,
+  Eye,
+  ArrowRightLeft,
   User
 } from 'lucide-react';
 import { AdvancedSignatureIcon } from '@/components/ui/signature-icon';
@@ -78,18 +80,19 @@ export const NavigationOverview: React.FC = () => {
     const commonItems = [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, category: "Main" },
       { title: "Search", url: "/search", icon: Search, category: "Main" },
-      { title: "Documents", url: "/documents", icon: FileText, category: "Core" },
+      { title: "Track Documents", url: "/track-documents", icon: Eye, category: "Core" },
       { title: "Calendar", url: "/calendar", icon: Calendar, category: "Core" },
       { title: "Messages", url: "/messages", icon: MessageSquare, category: "Communication" },
+      { title: "Document Management", url: "/documents", icon: FileText, category: "Core" },
       { title: "Advanced Signature", url: "/advanced-signature", icon: AdvancedSignatureIcon, category: "Tools" },
-      { title: "Reminders", url: "/reminders", icon: Bell, category: "Tools" },
-      { title: "Emergency", url: "/emergency", icon: AlertTriangle, category: "Tools" },
+      { title: "Emergency Management", url: "/emergency", icon: AlertTriangle, category: "Tools" },
     ];
 
     const adminItems = [
+      { title: "Approval Center", url: "/approvals", icon: CheckSquare, category: "Management" },
       { title: "Workflow Management", url: "/workflow", icon: GitBranch, category: "Management" },
-      { title: "Approvals", url: "/approvals", icon: CheckSquare, category: "Management" },
-      { title: "Analytics", url: "/analytics", icon: BarChart3, category: "Management" },
+      { title: "Bi-Directional Routing", url: "/approval-routing", icon: ArrowRightLeft, category: "Management" },
+      { title: "Analytics Dashboard", url: "/analytics", icon: BarChart3, category: "Management" },
     ];
 
     const roleSpecificItems = {
@@ -99,8 +102,8 @@ export const NavigationOverview: React.FC = () => {
       hod: [...commonItems, ...adminItems],
       employee: [...commonItems, 
         { title: "Workflow Management", url: "/workflow", icon: GitBranch, category: "Management" },
-        { title: "Bi-Directional Routing", url: "/approval-routing", icon: CheckSquare, category: "Management" },
-        { title: "Analytics", url: "/analytics", icon: BarChart3, category: "Management" }
+        { title: "Bi-Directional Routing", url: "/approval-routing", icon: ArrowRightLeft, category: "Management" },
+        { title: "Analytics Dashboard", url: "/analytics", icon: BarChart3, category: "Management" }
       ],
     };
 

@@ -46,7 +46,6 @@ import {
   Trash2,
   ExternalLink,
   Zap,
-  Brain,
   AlertTriangle,
   Shield,
   FileText,
@@ -81,7 +80,6 @@ import {
   UserMinus,
   Timer,
   Target,
-  Lightbulb,
   BookOpen,
   Award,
   Globe,
@@ -157,10 +155,8 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(false);
   const [conflicts, setConflicts] = useState<ConflictCheck | null>(null);
-  const [aiSuggestions, setAiSuggestions] = useState<AISchedulingSuggestion | null>(null);
   const [showNewMeetingDialog, setShowNewMeetingDialog] = useState(false);
   const [showConflictDialog, setShowConflictDialog] = useState(false);
-  const [showAISuggestionsDialog, setShowAISuggestionsDialog] = useState(false);
   const [showLiveMeetingModal, setShowLiveMeetingModal] = useState(false);
   const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
   const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'analytics'>('calendar');
@@ -502,33 +498,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
         title: "Error",
         description: "Failed to create meeting. Please try again.",
         variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGetAISuggestions = async () => {
-    if (!newMeeting.title || !newMeeting.attendees?.length) {
-      toast({
-        title: "Information Needed",
-        description: "Please provide meeting title and select attendees for AI suggestions",
-        variant: "default"
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const suggestions = await meetingAPI.getAISchedulingSuggestions(newMeeting);
-      setAiSuggestions(suggestions);
-      setShowAISuggestionsDialog(true);
-    } catch (error) {
-      console.error('AI suggestions failed:', error);
-      toast({
-        title: "AI Suggestions Unavailable",
-        description: "Unable to get AI suggestions at this time",
-        variant: "default"
       });
     } finally {
       setLoading(false);
@@ -1291,18 +1260,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
                     </ScrollArea>
                   </div>
                 </div>
-                
-                <Alert>
-                  <Lightbulb className="h-4 w-4" />
-                  <AlertTitle>AI Suggestion Available</AlertTitle>
-                  <AlertDescription>
-                    Click the AI button to get intelligent scheduling suggestions based on attendee availability.
-                    <Button variant="outline" size="sm" className="ml-2" onClick={handleGetAISuggestions}>
-                      <Brain className="w-3 h-3 mr-1" />
-                      Get AI Suggestions
-                    </Button>
-                  </AlertDescription>
-                </Alert>
               </TabsContent>
               
               {/* Settings Tab */}
@@ -1417,10 +1374,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
               <Button variant="outline" onClick={() => setShowNewMeetingDialog(false)}>
                 Cancel
               </Button>
-              <Button variant="outline" onClick={handleGetAISuggestions} disabled={loading}>
-                <Brain className="w-4 h-4 mr-2" />
-                AI Suggestions
-              </Button>
               <Button onClick={handleCreateMeeting} disabled={loading} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
                 {loading ? (
                   <>
@@ -1502,64 +1455,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
                 handleCreateMeeting();
               }}>
                 Schedule Anyway
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* AI Suggestions Dialog */}
-        <Dialog open={showAISuggestionsDialog} onOpenChange={setShowAISuggestionsDialog}>
-          <DialogContent className="max-w-3xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <Brain className="w-5 h-5 text-blue-500" />
-                AI Scheduling Suggestions
-              </DialogTitle>
-              <DialogDescription>
-                Smart recommendations based on attendee availability and preferences
-              </DialogDescription>
-            </DialogHeader>
-            
-            {aiSuggestions && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {aiSuggestions.recommendedSlots.slice(0, 4).map((slot, index) => (
-                    <div key={index} className="p-3 border rounded-lg cursor-pointer hover:bg-accent"
-                         onClick={() => {
-                           setNewMeeting({...newMeeting, date: slot.date, time: slot.time, duration: slot.duration});
-                           setShowAISuggestionsDialog(false);
-                         }}>
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium">{slot.date}</h4>
-                        <Badge variant="outline">{Math.round(slot.availabilityScore * 100)}% available</Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {formatTime(slot.time)} • {slot.duration} minutes
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {slot.conflictCount} conflicts
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                
-                {aiSuggestions.conflictAnalysis && (
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium mb-2">Conflict Analysis</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Best time range: {aiSuggestions.conflictAnalysis.bestTimeRange.start} - {aiSuggestions.conflictAnalysis.bestTimeRange.end}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Reason: {aiSuggestions.conflictAnalysis.bestTimeRange.reason}
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAISuggestionsDialog(false)}>
-                Close
               </Button>
             </DialogFooter>
           </DialogContent>

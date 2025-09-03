@@ -14,26 +14,11 @@ export const HITAMTreeLoading: React.FC<LoadingAnimationProps> = ({
 }) => {
   // Force re-render to restart animations every time component mounts
   const [animationKey, setAnimationKey] = useState(0);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
   
   useEffect(() => {
     // Generate a unique key when component mounts to ensure animations restart
     setAnimationKey(Date.now());
-    // Reset image states on mount
-    setImageLoaded(false);
-    setImageError(false);
   }, []);
-
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-    setImageError(false);
-  };
-
-  const handleImageError = () => {
-    setImageError(true);
-    setImageLoaded(false);
-  };
 
   const sizeClasses = {
     sm: 'w-40 h-40',
@@ -48,34 +33,21 @@ export const HITAMTreeLoading: React.FC<LoadingAnimationProps> = ({
         key={`hitam-tree-${animationKey}`}
         className={cn("relative overflow-hidden rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 shadow-lg", sizeClasses[size])}
       >
-        {/* Show CSS fallback if image fails to load */}
-        {imageError && (
-          <div className="hitam-tree-fallback absolute inset-0 hitam-tree-rising" />
-        )}
+        {/* Base HITAM Tree Image - Always use the specific PNG file */}
+        <img 
+          src="/hitam-tree-logo.png" 
+          alt="HITAM Tree Logo"
+          className="w-full h-full object-contain opacity-30 grayscale"
+        />
         
-        {/* Base HITAM Tree Image */}
-        {!imageError && (
+        {/* Colored Tree Overlay with Rising Animation - Always use the same PNG file */}
+        <div className="absolute inset-0 overflow-hidden">
           <img 
             src="/hitam-tree-logo.png" 
             alt="HITAM Tree Logo"
-            className="w-full h-full object-contain opacity-30 grayscale"
-            onLoad={handleImageLoad}
-            onError={handleImageError}
+            className="w-full h-full object-contain hitam-tree-rising"
           />
-        )}
-        
-        {/* Colored Tree Overlay with Rising Animation */}
-        {!imageError && (
-          <div className="absolute inset-0 overflow-hidden">
-            <img 
-              src="/hitam-tree-logo.png" 
-              alt="HITAM Tree Logo"
-              className="w-full h-full object-contain hitam-tree-rising"
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-            />
-          </div>
-        )}
+        </div>
         
         {/* Ripple Effect at the Base */}
         <div 

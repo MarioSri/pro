@@ -107,17 +107,17 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
     const commonItems = [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
       { title: "Search", url: "/search", icon: Search },
-      { title: "Document Management", url: "/documents", icon: FileText },
       { title: "Track Documents", url: "/track-documents", icon: Eye },
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
+      { title: "Document Management", url: "/documents", icon: FileText },
       { title: "Advanced Signature", url: "/advanced-signature", icon: AdvancedSignatureIcon },
       { title: "Emergency Management", url: "/emergency", icon: AlertTriangle },
     ];
 
     const adminItems = [
-      { title: "Workflow Management", url: "/workflow", icon: GitBranch },
       { title: "Approval Center", url: "/approvals", icon: CheckSquare },
+      { title: "Workflow Management", url: "/workflow", icon: GitBranch },
       { title: "Bi-Directional Routing", url: "/approval-routing", icon: ArrowRightLeft },
       { title: "Analytics Dashboard", url: "/analytics", icon: BarChart3 },
     ];

@@ -33,10 +33,10 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ userRole }) 
     const commonItems = [
       { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
       { title: "Search", url: "/search", icon: Search },
-      { title: "Document Management", url: "/documents", icon: FileText },
       { title: "Track Documents", url: "/track-documents", icon: Eye },
       { title: "Calendar", url: "/calendar", icon: Calendar },
       { title: "Messages", url: "/messages", icon: MessageSquare },
+      { title: "Document Management", url: "/documents", icon: FileText },
       { title: "Signature", url: "/advanced-signature", icon: AdvancedSignatureIcon },
       { title: "Emergency Management", url: "/emergency", icon: AlertTriangle },
       { title: "Profile", url: "/profile", icon: User },
@@ -46,21 +46,29 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ userRole }) 
       principal: [
         ...commonItems,
         { title: "Approval Center", url: "/approvals", icon: CheckSquare },
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+        { title: "Bi-Directional Routing", url: "/approval-routing", icon: CheckSquare },
         { title: "Analytics Dashboard", url: "/analytics", icon: BarChart3 },
       ],
       registrar: [
         ...commonItems,
         { title: "Approval Center", url: "/approvals", icon: CheckSquare },
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+        { title: "Bi-Directional Routing", url: "/approval-routing", icon: CheckSquare },
         { title: "Analytics Dashboard", url: "/analytics", icon: BarChart3 },
       ],
       "program-head": [
         ...commonItems,
         { title: "Approval Center", url: "/approvals", icon: CheckSquare },
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+        { title: "Bi-Directional Routing", url: "/approval-routing", icon: CheckSquare },
         { title: "Analytics Dashboard", url: "/analytics", icon: BarChart3 },
       ],
       hod: [
         ...commonItems,
         { title: "Approval Center", url: "/approvals", icon: CheckSquare },
+        { title: "Workflow Management", url: "/workflow", icon: GitBranch },
+        { title: "Bi-Directional Routing", url: "/approval-routing", icon: CheckSquare },
         { title: "Analytics Dashboard", url: "/analytics", icon: BarChart3 },
       ],
       employee: [
