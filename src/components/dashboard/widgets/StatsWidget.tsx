@@ -84,7 +84,7 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
       setTimeout(() => {
         setStats(mockStats);
         setLoading(false);
-      }, 1000);
+      }, 800);
     };
 
     fetchStats();
@@ -99,7 +99,7 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
         value: stats.total.toString(),
         change: "+12%",
         icon: FileText,
-        color: "text-blue-500",
+        color: "text-blue-600",
         bgColor: "bg-blue-50",
         trend: "up"
       },
@@ -108,8 +108,8 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
         value: stats.pending.toString(),
         change: "-3",
         icon: Clock,
-        color: "text-warning",
-        bgColor: "bg-yellow-50",
+        color: "text-orange-600",
+        bgColor: "bg-orange-50",
         trend: "down"
       },
       {
@@ -117,7 +117,7 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
         value: stats.approved.toString(),
         change: "+8",
         icon: CheckCircle,
-        color: "text-success",
+        color: "text-green-600",
         bgColor: "bg-green-50",
         trend: "up"
       },
@@ -126,7 +126,7 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
         value: stats.rejected.toString(),
         change: "+1",
         icon: XCircle,
-        color: "text-destructive",
+        color: "text-red-600",
         bgColor: "bg-red-50",
         trend: "up"
       }
@@ -135,11 +135,11 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
     // Add role-specific stats
     if (userRole === 'principal') {
       baseStats.push({
-        title: "Emergency Docs",
+        title: "Emergency",
         value: stats.emergency.toString(),
         change: "0",
         icon: AlertTriangle,
-        color: "text-red-600",
+        color: "text-red-700",
         bgColor: "bg-red-100",
         trend: "stable"
       });
@@ -151,7 +151,7 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
         value: Object.keys(stats.byDepartment).length.toString(),
         change: "+0",
         icon: Building,
-        color: "text-purple-500",
+        color: "text-purple-600",
         bgColor: "bg-purple-50",
         trend: "stable"
       });
@@ -165,21 +165,18 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
   if (loading) {
     return (
       <Card className={cn(
-        "shadow-elegant",
+        "shadow-elegant h-full",
         isSelected && "border-primary",
         isCustomizing && "cursor-pointer"
       )} onClick={onSelect}>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
             <TrendingUp className="w-5 h-5 text-primary" />
             Dashboard Statistics
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className={cn(
-            "grid gap-4",
-            isMobile ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"
-          )}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="animate-pulse">
                 <div className="h-20 bg-muted rounded-lg"></div>
@@ -193,66 +190,44 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
 
   return (
     <Card className={cn(
-      "shadow-elegant hover:shadow-glow transition-all duration-300",
+      "shadow-elegant hover:shadow-glow transition-all duration-300 h-full",
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className={cn(isMobile && "pb-3")}>
-        <CardTitle className={cn(
-          "flex items-center gap-2",
-          isMobile ? "text-lg" : "text-xl"
-        )}>
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
           <TrendingUp className="w-5 h-5 text-primary" />
           Dashboard Statistics
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={cn(
-          "grid gap-4",
-          isMobile ? "grid-cols-2" : "grid-cols-2 lg:grid-cols-4"
-        )}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {statsCards.map((stat, index) => (
             <div
               key={index}
-              className="p-4 rounded-lg border hover:shadow-md transition-all duration-200 animate-scale-in"
+              className="relative p-4 rounded-lg border hover:shadow-md transition-all duration-200 animate-scale-in bg-white"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className={cn(
-                  "rounded-full flex items-center justify-center",
-                  stat.bgColor,
-                  isMobile ? "p-2" : "p-3"
-                )}>
-                  <stat.icon className={cn(
-                    stat.color,
-                    isMobile ? "w-4 h-4" : "w-5 h-5"
-                  )} />
+              {/* Icon and Change Indicator */}
+              <div className="flex items-center justify-between mb-3">
+                <div className={cn("p-2 rounded-lg", stat.bgColor)}>
+                  <stat.icon className={cn("w-5 h-5", stat.color)} />
                 </div>
                 <div className={cn(
-                  "text-right",
-                  stat.trend === 'up' ? 'text-success' : 
-                  stat.trend === 'down' ? 'text-destructive' : 'text-muted-foreground'
+                  "text-xs font-medium px-2 py-1 rounded-full",
+                  stat.trend === 'up' ? 'text-green-700 bg-green-100' : 
+                  stat.trend === 'down' ? 'text-red-700 bg-red-100' : 'text-gray-700 bg-gray-100'
                 )}>
-                  <span className={cn(
-                    "font-medium",
-                    isMobile ? "text-xs" : "text-sm"
-                  )}>
-                    {stat.change}
-                  </span>
+                  {stat.change}
                 </div>
               </div>
               
-              <div>
-                <p className={cn(
-                  "font-bold",
-                  isMobile ? "text-xl" : "text-2xl"
-                )}>
+              {/* Value and Title */}
+              <div className="space-y-1">
+                <p className="text-2xl font-bold text-gray-900">
                   {stat.value}
                 </p>
-                <p className={cn(
-                  "text-muted-foreground",
-                  isMobile ? "text-xs" : "text-sm"
-                )}>
+                <p className="text-sm text-gray-600 font-medium">
                   {stat.title}
                 </p>
               </div>
@@ -260,30 +235,17 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
           ))}
         </div>
 
-        {/* Additional Role-Specific Metrics */}
+        {/* Department Overview for Admin Roles */}
         {stats && (userRole === 'principal' || userRole === 'registrar') && (
           <div className="mt-6 pt-4 border-t">
-            <h4 className={cn(
-              "font-semibold mb-3",
-              isMobile ? "text-sm" : "text-base"
-            )}>
+            <h4 className="font-semibold mb-3 text-sm text-gray-700">
               Department Overview
             </h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {Object.entries(stats.byDepartment).slice(0, 4).map(([dept, count]) => (
-                <div key={dept} className="text-center p-2 bg-muted/30 rounded">
-                  <p className={cn(
-                    "font-bold",
-                    isMobile ? "text-lg" : "text-xl"
-                  )}>
-                    {count}
-                  </p>
-                  <p className={cn(
-                    "text-muted-foreground",
-                    isMobile ? "text-xs" : "text-sm"
-                  )}>
-                    {dept}
-                  </p>
+                <div key={dept} className="text-center p-3 bg-gray-50 rounded-lg">
+                  <p className="text-xl font-bold text-gray-900">{count}</p>
+                  <p className="text-xs text-gray-600 font-medium">{dept}</p>
                 </div>
               ))}
             </div>

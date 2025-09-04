@@ -12,7 +12,8 @@ import {
   TrendingUp,
   AlertTriangle,
   Eye,
-  Search
+  Search,
+  ArrowRight
 } from "lucide-react";
 import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 
@@ -23,6 +24,7 @@ interface DashboardStatsProps {
 
 export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
   const navigate = useNavigate();
+  
   // Mock data - in real app this would come from API
   const getStatsForRole = () => {
     const commonStats = [
@@ -31,63 +33,69 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
         value: "47",
         change: "+12%",
         icon: FileText,
-        color: "text-blue-500",
-        bgColor: "bg-blue-50"
+        color: "text-blue-600",
+        bgColor: "bg-blue-50",
+        trend: "up"
       },
       {
         title: "Pending Reviews",
         value: "8",
         change: "-3",
         icon: Clock,
-        color: "text-warning",
-        bgColor: "bg-yellow-50"
+        color: "text-orange-600",
+        bgColor: "bg-orange-50",
+        trend: "down"
       },
       {
         title: "Approved",
         value: "35",
         change: "+8",
         icon: CheckCircle,
-        color: "text-success",
-        bgColor: "bg-green-50"
+        color: "text-green-600",
+        bgColor: "bg-green-50",
+        trend: "up"
       },
       {
         title: "Rejected",
         value: "4",
         change: "+1",
         icon: XCircle,
-        color: "text-destructive",
-        bgColor: "bg-red-50"
+        color: "text-red-600",
+        bgColor: "bg-red-50",
+        trend: "up"
       }
     ];
 
     const roleSpecific = {
       principal: [
-        ...commonStats,
+        ...baseStats,
         {
           title: "Active Users",
           value: "156",
           change: "+5%",
           icon: Users,
-          color: "text-purple-500",
-          bgColor: "bg-purple-50"
+          color: "text-purple-600",
+          bgColor: "bg-purple-50",
+          trend: "up"
         }
       ],
       registrar: [
-        ...commonStats,
+        ...baseStats,
         {
           title: "Workflows Active",
           value: "23",
           change: "+2",
           icon: TrendingUp,
-          color: "text-indigo-500",
-          bgColor: "bg-indigo-50"
+          color: "text-indigo-600",
+          bgColor: "bg-indigo-50",
+          trend: "up"
         }
       ],
-      hod: commonStats,
-      employee: commonStats.slice(0, 3)
+      hod: baseStats,
+      employee: baseStats.slice(0, 3)
     };
 
-    return roleSpecific[userRole as keyof typeof roleSpecific] || commonStats;
+    return roleSpecific[userRole as keyof typeof roleSpecific] || baseStats;
   };
 
   const stats = getStatsForRole();
@@ -133,83 +141,85 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      approved: { variant: "success" as const, text: "Approved" },
-      pending: { variant: "warning" as const, text: "Pending" },
-      "under-review": { variant: "default" as const, text: "Under Review" },
-      rejected: { variant: "destructive" as const, text: "Rejected" }
+      approved: { variant: "default" as const, text: "Approved", color: "bg-green-100 text-green-800" },
+      pending: { variant: "secondary" as const, text: "Pending", color: "bg-orange-100 text-orange-800" },
+      "under-review": { variant: "outline" as const, text: "Under Review", color: "bg-blue-100 text-blue-800" },
+      rejected: { variant: "destructive" as const, text: "Rejected", color: "bg-red-100 text-red-800" }
     };
     
-    return statusConfig[status as keyof typeof statusConfig] || { variant: "default" as const, text: status };
+    return statusConfig[status as keyof typeof statusConfig] || { variant: "outline" as const, text: status, color: "bg-gray-100 text-gray-800" };
   };
 
   const getPriorityColor = (priority: string) => {
     const colors = {
-      normal: "text-blue-500",
-      high: "text-warning",
-      urgent: "text-destructive"
+      normal: "text-blue-600",
+      high: "text-orange-600",
+      urgent: "text-red-600"
     };
-    return colors[priority as keyof typeof colors] || "text-muted-foreground";
+    return colors[priority as keyof typeof colors] || "text-gray-600";
   };
 
   return (
     <div className="space-y-6">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Improved Stats Grid - Better Alignment */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
           <Card key={index} className="shadow-elegant hover:shadow-glow transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">{stat.title}</p>
-                  <p className="text-2xl font-bold">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    <span className={stat.change.startsWith('+') ? 'text-success' : 'text-destructive'}>
-                      {stat.change}
-                    </span>
-                    {' '}from last week
-                  </p>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-3">
+                <div className={cn("p-2 rounded-lg", stat.bgColor)}>
+                  <stat.icon className={cn("w-5 h-5", stat.color)} />
                 </div>
-                <div className={`p-3 rounded-full ${stat.bgColor}`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
+                <div className={cn(
+                  "text-xs font-medium px-2 py-1 rounded-full",
+                  stat.trend === 'up' ? 'text-green-700 bg-green-100' : 
+                  stat.trend === 'down' ? 'text-red-700 bg-red-100' : 'text-gray-700 bg-gray-100'
+                )}>
+                  {stat.change}
                 </div>
+              </div>
+              
+              <div className="space-y-1">
+                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm text-gray-600 font-medium">{stat.title}</p>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Recent Documents */}
+      {/* Improved Recent Documents - Better Layout */}
       <Card className="shadow-elegant">
-        <CardHeader>
+        <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Recent Documents</CardTitle>
-              <CardDescription>Latest document submissions and their status</CardDescription>
+              <CardTitle className="text-lg">Recent Documents</CardTitle>
+              <CardDescription className="text-sm">Latest document submissions and their status</CardDescription>
             </div>
-            <Button variant="outline" size="sm" onClick={() => navigate("/documents")}>
+            <Button variant="outline" size="sm" onClick={() => navigate("/documents")} className="h-9">
               <Eye className="w-4 h-4 mr-2" />
               View All
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {recentDocuments.map((doc) => (
-              <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-md">
-                    <FileText className="w-4 h-4 text-primary" />
+              <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="p-2 bg-blue-50 rounded-lg flex-shrink-0">
+                    <FileText className="w-4 h-4 text-blue-600" />
                   </div>
-                  <div>
-                    <h4 className="font-medium">{doc.title}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {doc.type} • Submitted by {doc.submittedBy} • {doc.date}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm text-gray-900 truncate">{doc.title}</h4>
+                    <p className="text-xs text-gray-600">
+                      {doc.type} • {doc.submittedBy} • {doc.date}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className={`w-4 h-4 ${getPriorityColor(doc.priority)}`} />
-                  <Badge variant={getStatusBadge(doc.status).variant}>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <AlertTriangle className={cn("w-4 h-4", getPriorityColor(doc.priority))} />
+                  <Badge className={cn("text-xs", getStatusBadge(doc.status).color)}>
                     {getStatusBadge(doc.status).text}
                   </Badge>
                 </div>
@@ -219,53 +229,45 @@ export function DashboardStats({ userRole, onNavigate }: DashboardStatsProps) {
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
+      {/* Improved Quick Actions - Compact Grid */}
       <Card className="shadow-elegant">
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Frequently used actions for your role</CardDescription>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-lg">Quick Actions</CardTitle>
+          <CardDescription className="text-sm">Frequently used actions for your role</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <Button 
               variant="outline" 
-              className="h-auto p-4 flex flex-col gap-2"
+              className="h-16 p-3 flex flex-col gap-2 hover:shadow-md transition-all"
               onClick={() => navigate("/search")}
             >
-              <Search className="w-6 h-6 text-primary" />
-              <span className="text-sm">Universal Search</span>
+              <Search className="w-5 h-5 text-blue-600" />
+              <span className="text-xs font-medium">Universal Search</span>
             </Button>
             <Button 
               variant="outline" 
-              className="h-auto p-4 flex flex-col gap-2"
+              className="h-16 p-3 flex flex-col gap-2 hover:shadow-md transition-all"
               onClick={() => navigate("/documents")}
             >
-              <FileText className="w-6 h-6 text-primary" />
-              <span className="text-sm">Submit Document</span>
+              <FileText className="w-5 h-5 text-green-600" />
+              <span className="text-xs font-medium">Submit Document</span>
             </Button>
             <Button 
               variant="outline" 
-              className="h-auto p-4 flex flex-col gap-2"
+              className="h-16 p-3 flex flex-col gap-2 hover:shadow-md transition-all"
               onClick={() => navigate("/approvals")}
             >
-              <AdvancedSignatureIcon className="w-6 h-6 text-warning" />
-              <span className="text-sm">Review Pending</span>
+              <AdvancedSignatureIcon className="w-5 h-5 text-orange-600" />
+              <span className="text-xs font-medium">Review Pending</span>
             </Button>
             <Button 
               variant="outline" 
-              className="h-auto p-4 flex flex-col gap-2"
+              className="h-16 p-3 flex flex-col gap-2 hover:shadow-md transition-all"
               onClick={() => navigate("/calendar")}
             >
-              <CalendarIcon className="w-6 h-6 text-blue-500" />
-              <span className="text-sm">Schedule Meeting</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="h-auto p-4 flex flex-col gap-2"
-              onClick={() => navigate("/documents")}
-            >
-              <Users className="w-6 h-6 text-purple-500" />
-              <span className="text-sm">View Documents</span>
+              <CalendarIcon className="w-5 h-5 text-purple-600" />
+              <span className="text-xs font-medium">Schedule Meeting</span>
             </Button>
           </div>
         </CardContent>

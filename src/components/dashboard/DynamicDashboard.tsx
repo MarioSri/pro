@@ -23,12 +23,12 @@ import { AIWidget } from './widgets/AIWidget';
 import {
   Settings,
   Layout,
-  Maximize2,
-  Minimize2,
   Eye,
   EyeOff,
   RotateCcw,
-  Save
+  Save,
+  Grid3X3,
+  Maximize2
 } from 'lucide-react';
 
 interface DynamicDashboardProps {
@@ -64,7 +64,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'stats',
         type: 'stats',
         title: 'Dashboard Statistics',
-        position: { x: 0, y: 0, w: isMobile ? 12 : 6, h: 2 },
+        position: { x: 0, y: 0, w: 12, h: 1 },
         visible: true,
         permissions: []
       },
@@ -72,7 +72,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'quickActions',
         type: 'quickActions',
         title: 'Quick Actions',
-        position: { x: isMobile ? 0 : 6, y: 0, w: isMobile ? 12 : 6, h: 2 },
+        position: { x: 0, y: 1, w: 6, h: 1 },
         visible: true,
         permissions: []
       },
@@ -80,7 +80,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'documents',
         type: 'documents',
         title: 'Recent Documents',
-        position: { x: 0, y: 2, w: isMobile ? 12 : 8, h: 3 },
+        position: { x: 6, y: 1, w: 6, h: 2 },
         visible: true,
         permissions: []
       },
@@ -88,7 +88,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'calendar',
         type: 'calendar',
         title: 'Calendar & Meetings',
-        position: { x: isMobile ? 0 : 8, y: 2, w: isMobile ? 12 : 4, h: 3 },
+        position: { x: 0, y: 2, w: 6, h: 2 },
         visible: true,
         permissions: []
       },
@@ -96,7 +96,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'notifications',
         type: 'notifications',
         title: 'Notifications',
-        position: { x: 0, y: 5, w: isMobile ? 12 : 4, h: 2 },
+        position: { x: 0, y: 4, w: 4, h: 1 },
         visible: true,
         permissions: []
       },
@@ -104,7 +104,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'stickyNotes',
         type: 'stickyNotes',
         title: 'Sticky Notes',
-        position: { x: isMobile ? 0 : 4, y: 5, w: isMobile ? 12 : 4, h: 2 },
+        position: { x: 4, y: 4, w: 4, h: 1 },
         visible: true,
         permissions: []
       },
@@ -112,7 +112,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'analytics',
         type: 'analytics',
         title: 'Analytics Overview',
-        position: { x: isMobile ? 0 : 8, y: 5, w: isMobile ? 12 : 4, h: 2 },
+        position: { x: 8, y: 4, w: 4, h: 1 },
         visible: config.permissions.canViewAnalytics,
         permissions: ['canViewAnalytics']
       },
@@ -120,7 +120,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'workflow',
         type: 'workflow',
         title: 'Workflow Management',
-        position: { x: 0, y: 7, w: isMobile ? 12 : 6, h: 2 },
+        position: { x: 0, y: 5, w: 6, h: 1 },
         visible: config.permissions.canManageWorkflows,
         permissions: ['canManageWorkflows']
       },
@@ -128,7 +128,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'ai',
         type: 'ai',
         title: 'AI Assistant',
-        position: { x: isMobile ? 0 : 6, y: 7, w: isMobile ? 12 : 6, h: 2 },
+        position: { x: 6, y: 5, w: 6, h: 1 },
         visible: config.permissions.canAccessAI,
         permissions: ['canAccessAI']
       },
@@ -136,7 +136,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'chat',
         type: 'chat',
         title: 'Real-Time Communication',
-        position: { x: 0, y: 9, w: 12, h: 2 },
+        position: { x: 0, y: 6, w: 12, h: 1 },
         visible: config.features.realTimeChat,
         permissions: []
       }
@@ -151,7 +151,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
   };
 
   const renderWidget = (widget: DashboardWidget) => {
-    if (!widget.visible) return null;
+    if (!widget.visible && !isCustomizing) return null;
 
     const widgetProps = {
       userRole: user?.role || '',
@@ -188,28 +188,33 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
       }
     };
 
+    // Improved grid positioning with consistent spacing
+    const gridColumn = isMobile ? 'span 1' : `span ${Math.min(widget.position.w, 12)}`;
+    const gridRow = `span ${widget.position.h}`;
+
     return (
       <div
         key={widget.id}
         className={cn(
           "relative transition-all duration-200",
-          isCustomizing && "border-2 border-dashed border-primary/50 rounded-lg",
-          selectedWidget === widget.id && "border-primary shadow-glow"
+          isCustomizing && "border-2 border-dashed border-primary/50 rounded-lg p-1",
+          selectedWidget === widget.id && "border-primary shadow-glow",
+          !widget.visible && isCustomizing && "opacity-50"
         )}
         style={{
-          gridColumn: isMobile ? 'span 1' : `span ${widget.position.w}`,
-          gridRow: `span ${widget.position.h}`
+          gridColumn,
+          gridRow
         }}
         onClick={() => isCustomizing && setSelectedWidget(widget.id)}
       >
         <WidgetComponent />
         
         {isCustomizing && (
-          <div className="absolute top-2 right-2 flex gap-1">
+          <div className="absolute top-2 right-2 flex gap-1 z-10">
             <Button
               size="icon"
               variant="outline"
-              className="h-6 w-6"
+              className="h-6 w-6 bg-white shadow-sm"
               onClick={(e) => {
                 e.stopPropagation();
                 toggleWidgetVisibility(widget.id);
@@ -244,32 +249,40 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
   };
 
   if (!user || !dashboardConfig) {
-    return <div>Loading dashboard...</div>;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[...Array(6)].map((_, i) => (
+          <Card key={i} className="animate-pulse">
+            <CardContent className="p-6">
+              <div className="space-y-3">
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+                <div className="h-8 bg-muted rounded"></div>
+                <div className="h-3 bg-muted rounded w-1/2"></div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
   }
-
-  const layout = dashboardConfig.dashboardLayout;
-  const currentLayout = isMobile ? layout.responsive.mobile : 
-                       isTablet ? layout.responsive.tablet : 
-                       layout.responsive.desktop;
 
   return (
     <div className={cn("space-y-6", className)}>
-      {/* Dashboard Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className={cn(
-            "font-bold",
-            isMobile ? "text-2xl" : "text-3xl"
-          )}>
-            {dashboardConfig.displayName} Dashboard
-          </h1>
+      {/* Redesigned Dashboard Controls - Compact Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h2 className="text-xl font-semibold">Dashboard Widgets</h2>
+          <Badge variant="outline" className="text-xs">
+            {widgets.filter(w => w.visible).length} Active
+          </Badge>
         </div>
 
         <div className="flex items-center gap-2">
           <Button
             variant={isCustomizing ? "default" : "outline"}
+            size="sm"
             onClick={() => setIsCustomizing(!isCustomizing)}
-            className={cn(isMobile && "h-12")}
+            className="h-9"
           >
             <Layout className="w-4 h-4 mr-2" />
             {isCustomizing ? "Exit Customize" : "Customize"}
@@ -279,15 +292,17 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
             <>
               <Button
                 variant="outline"
+                size="sm"
                 onClick={resetLayout}
-                className={cn(isMobile && "h-12")}
+                className="h-9"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Reset
               </Button>
               <Button
+                size="sm"
                 onClick={saveLayout}
-                className={cn(isMobile && "h-12")}
+                className="h-9"
               >
                 <Save className="w-4 h-4 mr-2" />
                 Save
@@ -297,55 +312,54 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         </div>
       </div>
 
-      {/* Customization Instructions */}
+      {/* Customization Instructions - Compact */}
       {isCustomizing && (
         <Card className="border-primary bg-primary/5">
           <CardContent className="p-4">
-            <div className="flex items-center gap-2 text-primary">
-              <Settings className="w-5 h-5" />
-              <span className="font-medium">Customization Mode Active</span>
+            <div className="flex items-center gap-2 text-primary mb-2">
+              <Settings className="w-4 h-4" />
+              <span className="font-medium text-sm">Customization Mode Active</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              Click on widgets to select them. Use the eye icon to show/hide widgets. 
-              Changes are saved automatically when you exit customization mode.
+            <p className="text-xs text-muted-foreground">
+              Click widgets to select them. Use the eye icon to show/hide widgets. Changes save automatically when you exit.
             </p>
           </CardContent>
         </Card>
       )}
 
-      {/* Dashboard Grid */}
+      {/* Improved Dashboard Grid - Consistent Spacing */}
       <div 
         className={cn(
           "grid gap-4 auto-rows-min",
           isMobile ? "grid-cols-1" : 
           isTablet ? "grid-cols-2" : 
-          "grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+          "grid-cols-12"
         )}
         style={{
-          gridTemplateColumns: isMobile ? '1fr' : 
-                              isTablet ? 'repeat(2, 1fr)' :
-                              `repeat(${currentLayout.columns}, 1fr)`
+          gridTemplateRows: 'repeat(auto-fit, minmax(200px, auto))'
         }}
       >
         {widgets
           .filter(widget => widget.visible || isCustomizing)
+          .sort((a, b) => a.position.y - b.position.y || a.position.x - b.position.x)
           .map(widget => renderWidget(widget))}
       </div>
 
-      {/* Widget Customization Panel */}
+      {/* Widget Customization Panel - Improved */}
       {isCustomizing && selectedWidget && (
-        <Card className="border-primary">
-          <CardHeader>
-            <CardTitle className="text-lg">
+        <Card className="border-primary bg-primary/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Grid3X3 className="w-5 h-5" />
               Widget Settings: {widgets.find(w => w.id === selectedWidget)?.title}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              <div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="space-y-2">
                 <label className="text-sm font-medium">Width</label>
-                <select 
-                  className="w-full mt-1 p-2 border rounded"
+                <select
+                  className="w-full h-9 px-3 py-1 border border-input bg-background rounded-md text-sm"
                   value={widgets.find(w => w.id === selectedWidget)?.position.w || 1}
                   onChange={(e) => {
                     const newWidth = parseInt(e.target.value);
@@ -362,10 +376,10 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
                 </select>
               </div>
               
-              <div>
+              <div className="space-y-2">
                 <label className="text-sm font-medium">Height</label>
-                <select 
-                  className="w-full mt-1 p-2 border rounded"
+                <select
+                  className="w-full h-9 px-3 py-1 border border-input bg-background rounded-md text-sm"
                   value={widgets.find(w => w.id === selectedWidget)?.position.h || 1}
                   onChange={(e) => {
                     const newHeight = parseInt(e.target.value);
@@ -376,7 +390,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
                     ));
                   }}
                 >
-                  {[1, 2, 3, 4, 5, 6].map(h => (
+                  {[1, 2, 3, 4].map(h => (
                     <option key={h} value={h}>{h} rows</option>
                   ))}
                 </select>
@@ -384,8 +398,9 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
               
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => toggleWidgetVisibility(selectedWidget)}
-                className="mt-6"
+                className="mt-6 h-9"
               >
                 {widgets.find(w => w.id === selectedWidget)?.visible ? (
                   <>
@@ -402,8 +417,9 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
               
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => setSelectedWidget(null)}
-                className="mt-6"
+                className="mt-6 h-9"
               >
                 Done
               </Button>
@@ -411,8 +427,6 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
           </CardContent>
         </Card>
       )}
-
-
     </div>
   );
 };
