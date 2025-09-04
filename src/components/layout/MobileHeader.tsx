@@ -34,7 +34,7 @@ export const MobileHeader: React.FC = () => {
 
   const menuItems = [
     { icon: User, label: 'Profile', path: '/profile' },
-    { icon: Settings, label: 'Settings', path: '/settings' },
+    { icon: Lightbulb, label: 'Tutorials', path: '/tutorials' },
     { icon: Bell, label: 'Notifications', path: '/notifications' },
     { icon: AlertTriangle, label: 'Emergency', path: '/emergency' },
   ];

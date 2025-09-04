@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { TutorialProvider } from "@/components/tutorial/TutorialProvider";
 import { ErrorBoundary } from "@/utils/errorBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
@@ -23,6 +24,7 @@ import Emergency from "./pages/Emergency";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import Tutorials from "./pages/Tutorials";
 
 const queryClient = new QueryClient();
 
@@ -32,82 +34,89 @@ const App = () => (
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         <AuthProvider>
           <NotificationProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/dashboard" element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/documents" element={
-                  <ProtectedRoute>
-                    <Documents />
-                  </ProtectedRoute>
-                } />
-                <Route path="/track-documents" element={
-                  <ProtectedRoute>
-                    <TrackDocuments />
-                  </ProtectedRoute>
-                } />
-                <Route path="/calendar" element={
-                  <ProtectedRoute>
-                    <Calendar />
-                  </ProtectedRoute>
-                } />
-                <Route path="/messages" element={
-                  <ProtectedRoute>
-                    <Messages />
-                  </ProtectedRoute>
-                } />
-                <Route path="/workflow" element={
-                  <ProtectedRoute requiredPermissions={['canManageWorkflows']}>
-                    <WorkflowManagement />
-                  </ProtectedRoute>
-                } />
-                <Route path="/approvals" element={
-                  <ProtectedRoute requiredPermissions={['canApprove']}>
-                    <Approvals />
-                  </ProtectedRoute>
-                } />
-                <Route path="/approval-routing" element={
-                  <ProtectedRoute requiredPermissions={['canManageWorkflows']}>
-                    <ApprovalRouting />
-                  </ProtectedRoute>
-                } />
-                <Route path="/analytics" element={
-                  <ProtectedRoute requiredPermissions={['canViewAnalytics']}>
-                    <Analytics />
-                  </ProtectedRoute>
-                } />
-                <Route path="/advanced-signature" element={
-                  <ProtectedRoute>
-                    <AdvancedSignature />
-                  </ProtectedRoute>
-                } />
-                <Route path="/emergency" element={
-                  <ProtectedRoute>
-                    <Emergency />
-                  </ProtectedRoute>
-                } />
-                <Route path="/search" element={
-                  <ProtectedRoute>
-                    <Search />
-                  </ProtectedRoute>
-                } />
-                <Route path="/profile" element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
+            <TutorialProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/dashboard" element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/documents" element={
+                    <ProtectedRoute>
+                      <Documents />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/track-documents" element={
+                    <ProtectedRoute>
+                      <TrackDocuments />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/calendar" element={
+                    <ProtectedRoute>
+                      <Calendar />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/messages" element={
+                    <ProtectedRoute>
+                      <Messages />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/workflow" element={
+                    <ProtectedRoute requiredPermissions={['canManageWorkflows']}>
+                      <WorkflowManagement />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/approvals" element={
+                    <ProtectedRoute requiredPermissions={['canApprove']}>
+                      <Approvals />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/approval-routing" element={
+                    <ProtectedRoute requiredPermissions={['canManageWorkflows']}>
+                      <ApprovalRouting />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/analytics" element={
+                    <ProtectedRoute requiredPermissions={['canViewAnalytics']}>
+                      <Analytics />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/advanced-signature" element={
+                    <ProtectedRoute>
+                      <AdvancedSignature />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/emergency" element={
+                    <ProtectedRoute>
+                      <Emergency />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/search" element={
+                    <ProtectedRoute>
+                      <Search />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/profile" element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/tutorials" element={
+                    <ProtectedRoute>
+                      <Tutorials />
+                    </ProtectedRoute>
+                  } />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </TutorialProvider>
         </NotificationProvider>
       </AuthProvider>
       </ThemeProvider>

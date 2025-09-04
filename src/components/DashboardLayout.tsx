@@ -5,6 +5,7 @@ import { NotificationCenter } from "./NotificationCenter";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { User, LogOut, Search, Settings, Crown, Shield, Users, Briefcase } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -152,9 +153,9 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
                       Profile Settings
                     </DropdownMenuItem>
                     
-                    <DropdownMenuItem onClick={() => navigate('/settings')}>
-                      <Settings className="w-4 h-4 mr-2" />
-                      System Settings
+                    <DropdownMenuItem onClick={() => navigate('/tutorials')}>
+                      <Lightbulb className="w-4 h-4 mr-2" />
+                      Tutorials
                     </DropdownMenuItem>
                     
                     <DropdownMenuSeparator />

@@ -15,7 +15,8 @@ import {
   X,
   Search,
   GitBranch,
-  Eye
+  Eye,
+  Lightbulb
 } from "lucide-react";
 import { AdvancedSignatureIcon } from "@/components/ui/signature-icon";
 import { cn } from "@/lib/utils";
@@ -39,6 +40,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({ userRole }) 
       { title: "Document Management", url: "/documents", icon: FileText },
       { title: "Signature", url: "/advanced-signature", icon: AdvancedSignatureIcon },
       { title: "Emergency Management", url: "/emergency", icon: AlertTriangle },
+      { title: "Tutorials", url: "/tutorials", icon: Lightbulb },
       { title: "Profile", url: "/profile", icon: User },
     ];
 
