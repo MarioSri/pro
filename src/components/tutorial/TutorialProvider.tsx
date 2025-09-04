@@ -36,11 +36,12 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
     
     setHasCompletedTutorial(!!(completed || completedForUser));
     
-    // Auto-start tutorial for new users after a delay
-    if (!completed && !completedForUser && user) {
+    // Auto-start tutorial for new users after they reach dashboard
+    // Only trigger if user is logged in and on dashboard page
+    if (!completed && !completedForUser && user && window.location.pathname === '/dashboard') {
       const timer = setTimeout(() => {
         setShowTutorial(true);
-      }, 3000); // 3 second delay to allow page to load
+      }, 2000); // 2 second delay to allow dashboard to fully load
       
       return () => clearTimeout(timer);
     }

@@ -229,9 +229,6 @@ export const TutorialSystem: React.FC<TutorialSystemProps> = ({
   const highlightElement = (step: TutorialStep) => {
     // Remove previous highlight
     if (highlightedElement) {
-      highlightedElement.style.position = '';
-      highlightedElement.style.zIndex = '';
-      highlightedElement.style.boxShadow = '';
       highlightedElement.classList.remove('tutorial-highlight');
     }
 
@@ -240,20 +237,75 @@ export const TutorialSystem: React.FC<TutorialSystemProps> = ({
     if (element) {
       setHighlightedElement(element);
       
-      // Add highlight styles
-      element.style.position = 'relative';
-      element.style.zIndex = '50';
-      element.style.boxShadow = '0 0 0 4px rgba(34, 197, 94, 0.5), 0 0 20px rgba(34, 197, 94, 0.3)';
-      element.classList.add('tutorial-highlight');
-      
-      // Calculate tooltip position
+      // Calculate smart positioning to avoid blocking content
       const rect = element.getBoundingClientRect();
-      const tooltipX = rect.left + rect.width / 2;
-      const tooltipY = step.position === 'top' ? rect.top - 20 : rect.bottom + 20;
+      const viewport = {
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+      
+      const tooltipWidth = 320;
+      const tooltipHeight = 200;
+      const padding = 16;
+      let tooltipX = 0;
+      let tooltipY = 0;
+
+      // Smart positioning logic based on step position and available space
+      switch (step.position) {
+        case 'right':
+          tooltipX = rect.right + padding;
+          tooltipY = rect.top + (rect.height / 2) - (tooltipHeight / 2);
+          // If tooltip would go off-screen, position it to the left
+          if (tooltipX + tooltipWidth > viewport.width) {
+            tooltipX = rect.left - tooltipWidth - padding;
+          }
+          break;
+        case 'left':
+          tooltipX = rect.left - tooltipWidth - padding;
+          tooltipY = rect.top + (rect.height / 2) - (tooltipHeight / 2);
+          // If tooltip would go off-screen, position it to the right
+          if (tooltipX < 0) {
+            tooltipX = rect.right + padding;
+          }
+          break;
+        case 'bottom':
+          tooltipX = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+          tooltipY = rect.bottom + padding;
+          // If tooltip would go off-screen horizontally, adjust
+          if (tooltipX < padding) tooltipX = padding;
+          if (tooltipX + tooltipWidth > viewport.width) tooltipX = viewport.width - tooltipWidth - padding;
+          // If tooltip would go off-screen vertically, position above
+          if (tooltipY + tooltipHeight > viewport.height) {
+            tooltipY = rect.top - tooltipHeight - padding;
+          }
+          break;
+        case 'top':
+          tooltipX = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+          tooltipY = rect.top - tooltipHeight - padding;
+          // If tooltip would go off-screen horizontally, adjust
+          if (tooltipX < padding) tooltipX = padding;
+          if (tooltipX + tooltipWidth > viewport.width) tooltipX = viewport.width - tooltipWidth - padding;
+          // If tooltip would go off-screen vertically, position below
+          if (tooltipY < 0) {
+            tooltipY = rect.bottom + padding;
+          }
+          break;
+        default:
+          // Center positioning for non-specific elements
+          tooltipX = (viewport.width / 2) - (tooltipWidth / 2);
+          tooltipY = (viewport.height / 2) - (tooltipHeight / 2);
+      }
+
+      // Ensure tooltip stays within viewport bounds
+      tooltipX = Math.max(padding, Math.min(tooltipX, viewport.width - tooltipWidth - padding));
+      tooltipY = Math.max(padding, Math.min(tooltipY, viewport.height - tooltipHeight - padding));
       
       setTooltipPosition({ x: tooltipX, y: tooltipY });
       
-      // Scroll element into view
+      // Add subtle highlight that doesn't block content
+      element.classList.add('tutorial-highlight');
+      
+      // Scroll element into view smoothly
       element.scrollIntoView({ 
         behavior: 'smooth', 
         block: 'center',
@@ -373,12 +425,14 @@ export const TutorialSystem: React.FC<TutorialSystemProps> = ({
         {/* Tutorial Tooltip */}
         <div
           className={cn(
-            "fixed z-50 bg-white border border-primary shadow-xl rounded-lg p-4 max-w-sm",
-            isMobile ? "left-4 right-4 bottom-4" : "transform -translate-x-1/2"
+            "fixed bg-white border border-primary shadow-xl rounded-lg p-4 max-w-sm transition-all duration-300",
+            "tutorial-tooltip z-50",
+            isMobile ? "left-4 right-4 bottom-4" : ""
           )}
           style={isMobile ? {} : {
             left: `${tooltipPosition.x}px`,
-            top: `${tooltipPosition.y}px`
+            top: `${tooltipPosition.y}px`,
+            width: '320px'
           }}
         >
           {/* Progress Header */}
