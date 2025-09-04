@@ -105,9 +105,8 @@ export const LiveMeetingRequestManager: React.FC = () => {
             return request.urgency === 'urgent';
           case 'immediate':
             return request.urgency === 'immediate';
-          case 'today':
-            const today = new Date().toDateString();
-            return new Date(request.createdAt).toDateString() === today;
+          case 'normal':
+            return request.urgency === 'normal';
           default:
             return true;
         }
@@ -290,7 +289,7 @@ export const LiveMeetingRequestManager: React.FC = () => {
               <SelectItem value="pending">Pending Only</SelectItem>
               <SelectItem value="immediate">🔥 Immediate</SelectItem>
               <SelectItem value="urgent">⚡ Urgent</SelectItem>
-              <SelectItem value="today">📅 Today</SelectItem>
+              <SelectItem value="normal">📅 Normal</SelectItem>
             </SelectContent>
           </Select>
         </div>
