@@ -113,7 +113,6 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
       { title: "Document Management", url: "/documents", icon: FileText },
       { title: "Advanced Signature", url: "/advanced-signature", icon: AdvancedSignatureIcon },
       { title: "Emergency Management", url: "/emergency", icon: AlertTriangle },
-      { title: "Tutorials", url: "/tutorials", icon: Bell },
     ];
 
     const adminItems = [
