@@ -195,7 +195,6 @@ export const LiveMeetingRequestModal: React.FC<LiveMeetingRequestModalProps> = (
                     <Label htmlFor={key} className={`flex items-center gap-2 text-${(config as any).color}-600`}>
                       <span>{(config as any).icon}</span>
                       <span className="font-medium">{(config as any).label}</span>
-                      <span className="text-sm text-gray-500">({(config as any).description})</span>
                     </Label>
                   </div>
                 ))}
