@@ -27,7 +27,6 @@ import {
   Send,
   Paperclip,
   Smile,
-  Phone,
   Video,
   Settings,
   Search,
@@ -639,9 +638,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="ghost" onClick={() => setShowSearch(!showSearch)}>
                   <Search className="w-4 h-4" />
-                </Button>
-                <Button size="sm" variant="ghost">
-                  <Phone className="w-4 h-4" />
                 </Button>
                 <Button size="sm" variant="ghost">
                   <Video className="w-4 h-4" />
