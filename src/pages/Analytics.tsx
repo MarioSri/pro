@@ -424,10 +424,10 @@ const Analytics = () => {
 
                 {/* Tutorial Modal */}
                 {showTutorialModal && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden">
-                      <div className="p-6">
-                        <div className="flex items-center justify-between mb-4">
+                  <div className="tutorial-modal-overlay">
+                    <div className="tutorial-modal-content">
+                      <div className="tutorial-modal-body">
+                        <div className="tutorial-modal-header">
                           <Badge variant="outline" className="text-xs">
                             Step {tutorialStep + 1} of {tutorialSteps.length}
                           </Badge>
@@ -435,12 +435,13 @@ const Analytics = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => setShowTutorialModal(false)}
+                            className="h-auto p-1"
                           >
                             ✕
                           </Button>
                         </div>
                         
-                        <div className="mb-6">
+                        <div className="tutorial-modal-content-area">
                           <h3 className="text-xl font-semibold mb-3">
                             {tutorialSteps[tutorialStep].title}
                           </h3>
@@ -449,7 +450,7 @@ const Analytics = () => {
                           </p>
                         </div>
                         
-                        <div className="flex items-center justify-between">
+                        <div className="tutorial-modal-footer">
                           <Button
                             variant="outline"
                             size="sm"

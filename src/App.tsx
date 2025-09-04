@@ -34,81 +34,108 @@ const App = () => (
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         <AuthProvider>
           <NotificationProvider>
-            <TutorialProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/dashboard" element={
-                    <ProtectedRoute>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/dashboard" element={
+                  <ProtectedRoute>
+                    <TutorialProvider>
                       <Dashboard />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/documents" element={
-                    <ProtectedRoute>
+                    </TutorialProvider>
+                  </ProtectedRoute>
+                } />
+                <Route path="/documents" element={
+                  <ProtectedRoute>
+                    <TutorialProvider>
                       <Documents />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/track-documents" element={
-                    <ProtectedRoute>
+                    </TutorialProvider>
+                  </ProtectedRoute>
+                } />
+                <Route path="/track-documents" element={
+                  <ProtectedRoute>
+                    <TutorialProvider>
                       <TrackDocuments />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/calendar" element={
-                    <ProtectedRoute>
+                    </TutorialProvider>
+                  </ProtectedRoute>
+                } />
+                <Route path="/calendar" element={
+                  <ProtectedRoute>
+                    <TutorialProvider>
                       <Calendar />
-                    </ProtectedRoute>
-                  } />
+                    </TutorialProvider>
+                  </ProtectedRoute>
+                } />
                   <Route path="/messages" element={
                     <ProtectedRoute>
-                      <Messages />
+                      <TutorialProvider>
+                        <Messages />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/workflow" element={
                     <ProtectedRoute requiredPermissions={['canManageWorkflows']}>
-                      <WorkflowManagement />
+                      <TutorialProvider>
+                        <WorkflowManagement />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/approvals" element={
                     <ProtectedRoute requiredPermissions={['canApprove']}>
-                      <Approvals />
+                      <TutorialProvider>
+                        <Approvals />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/approval-routing" element={
                     <ProtectedRoute requiredPermissions={['canManageWorkflows']}>
-                      <ApprovalRouting />
+                      <TutorialProvider>
+                        <ApprovalRouting />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/analytics" element={
                     <ProtectedRoute requiredPermissions={['canViewAnalytics']}>
-                      <Analytics />
+                      <TutorialProvider>
+                        <Analytics />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/advanced-signature" element={
                     <ProtectedRoute>
-                      <AdvancedSignature />
+                      <TutorialProvider>
+                        <AdvancedSignature />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/emergency" element={
                     <ProtectedRoute>
-                      <Emergency />
+                      <TutorialProvider>
+                        <Emergency />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/search" element={
                     <ProtectedRoute>
-                      <Search />
+                      <TutorialProvider>
+                        <Search />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/profile" element={
                     <ProtectedRoute>
-                      <Profile />
+                      <TutorialProvider>
+                        <Profile />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   <Route path="/tutorials" element={
                     <ProtectedRoute>
-                      <Tutorials />
+                      <TutorialProvider>
+                        <Tutorials />
+                      </TutorialProvider>
                     </ProtectedRoute>
                   } />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
@@ -116,7 +143,6 @@ const App = () => (
                 </Routes>
               </BrowserRouter>
             </TooltipProvider>
-          </TutorialProvider>
         </NotificationProvider>
       </AuthProvider>
       </ThemeProvider>
