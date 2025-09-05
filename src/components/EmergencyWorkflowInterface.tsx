@@ -512,7 +512,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
 
             {/* Expanded Recipient Selection */}
             <div className="space-y-4">
-              <Label>Emergency Recipients *</Label>
+              <Label>Emergency Management Recipients *</Label>
               <RecipientSelector
                 userRole={userRole}
                 selectedRecipients={selectedRecipients}
