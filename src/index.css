@@ -498,7 +498,7 @@ All colors MUST be HSL.
   /* HITAM Tree Loading Animations */
   .hitam-tree-rising {
     clip-path: inset(100% 0 0 0);
-    filter: hue-rotate(90deg) saturate(1.8) brightness(1.2) contrast(1.1);
+    filter: hue-rotate(15deg) saturate(1.4) brightness(1.1) contrast(1.05);
     animation: hitam-tree-rising 3s ease-out forwards;
   }
 

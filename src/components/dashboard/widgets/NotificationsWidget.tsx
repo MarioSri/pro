@@ -82,6 +82,7 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
   return (
     <Card className={cn(
       "shadow-elegant hover:shadow-glow transition-all duration-300",
+      "dashboard-widget-container",
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
@@ -114,7 +115,7 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
                 variant={filter === filterType ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setFilter(filterType)}
-                className={cn(isMobile && "text-xs px-2")}
+                className="h-6 px-2 text-xs"
               >
                 {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
               </Button>
@@ -123,14 +124,14 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent>
-        <ScrollArea className={cn(isMobile ? "h-48" : "h-64")}>
+      <CardContent className="dashboard-widget-content">
+        <ScrollArea className={cn(isMobile ? "h-32" : "h-40")}>
           <div className="space-y-2">
             {filteredNotifications.slice(0, isMobile ? 5 : 8).map((notification, index) => (
               <div
                 key={notification.id}
                 className={cn(
-                  "p-3 border rounded-lg hover:bg-accent transition-all cursor-pointer animate-fade-in",
+                  "p-2 border rounded-lg hover:bg-accent transition-all cursor-pointer animate-fade-in",
                   !notification.read && "bg-primary/5 border-l-4 border-l-primary",
                   notification.urgent && "border-warning bg-warning/5",
                   notification.type === 'emergency' && "border-destructive bg-destructive/5"
@@ -138,21 +139,21 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => markAsRead(notification.id)}
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2">
                   <div className="flex-shrink-0 mt-1">
                     {getNotificationIcon(notification.type)}
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-start justify-between gap-1">
                       <h5 className={cn(
-                        "font-medium line-clamp-2",
+                        "font-medium line-clamp-1",
                         !notification.read ? 'text-foreground' : 'text-muted-foreground',
-                        isMobile ? "text-sm" : "text-base"
+                        "text-xs"
                       )}>
                         {notification.title}
                         {notification.urgent && (
-                          <Badge variant="destructive" className="ml-2 text-xs">
+                          <Badge variant="destructive" className="ml-1 text-xs px-1 py-0">
                             Urgent
                           </Badge>
                         )}
@@ -160,30 +161,30 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 flex-shrink-0"
+                        className="h-4 w-4 flex-shrink-0"
                         onClick={(e) => {
                           e.stopPropagation();
                           removeNotification(notification.id);
                         }}
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-2.5 h-2.5" />
                       </Button>
                     </div>
                     
                     <p className={cn(
-                      "text-muted-foreground mt-1 line-clamp-2",
-                      isMobile ? "text-xs" : "text-sm"
+                      "text-muted-foreground mt-0.5 line-clamp-1",
+                      "text-xs"
                     )}>
                       {notification.message}
                     </p>
                     
-                    <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center justify-between mt-1">
                       <span className="text-xs text-muted-foreground">
                         {getTimeAgo(notification.timestamp)}
                       </span>
                       {notification.actionUrl && (
-                        <Button variant="ghost" size="sm" className="h-6 text-xs">
-                          <ArrowRight className="w-3 h-3 mr-1" />
+                        <Button variant="ghost" size="sm" className="h-4 text-xs">
+                          <ArrowRight className="w-2.5 h-2.5 mr-1" />
                           View
                         </Button>
                       )}
@@ -194,9 +195,9 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
             ))}
             
             {filteredNotifications.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p className={cn(isMobile ? "text-sm" : "text-base")}>
+              <div className="text-center py-4 text-muted-foreground">
+                <Bell className="w-6 h-6 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">
                   {filter === 'all' ? 'No notifications' : `No ${filter} notifications`}
                 </p>
               </div>
@@ -205,45 +206,45 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
         </ScrollArea>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-2 pt-2 border-t">
-          <div className="text-center p-2 bg-muted/30 rounded">
+        <div className="grid grid-cols-3 gap-1 pt-2 border-t">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-primary",
-              isMobile ? "text-lg" : "text-xl"
+              "text-lg"
             )}>
               {notifications.length}
             </p>
             <p className={cn(
               "text-muted-foreground",
-              isMobile ? "text-xs" : "text-sm"
+              "text-xs"
             )}>
               Total
             </p>
           </div>
-          <div className="text-center p-2 bg-muted/30 rounded">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-warning",
-              isMobile ? "text-lg" : "text-xl"
+              "text-lg"
             )}>
               {unreadCount}
             </p>
             <p className={cn(
               "text-muted-foreground",
-              isMobile ? "text-xs" : "text-sm"
+              "text-xs"
             )}>
               Unread
             </p>
           </div>
-          <div className="text-center p-2 bg-muted/30 rounded">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-destructive",
-              isMobile ? "text-lg" : "text-xl"
+              "text-lg"
             )}>
               {urgentCount}
             </p>
             <p className={cn(
               "text-muted-foreground",
-              isMobile ? "text-xs" : "text-sm"
+              "text-xs"
             )}>
               Urgent
             </p>

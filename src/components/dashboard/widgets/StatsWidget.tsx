@@ -191,6 +191,7 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
   return (
     <Card className={cn(
       "shadow-elegant hover:shadow-glow transition-all duration-300 h-full",
+      "dashboard-widget-container",
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
@@ -200,21 +201,21 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
           Dashboard Statistics
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <CardContent className="dashboard-widget-content">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
           {statsCards.map((stat, index) => (
             <div
               key={index}
-              className="relative p-4 rounded-lg border hover:shadow-md transition-all duration-200 animate-scale-in bg-white"
+              className="relative p-3 rounded-lg border hover:shadow-md transition-all duration-200 animate-scale-in bg-white min-h-[80px] flex flex-col justify-between"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Icon and Change Indicator */}
-              <div className="flex items-center justify-between mb-3">
-                <div className={cn("p-2 rounded-lg", stat.bgColor)}>
-                  <stat.icon className={cn("w-5 h-5", stat.color)} />
+              <div className="flex items-center justify-between mb-2">
+                <div className={cn("p-1.5 rounded-lg", stat.bgColor)}>
+                  <stat.icon className={cn("w-4 h-4", stat.color)} />
                 </div>
                 <div className={cn(
-                  "text-xs font-medium px-2 py-1 rounded-full",
+                  "text-xs font-medium px-1.5 py-0.5 rounded-full",
                   stat.trend === 'up' ? 'text-green-700 bg-green-100' : 
                   stat.trend === 'down' ? 'text-red-700 bg-red-100' : 'text-gray-700 bg-gray-100'
                 )}>
@@ -224,10 +225,10 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
               
               {/* Value and Title */}
               <div className="space-y-1">
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-xl font-bold text-gray-900">
                   {stat.value}
                 </p>
-                <p className="text-sm text-gray-600 font-medium">
+                <p className="text-xs text-gray-600 font-medium leading-tight">
                   {stat.title}
                 </p>
               </div>
@@ -237,14 +238,14 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
 
         {/* Department Overview for Admin Roles */}
         {stats && (userRole === 'principal' || userRole === 'registrar') && (
-          <div className="mt-6 pt-4 border-t">
+          <div className="mt-4 pt-3 border-t">
             <h4 className="font-semibold mb-3 text-sm text-gray-700">
               Department Overview
             </h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {Object.entries(stats.byDepartment).slice(0, 4).map(([dept, count]) => (
-                <div key={dept} className="text-center p-3 bg-gray-50 rounded-lg">
-                  <p className="text-xl font-bold text-gray-900">{count}</p>
+                <div key={dept} className="text-center p-2 bg-gray-50 rounded-lg">
+                  <p className="text-lg font-bold text-gray-900">{count}</p>
                   <p className="text-xs text-gray-600 font-medium">{dept}</p>
                 </div>
               ))}

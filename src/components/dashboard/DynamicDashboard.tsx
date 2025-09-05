@@ -64,7 +64,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'stats',
         type: 'stats',
         title: 'Dashboard Statistics',
-        position: { x: 0, y: 0, w: 12, h: 1 },
+        position: { x: 0, y: 0, w: 12, h: 2 },
         visible: true,
         permissions: []
       },
@@ -72,7 +72,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'quickActions',
         type: 'quickActions',
         title: 'Quick Actions',
-        position: { x: 0, y: 1, w: 6, h: 1 },
+        position: { x: 0, y: 2, w: 6, h: 2 },
         visible: true,
         permissions: []
       },
@@ -80,15 +80,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'documents',
         type: 'documents',
         title: 'Recent Documents',
-        position: { x: 6, y: 1, w: 6, h: 2 },
-        visible: true,
-        permissions: []
-      },
-      {
-        id: 'calendar',
-        type: 'calendar',
-        title: 'Calendar & Meetings',
-        position: { x: 0, y: 2, w: 6, h: 2 },
+        position: { x: 6, y: 2, w: 6, h: 2 },
         visible: true,
         permissions: []
       },
@@ -96,15 +88,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'notifications',
         type: 'notifications',
         title: 'Notifications',
-        position: { x: 0, y: 4, w: 4, h: 1 },
-        visible: true,
-        permissions: []
-      },
-      {
-        id: 'stickyNotes',
-        type: 'stickyNotes',
-        title: 'Sticky Notes',
-        position: { x: 4, y: 4, w: 4, h: 1 },
+        position: { x: 0, y: 4, w: 6, h: 2 },
         visible: true,
         permissions: []
       },
@@ -112,7 +96,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'analytics',
         type: 'analytics',
         title: 'Analytics Overview',
-        position: { x: 8, y: 4, w: 4, h: 1 },
+        position: { x: 6, y: 4, w: 6, h: 2 },
         visible: config.permissions.canViewAnalytics,
         permissions: ['canViewAnalytics']
       },
@@ -120,7 +104,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'workflow',
         type: 'workflow',
         title: 'Workflow Management',
-        position: { x: 0, y: 5, w: 6, h: 1 },
+        position: { x: 0, y: 6, w: 12, h: 2 },
         visible: config.permissions.canManageWorkflows,
         permissions: ['canManageWorkflows']
       },
@@ -128,17 +112,9 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         id: 'ai',
         type: 'ai',
         title: 'AI Assistant',
-        position: { x: 6, y: 5, w: 6, h: 1 },
+        position: { x: 0, y: 8, w: 12, h: 2 },
         visible: config.permissions.canAccessAI,
         permissions: ['canAccessAI']
-      },
-      {
-        id: 'chat',
-        type: 'chat',
-        title: 'Real-Time Communication',
-        position: { x: 0, y: 6, w: 12, h: 1 },
-        visible: config.features.realTimeChat,
-        permissions: []
       }
     ];
 
@@ -169,16 +145,10 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
           return <QuickActionsWidget {...widgetProps} />;
         case 'documents':
           return <DocumentsWidget {...widgetProps} />;
-        case 'calendar':
-          return <CalendarWidget {...widgetProps} />;
         case 'notifications':
           return <NotificationsWidget {...widgetProps} />;
         case 'analytics':
           return <AnalyticsWidget {...widgetProps} />;
-        case 'stickyNotes':
-          return <StickyNotesWidget {...widgetProps} />;
-        case 'chat':
-          return <ChatWidget {...widgetProps} />;
         case 'workflow':
           return <WorkflowWidget {...widgetProps} />;
         case 'ai':
@@ -190,7 +160,7 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
 
     // Improved grid positioning with consistent spacing
     const gridColumn = isMobile ? 'span 1' : `span ${Math.min(widget.position.w, 12)}`;
-    const gridRow = `span ${widget.position.h}`;
+    const gridRow = `span ${Math.min(widget.position.h, 3)}`;
 
     return (
       <div
@@ -199,7 +169,8 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
           "relative transition-all duration-200",
           isCustomizing && "border-2 border-dashed border-primary/50 rounded-lg p-1",
           selectedWidget === widget.id && "border-primary shadow-glow",
-          !widget.visible && isCustomizing && "opacity-50"
+          !widget.visible && isCustomizing && "opacity-50",
+          "min-h-[200px]" // Standardized minimum height
         )}
         style={{
           gridColumn,
@@ -207,6 +178,48 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         }}
         onClick={() => isCustomizing && setSelectedWidget(widget.id)}
       >
+        {/* Resize Handle */}
+        {isCustomizing && widget.visible && (
+          <div className="absolute bottom-2 right-2 flex gap-1 z-20">
+            <Button
+              size="icon"
+              variant="outline"
+              className="h-6 w-6 bg-white shadow-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                resizeWidget(widget.id, 'small');
+              }}
+              title="Small size"
+            >
+              <div className="w-2 h-2 bg-current rounded" />
+            </Button>
+            <Button
+              size="icon"
+              variant="outline"
+              className="h-6 w-6 bg-white shadow-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                resizeWidget(widget.id, 'medium');
+              }}
+              title="Medium size"
+            >
+              <div className="w-3 h-3 bg-current rounded" />
+            </Button>
+            <Button
+              size="icon"
+              variant="outline"
+              className="h-6 w-6 bg-white shadow-sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                resizeWidget(widget.id, 'large');
+              }}
+              title="Large size"
+            >
+              <div className="w-4 h-4 bg-current rounded" />
+            </Button>
+          </div>
+        )}
+        
         <WidgetComponent />
         
         {isCustomizing && (
@@ -226,6 +239,20 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
         )}
       </div>
     );
+  };
+
+  const resizeWidget = (widgetId: string, size: 'small' | 'medium' | 'large') => {
+    const sizeMap = {
+      small: { w: 4, h: 1 },
+      medium: { w: 6, h: 2 },
+      large: { w: 12, h: 2 }
+    };
+    
+    setWidgets(prev => prev.map(widget =>
+      widget.id === widgetId 
+        ? { ...widget, position: { ...widget.position, ...sizeMap[size] } }
+        : widget
+    ));
   };
 
   const toggleWidgetVisibility = (widgetId: string) => {
@@ -336,7 +363,8 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
           "grid-cols-12"
         )}
         style={{
-          gridTemplateRows: 'repeat(auto-fit, minmax(200px, auto))'
+          gridTemplateRows: 'repeat(auto-fit, minmax(180px, auto))',
+          gridAutoRows: 'minmax(180px, auto)'
         }}
       >
         {widgets
@@ -357,27 +385,27 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Width</label>
+                <label className="text-sm font-medium">Size</label>
                 <select
                   className="w-full h-9 px-3 py-1 border border-input bg-background rounded-md text-sm"
-                  value={widgets.find(w => w.id === selectedWidget)?.position.w || 1}
+                  value={
+                    widgets.find(w => w.id === selectedWidget)?.position.w === 4 ? 'small' :
+                    widgets.find(w => w.id === selectedWidget)?.position.w === 6 ? 'medium' : 'large'
+                  }
                   onChange={(e) => {
-                    const newWidth = parseInt(e.target.value);
-                    setWidgets(prev => prev.map(widget =>
-                      widget.id === selectedWidget 
-                        ? { ...widget, position: { ...widget.position, w: newWidth } }
-                        : widget
-                    ));
+                    if (selectedWidget) {
+                      resizeWidget(selectedWidget, e.target.value as 'small' | 'medium' | 'large');
+                    }
                   }}
                 >
-                  {[1, 2, 3, 4, 6, 12].map(w => (
-                    <option key={w} value={w}>{w} columns</option>
-                  ))}
+                  <option value="small">Small (4 columns)</option>
+                  <option value="medium">Medium (6 columns)</option>
+                  <option value="large">Large (12 columns)</option>
                 </select>
               </div>
               
               <div className="space-y-2">
-                <label className="text-sm font-medium">Height</label>
+                <label className="text-sm font-medium">Compact Mode</label>
                 <select
                   className="w-full h-9 px-3 py-1 border border-input bg-background rounded-md text-sm"
                   value={widgets.find(w => w.id === selectedWidget)?.position.h || 1}
@@ -390,9 +418,9 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
                     ));
                   }}
                 >
-                  {[1, 2, 3, 4].map(h => (
-                    <option key={h} value={h}>{h} rows</option>
-                  ))}
+                  <option value={1}>Compact</option>
+                  <option value={2}>Standard</option>
+                  <option value={3}>Expanded</option>
                 </select>
               </div>
               

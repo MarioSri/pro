@@ -245,6 +245,7 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
   return (
     <Card className={cn(
       "shadow-elegant hover:shadow-glow transition-all duration-300",
+      "dashboard-widget-container",
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
@@ -277,7 +278,7 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
                 variant={filter === filterType ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setFilter(filterType)}
-                className={cn(isMobile && "text-xs px-2")}
+                className="h-6 px-2 text-xs"
               >
                 {filterType === 'all' ? 'All' : 
                  filterType === 'actionable' ? 'Action' : 'Priority'}
@@ -287,9 +288,9 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="dashboard-widget-content space-y-3">
         {/* Quick Query */}
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="flex gap-2">
             <Textarea
               placeholder="Ask AI about documents, workflows, or analytics..."
@@ -297,14 +298,14 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
               onChange={(e) => setQuickQuery(e.target.value)}
               className={cn(
                 "flex-1 resize-none",
-                isMobile ? "h-10 text-sm" : "h-12"
+                "h-8 text-sm"
               )}
-              rows={isMobile ? 1 : 2}
+              rows={1}
             />
             <Button
               onClick={handleQuickQuery}
               disabled={isProcessing || !quickQuery.trim()}
-              className={cn(isMobile && "h-10 w-10 p-0")}
+              className="h-8 w-8 p-0"
             >
               {isProcessing ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -316,28 +317,28 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
         </div>
 
         {/* AI Insights */}
-        <ScrollArea className={cn(isMobile ? "h-40" : "h-48")}>
-          <div className="space-y-3">
+        <ScrollArea className={cn(isMobile ? "h-28" : "h-32")}>
+          <div className="space-y-2">
             {filteredInsights.slice(0, isMobile ? 3 : 4).map((insight, index) => (
               <div
                 key={insight.id}
                 className={cn(
-                  "p-3 border rounded-lg hover:bg-accent transition-all animate-fade-in",
+                  "p-2 border rounded-lg hover:bg-accent transition-all animate-fade-in",
                   insight.priority === 'high' && "border-l-4 border-l-destructive",
                   insight.actionable && "bg-primary/5"
                 )}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2">
                   <div className="flex-shrink-0 mt-1">
                     {getInsightIcon(insight.type)}
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start justify-between mb-1">
                       <h5 className={cn(
                         "font-medium",
-                        isMobile ? "text-sm" : "text-base"
+                        "text-sm"
                       )}>
                         {insight.title}
                       </h5>
@@ -354,8 +355,8 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
                     </div>
                     
                     <p className={cn(
-                      "text-muted-foreground mb-2",
-                      isMobile ? "text-xs" : "text-sm"
+                      "text-muted-foreground mb-1",
+                      "text-xs"
                     )}>
                       {insight.content}
                     </p>
@@ -365,7 +366,7 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
                         {insight.timestamp.toLocaleTimeString()}
                       </span>
                       {insight.actionable && (
-                        <Button variant="ghost" size="sm" className="h-6 text-xs">
+                        <Button variant="ghost" size="sm" className="h-5 text-xs">
                           <ArrowRight className="w-3 h-3 mr-1" />
                           Take Action
                         </Button>
@@ -377,9 +378,9 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
             ))}
             
             {filteredInsights.length === 0 && (
-              <div className="text-center py-6 text-muted-foreground">
-                <Brain className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p className={cn(isMobile ? "text-sm" : "text-base")}>
+              <div className="text-center py-4 text-muted-foreground">
+                <Brain className="w-6 h-6 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">
                   No AI insights available
                 </p>
                 <p className="text-xs">
@@ -391,65 +392,65 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
         </ScrollArea>
 
         {/* AI Quick Actions */}
-        <div className="grid grid-cols-2 gap-2 pt-2 border-t">
-          <Button variant="outline" size="sm" className="text-xs">
+        <div className="grid grid-cols-2 gap-1 pt-2 border-t">
+          <Button variant="outline" size="sm" className="text-xs h-6">
             <FileText className="w-3 h-3 mr-1" />
             Summarize Docs
           </Button>
-          <Button variant="outline" size="sm" className="text-xs">
+          <Button variant="outline" size="sm" className="text-xs h-6">
             <Users className="w-3 h-3 mr-1" />
             Suggest Recipients
           </Button>
-          <Button variant="outline" size="sm" className="text-xs">
+          <Button variant="outline" size="sm" className="text-xs h-6">
             <Clock className="w-3 h-3 mr-1" />
             Predict Timeline
           </Button>
-          <Button variant="outline" size="sm" className="text-xs">
+          <Button variant="outline" size="sm" className="text-xs h-6">
             <TrendingUp className="w-3 h-3 mr-1" />
             Optimize Process
           </Button>
         </div>
 
         {/* AI Stats */}
-        <div className="grid grid-cols-3 gap-2 pt-2 border-t">
-          <div className="text-center p-2 bg-muted/30 rounded">
+        <div className="grid grid-cols-3 gap-1 pt-2 border-t">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-primary",
-              isMobile ? "text-lg" : "text-xl"
+              "text-lg"
             )}>
               {insights.length}
             </p>
             <p className={cn(
               "text-muted-foreground",
-              isMobile ? "text-xs" : "text-sm"
+              "text-xs"
             )}>
               Insights
             </p>
           </div>
-          <div className="text-center p-2 bg-muted/30 rounded">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-warning",
-              isMobile ? "text-lg" : "text-xl"
+              "text-lg"
             )}>
               {actionableCount}
             </p>
             <p className={cn(
               "text-muted-foreground",
-              isMobile ? "text-xs" : "text-sm"
+              "text-xs"
             )}>
               Actionable
             </p>
           </div>
-          <div className="text-center p-2 bg-muted/30 rounded">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-success",
-              isMobile ? "text-lg" : "text-xl"
+              "text-lg"
             )}>
               89%
             </p>
             <p className={cn(
               "text-muted-foreground",
-              isMobile ? "text-xs" : "text-sm"
+              "text-xs"
             )}>
               Accuracy
             </p>
