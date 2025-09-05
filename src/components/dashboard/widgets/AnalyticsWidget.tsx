@@ -159,6 +159,7 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
   return (
     <Card className={cn(
       "shadow-elegant hover:shadow-glow transition-all duration-300",
+      "dashboard-widget-container",
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
@@ -176,7 +177,7 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
             <select
               value={timeframe}
               onChange={(e) => setTimeframe(e.target.value as any)}
-              className="px-2 py-1 border rounded text-xs"
+              className="px-2 py-1 border rounded text-xs h-6"
             >
               <option value="week">This Week</option>
               <option value="month">This Month</option>
@@ -187,7 +188,7 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
               variant="outline" 
               size="sm"
               onClick={() => navigate("/analytics")}
-              className={cn(isMobile && "text-xs")}
+              className="h-6 px-2 text-xs"
             >
               <Eye className="w-4 h-4 mr-1" />
               Details
@@ -196,48 +197,48 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="dashboard-widget-content space-y-3">
         {/* Key Metrics */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="p-3 bg-success/10 rounded-lg border border-success/20">
-            <div className="flex items-center gap-2 mb-1">
+        <div className="grid grid-cols-2 gap-2">
+          <div className="p-2 bg-success/10 rounded-lg border border-success/20">
+            <div className="flex items-center gap-1.5 mb-1">
               <CheckCircle className="w-4 h-4 text-success" />
               <span className={cn(
                 "font-medium text-success",
-                isMobile ? "text-sm" : "text-base"
+                "text-sm"
               )}>
                 Approval Rate
               </span>
             </div>
             <p className={cn(
               "font-bold text-success",
-              isMobile ? "text-xl" : "text-2xl"
+              "text-xl"
             )}>
               {approvalRate.toFixed(1)}%
             </p>
-            <div className="flex items-center gap-1 mt-1">
+            <div className="flex items-center gap-1 mt-0.5">
               <TrendingUp className="w-3 h-3 text-success" />
               <span className="text-xs text-success">+2.3% vs last {timeframe}</span>
             </div>
           </div>
           
-          <div className="p-3 bg-warning/10 rounded-lg border border-warning/20">
-            <div className="flex items-center gap-2 mb-1">
+          <div className="p-2 bg-warning/10 rounded-lg border border-warning/20">
+            <div className="flex items-center gap-1.5 mb-1">
               <Clock className="w-4 h-4 text-warning" />
               <span className={cn(
                 "font-medium text-warning",
-                isMobile ? "text-sm" : "text-base"
+                "text-sm"
               )}>
                 Avg. Time
               </span>
             </div>
             <p className={cn(
               "font-bold text-warning",
-              isMobile ? "text-xl" : "text-2xl"
+              "text-xl"
             )}>
               {analytics.documentStats.avgProcessingTime}d
             </p>
-            <div className="flex items-center gap-1 mt-1">
+            <div className="flex items-center gap-1 mt-0.5">
               <TrendingDown className="w-3 h-3 text-success" />
               <span className="text-xs text-success">-0.5d improvement</span>
             </div>

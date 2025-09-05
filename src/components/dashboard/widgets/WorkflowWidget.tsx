@@ -228,6 +228,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
   return (
     <Card className={cn(
       "shadow-elegant hover:shadow-glow transition-all duration-300",
+      "dashboard-widget-container",
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
@@ -261,7 +262,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
                   variant={filter === filterType ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setFilter(filterType)}
-                  className={cn(isMobile && "text-xs px-2")}
+                  className="h-6 px-2 text-xs"
                 >
                   {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
                 </Button>
@@ -272,7 +273,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
               variant="outline" 
               size="sm"
               onClick={() => navigate("/workflow")}
-              className={cn(isMobile && "text-xs")}
+              className="h-6 px-2 text-xs"
             >
               <Settings className="w-4 h-4 mr-1" />
               Manage
@@ -281,14 +282,14 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent>
-        <ScrollArea className={cn(isMobile ? "h-48" : "h-64")}>
+      <CardContent className="dashboard-widget-content">
+        <ScrollArea className={cn(isMobile ? "h-32" : "h-40")}>
           <div className="space-y-3">
             {filteredWorkflows.slice(0, isMobile ? 3 : 5).map((workflow, index) => (
               <div
                 key={workflow.id}
                 className={cn(
-                  "p-4 border rounded-lg hover:bg-accent transition-all cursor-pointer animate-fade-in",
+                  "p-3 border rounded-lg hover:bg-accent transition-all cursor-pointer animate-fade-in",
                   workflow.type === 'emergency' && "border-destructive bg-red-50",
                   workflow.escalationLevel > 0 && "border-l-4 border-l-warning"
                 )}
