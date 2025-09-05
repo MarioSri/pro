@@ -547,7 +547,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <History className="w-5 h-5 text-primary" />
-              Emergency History
+              EMERGENCY DIRECTIVE
             </CardTitle>
           </CardHeader>
         <CardContent>
