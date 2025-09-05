@@ -153,7 +153,7 @@ export const LiveMeetingRequestModal: React.FC<LiveMeetingRequestModalProps> = (
           <DialogTitle className="flex items-center gap-3">
             🔴 LiveConnect+
             <Badge variant="outline" className="text-xs">
-              {documentType.toUpperCase()}: {documentTitle}
+              {documentTitle}
             </Badge>
           </DialogTitle>
           <DialogDescription>
