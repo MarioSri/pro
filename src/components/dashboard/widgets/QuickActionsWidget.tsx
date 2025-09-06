@@ -293,14 +293,14 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent className="dashboard-widget-content">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {actions.map((action, index) => (
             <Button
               key={action.path}
               variant="outline"
               onClick={() => navigate(action.path)}
               className={cn(
-                "flex flex-col gap-1.5 h-16 p-2 transition-all duration-200 hover:shadow-md animate-scale-in border-gray-200 hover:border-gray-300",
+                "flex flex-col gap-2 h-20 p-3 transition-all duration-200 hover:shadow-md animate-scale-in border-gray-200 hover:border-gray-300",
                 "group relative overflow-hidden"
               )}
               style={{ animationDelay: `${index * 50}ms` }}
@@ -314,17 +314,17 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
               {/* Content */}
               <div className="relative z-10 flex flex-col items-center gap-1">
                 <div className={cn(
-                  "p-1.5 rounded-lg transition-colors duration-200",
+                  "p-2 rounded-lg transition-colors duration-200",
                   action.bgColor,
                   "group-hover:bg-white group-hover:shadow-sm"
                 )}>
                   <action.icon className={cn(
-                    "w-3.5 h-3.5 transition-colors duration-200",
+                    "w-5 h-5 transition-colors duration-200",
                     action.color
                   )} />
                 </div>
                 <div className="text-center">
-                  <span className="text-xs font-medium text-gray-900 group-hover:text-gray-900 leading-tight">
+                  <span className="text-sm font-medium text-gray-900 group-hover:text-gray-900 leading-tight">
                     {action.label}
                   </span>
                 </div>
@@ -335,25 +335,25 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
 
         {/* Role-specific quick stats */}
         {(userRole === 'principal' || userRole === 'registrar') && (
-          <div className="mt-3 pt-3 border-t">
-            <div className="grid grid-cols-3 gap-2 text-center">
-              <div className="p-2 bg-gray-50 rounded-lg">
-                <p className="text-lg font-bold text-red-600">
+          <div className="mt-6 pt-4 border-t">
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center p-3 bg-gray-50 rounded-lg">
+                <div className="text-xl font-bold text-red-600">
                   {userRole === 'principal' ? '8' : '5'}
                 </p>
-                <p className="text-xs text-gray-600 font-medium">Urgent</p>
+                <div className="text-sm text-gray-600 font-medium">Urgent</div>
               </div>
-              <div className="p-2 bg-gray-50 rounded-lg">
-                <p className="text-lg font-bold text-orange-600">
+              <div className="text-center p-3 bg-gray-50 rounded-lg">
+                <div className="text-xl font-bold text-orange-600">
                   {userRole === 'principal' ? '23' : '12'}
                 </p>
-                <p className="text-xs text-gray-600 font-medium">Today</p>
+                <div className="text-sm text-gray-600 font-medium">Today</div>
               </div>
-              <div className="p-2 bg-gray-50 rounded-lg">
-                <p className="text-lg font-bold text-green-600">
+              <div className="text-center p-3 bg-gray-50 rounded-lg">
+                <div className="text-xl font-bold text-green-600">
                   {userRole === 'principal' ? '156' : '89'}
                 </p>
-                <p className="text-xs text-gray-600 font-medium">This Week</p>
+                <div className="text-sm text-gray-600 font-medium">This Week</div>
               </div>
             </div>
           </div>
