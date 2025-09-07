@@ -474,7 +474,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
 
             {/* Expanded Recipient Selection */}
             <div className="space-y-4">
-              <Label>Emergency Management Recipients</Label>
+              <Label>Emergency Recipients *</Label>
               <RecipientSelector
                 userRole={userRole}
                 selectedRecipients={selectedRecipients}
@@ -522,7 +522,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <History className="w-5 h-5 text-primary" />
-              EMERGENCY DIRECTIVE
+              Emergency History
             </CardTitle>
           </CardHeader>
         <CardContent>

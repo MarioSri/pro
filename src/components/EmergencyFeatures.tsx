@@ -260,7 +260,7 @@ export function EmergencyFeatures({ userRole }: EmergencyFeaturesProps) {
       {/* Emergency History */}
       <Card className="shadow-elegant">
         <CardHeader>
-          <CardTitle>EMERGENCY DIRECTIVE</CardTitle>
+          <CardTitle>Emergency History</CardTitle>
           <CardDescription>Recent emergency submissions and their resolution status</CardDescription>
         </CardHeader>
         <CardContent>
