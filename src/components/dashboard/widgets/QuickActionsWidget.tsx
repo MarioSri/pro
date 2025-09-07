@@ -340,19 +340,19 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
               <div className="text-center p-3 bg-gray-50 rounded-lg">
                 <div className="text-xl font-bold text-red-600">
                   {userRole === 'principal' ? '8' : '5'}
-                </div>
+                </p>
                 <div className="text-sm text-gray-600 font-medium">Urgent</div>
               </div>
               <div className="text-center p-3 bg-gray-50 rounded-lg">
                 <div className="text-xl font-bold text-orange-600">
                   {userRole === 'principal' ? '23' : '12'}
-                </div>
+                </p>
                 <div className="text-sm text-gray-600 font-medium">Today</div>
               </div>
               <div className="text-center p-3 bg-gray-50 rounded-lg">
                 <div className="text-xl font-bold text-green-600">
                   {userRole === 'principal' ? '156' : '89'}
-                </div>
+                </p>
                 <div className="text-sm text-gray-600 font-medium">This Week</div>
               </div>
             </div>
