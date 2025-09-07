@@ -1,1010 +1,1474 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar } from '@/components/ui/calendar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { LiveMeetingRequestModal } from '@/components/LiveMeetingRequestModal';
-import { useToast } from '@/hooks/use-toast';
-import { useGoogleAPI } from '@/hooks/useGoogleAPI';
-import { meetingAPI } from '@/services/MeetingAPIService';
-import { Meeting, ConflictCheck, AISchedulingSuggestion } from '@/types/meeting';
-import { cn } from '@/lib/utils';
+import { useState, useEffect, useCallback } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { LiveMeetingRequestModal } from "./LiveMeetingRequestModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { meetingAPI } from "@/services/MeetingAPIService";
+import {
+  Meeting,
+  MeetingAttendee,
+  MeetingType,
+  MeetingPlatform,
+  MeetingStatus,
+  MeetingPriority,
+  MeetingCategory,
+  ConflictCheck,
+  AISchedulingSuggestion,
+  CreateMeetingResponse,
+  ApprovalWorkflow,
+  RecurringPattern,
+  NotificationSettings
+} from "@/types/meeting";
 import {
   Calendar as CalendarIcon,
   Clock,
   Users,
-  MapPin,
-  Video,
   Plus,
-  Settings,
-  AlertTriangle,
+  Video,
+  MapPin,
+  Bell,
   CheckCircle,
   XCircle,
+  Edit,
+  Trash2,
+  ExternalLink,
   Zap,
-  Brain,
+  AlertTriangle,
+  Shield,
+  FileText,
+  Download,
+  Upload,
+  Repeat,
+  Mail,
+  MessageSquare,
+  Phone,
   Wifi,
-  WifiOff,
-  RefreshCw,
-  Filter,
-  Search,
-  Grid,
-  List,
+  Monitor,
+  Calendar,
+  Settings,
+  Star,
   BarChart3,
   TrendingUp,
-  Eye,
-  Bell,
-  ChevronLeft,
+  Filter,
+  Search,
+  Copy,
+  Share,
+  Archive,
+  MoreVertical,
+  ChevronDown,
   ChevronRight,
+  Paperclip,
+  Mic,
+  MicOff,
+  Camera,
+  CameraOff,
+  ScreenShare,
+  UserPlus,
+  UserMinus,
+  Timer,
   Target,
-  Lightbulb
-} from 'lucide-react';
+  BookOpen,
+  Award,
+  Globe,
+  Lock,
+  Unlock,
+  RefreshCw,
+  Save,
+  Send,
+  Eye,
+  EyeOff,
+  Heart,
+  ThumbsUp,
+  ThumbsDown
+} from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MeetingSchedulerProps {
   userRole: string;
+  className?: string;
 }
 
-export const MeetingScheduler: React.FC<MeetingSchedulerProps> = ({ userRole }) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  const [meetings, setMeetings] = useState<Meeting[]>([]);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [showLiveConnectModal, setShowLiveConnectModal] = useState(false);
-  const [conflicts, setConflicts] = useState<ConflictCheck | null>(null);
-  const [aiSuggestions, setAiSuggestions] = useState<AISchedulingSuggestion | null>(null);
-  const [isCreating, setIsCreating] = useState(false);
-  const [syncStatus, setSyncStatus] = useState<'synced' | 'syncing' | 'error'>('synced');
-  const [lastSync, setLastSync] = useState<Date>(new Date());
-  const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'live-requests' | 'analytics'>('calendar');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'confirmed' | 'pending' | 'cancelled'>('all');
-
+export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps) {
+  const { user } = useAuth();
   const { toast } = useToast();
-  const { isLoaded: googleLoaded, isSignedIn: googleSignedIn, signIn: googleSignIn } = useGoogleAPI();
-
-  // Meeting form state
-  const [meetingForm, setMeetingForm] = useState({
-    title: '',
-    description: '',
-    date: '',
-    time: '',
+  
+  // State Management
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [conflicts, setConflicts] = useState<ConflictCheck | null>(null);
+  const [showNewMeetingDialog, setShowNewMeetingDialog] = useState(false);
+  const [showConflictDialog, setShowConflictDialog] = useState(false);
+  const [showLiveMeetingModal, setShowLiveMeetingModal] = useState(false);
+  const [selectedMeeting, setSelectedMeeting] = useState<Meeting | null>(null);
+  const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'analytics'>('calendar');
+  const [filterBy, setFilterBy] = useState<'all' | 'today' | 'week' | 'month'>('all');
+  
+  // New Meeting Form State
+  const [newMeeting, setNewMeeting] = useState<Partial<Meeting>>({
+    title: "",
+    description: "",
+    date: "",
+    time: "",
     duration: 60,
-    attendees: [] as any[],
-    location: 'google-meet',
-    type: 'online' as 'online' | 'physical' | 'hybrid',
-    priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
-    category: 'academic' as 'academic' | 'administrative' | 'financial' | 'emergency'
+    attendees: [],
+    location: "",
+    type: "online",
+    status: "scheduled",
+    priority: "medium",
+    category: "academic",
+    isRecurring: false,
+    tags: [],
+    department: user?.department || "",
+    notifications: {
+      email: true,
+      dashboard: true,
+      teams: false,
+      reminders: [
+        { type: 'email', timing: 1440, enabled: true }, // 24h
+        { type: 'dashboard', timing: 60, enabled: true }, // 1h
+        { type: 'email', timing: 10, enabled: true } // 10m
+      ],
+      escalation: {
+        enabled: false,
+        escalateAfterHours: 24,
+        escalateTo: [],
+        autoApprove: false
+      }
+    }
+  });
+  
+  const [recurringPattern, setRecurringPattern] = useState<RecurringPattern>({
+    frequency: 'weekly',
+    interval: 1,
+    daysOfWeek: [],
+    endDate: undefined,
+    occurrences: undefined,
+    exceptions: []
+  });
+  
+  const [approvalWorkflow, setApprovalWorkflow] = useState<ApprovalWorkflow>({
+    isRequired: false,
+    approvers: [],
+    currentStep: 0,
+    status: 'pending',
+    requestedAt: new Date(),
+    comments: []
   });
 
+  // Mock data for development - replace with API calls
   useEffect(() => {
     loadMeetings();
-    
-    // Set up auto-sync every 30 seconds
-    const syncInterval = setInterval(() => {
-      autoSync();
-    }, 30000);
-
-    return () => clearInterval(syncInterval);
   }, []);
 
   const loadMeetings = async () => {
-    // Simulate loading meetings
-    const mockMeetings: Meeting[] = [
-      {
-        id: 'meeting-1',
-        title: 'Faculty Development Workshop',
-        description: 'Monthly faculty development session',
-        date: '2024-01-18',
-        time: '10:00',
-        duration: 120,
-        attendees: [
-          { id: '1', name: 'Dr. Smith', email: 'smith@hitam.org', role: 'Principal', status: 'accepted', isRequired: true, canEdit: false },
-          { id: '2', name: 'Prof. Johnson', email: 'johnson@hitam.org', role: 'HOD', status: 'pending', isRequired: true, canEdit: false }
-        ],
-        location: 'Conference Room A',
-        type: 'physical',
-        status: 'confirmed',
-        documents: [],
-        createdBy: 'admin',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        priority: 'medium',
-        isRecurring: false,
-        tags: ['faculty', 'development'],
-        category: 'academic'
-      },
-      {
-        id: 'meeting-2',
-        title: 'Emergency Infrastructure Review',
-        description: 'Urgent review of Block A electrical issues',
-        date: '2024-01-17',
-        time: '14:00',
-        duration: 60,
-        attendees: [
-          { id: '1', name: 'Principal', email: 'principal@hitam.org', role: 'Principal', status: 'accepted', isRequired: true, canEdit: false },
-          { id: '3', name: 'Maintenance Head', email: 'maintenance@hitam.org', role: 'Employee', status: 'accepted', isRequired: true, canEdit: false }
-        ],
-        location: 'https://meet.google.com/emergency-review',
-        type: 'online',
-        status: 'confirmed',
-        documents: [],
-        createdBy: 'admin',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        priority: 'urgent',
-        isRecurring: false,
-        tags: ['emergency', 'infrastructure'],
-        category: 'emergency'
-      }
-    ];
-    setMeetings(mockMeetings);
-  };
-
-  const autoSync = async () => {
-    setSyncStatus('syncing');
-    
-    // Simulate sync process
-    setTimeout(() => {
-      setSyncStatus('synced');
-      setLastSync(new Date());
-    }, 1000);
-  };
-
-  const checkConflicts = async (meeting: Partial<Meeting>) => {
-    const conflictCheck = await meetingAPI.checkConflicts(meeting);
-    setConflicts(conflictCheck);
-    return conflictCheck;
-  };
-
-  const getAISuggestions = async (meeting: Partial<Meeting>) => {
-    const suggestions = await meetingAPI.getAISchedulingSuggestions(meeting);
-    setAiSuggestions(suggestions);
-    return suggestions;
-  };
-
-  const createMeeting = async () => {
-    if (!meetingForm.title || !meetingForm.date || !meetingForm.time) {
+    setLoading(true);
+    try {
+      // Mock meetings data - replace with actual API call
+      const mockMeetings: Meeting[] = [
+        {
+          id: "meeting-001",
+          title: "Faculty Recruitment Board Meeting",
+          description: "Review applications for new faculty positions in Computer Science Department",
+          date: "2024-01-18",
+          time: "10:00",
+          duration: 90,
+          attendees: [
+            { id: "1", name: "Dr. Principal", email: "principal@iaoms.edu", role: "Principal", status: "accepted", isRequired: true, canEdit: false },
+            { id: "2", name: "Prof. Registrar", email: "registrar@iaoms.edu", role: "Registrar", status: "accepted", isRequired: true, canEdit: false },
+            { id: "3", name: "Dr. HOD-CSE", email: "hod.cse@iaoms.edu", role: "HOD", department: "Computer Science", status: "no-response" as const, isRequired: true, canEdit: true }
+          ],
+          location: "Conference Room A",
+          type: "hybrid",
+          status: "confirmed",
+          documents: ["recruitment-policy-2024.pdf", "application-summary.xlsx"],
+          createdBy: user?.id || "user-1",
+          createdAt: new Date("2024-01-15T09:00:00Z"),
+          updatedAt: new Date("2024-01-16T14:30:00Z"),
+          priority: "high",
+          category: "recruitment",
+          isRecurring: false,
+          tags: ["recruitment", "faculty", "urgent"],
+          department: "Computer Science",
+          meetingLinks: {
+            googleMeet: {
+              meetingId: "meet-123",
+              joinUrl: "https://meet.google.com/abc-defg-hij",
+              hangoutLink: "https://meet.google.com/abc-defg-hij",
+              conferenceId: "abc-defg-hij",
+              requestId: "req-123",
+              status: "success",
+              createdAt: new Date()
+            },
+            primary: "google-meet"
+          },
+          notifications: {
+            email: true,
+            dashboard: true,
+            teams: true,
+            reminders: [
+              { type: 'email', timing: 1440, enabled: true },
+              { type: 'dashboard', timing: 60, enabled: true },
+              { type: 'email', timing: 10, enabled: true }
+            ],
+            escalation: {
+              enabled: true,
+              escalateAfterHours: 48,
+              escalateTo: ["dean@iaoms.edu"],
+              autoApprove: false
+            }
+          },
+          approvalWorkflow: {
+            isRequired: true,
+            approvers: [
+              {
+                id: "approval-1",
+                approverId: "dean-001",
+                approverName: "Dr. Dean",
+                approverRole: "Dean",
+                order: 1,
+                status: "approved",
+                responseTime: new Date("2024-01-16T10:00:00Z"),
+                comments: "Approved for recruitment process",
+                isRequired: true
+              }
+            ],
+            currentStep: 1,
+            status: "approved",
+            requestedAt: new Date("2024-01-15T09:00:00Z"),
+            approvedAt: new Date("2024-01-16T10:00:00Z"),
+            comments: []
+          }
+        },
+        {
+          id: "meeting-002",
+          title: "Budget Review - Q1 2024",
+          description: "Quarterly budget analysis and financial planning for upcoming semester",
+          date: "2024-01-19",
+          time: "14:00",
+          duration: 120,
+          attendees: [
+            { id: "1", name: "Dr. Principal", email: "principal@iaoms.edu", role: "Principal", status: "accepted", isRequired: true, canEdit: false },
+            { id: "4", name: "Mr. Finance Head", email: "finance@iaoms.edu", role: "Finance Head", status: "accepted", isRequired: true, canEdit: false },
+            { id: "2", name: "Prof. Registrar", email: "registrar@iaoms.edu", role: "Registrar", status: "tentative", isRequired: true, canEdit: false }
+          ],
+          location: "zoom",
+          type: "online",
+          status: "scheduled",
+          documents: ["budget-report-q1.pdf", "financial-analysis.xlsx"],
+          createdBy: user?.id || "user-1",
+          createdAt: new Date("2024-01-12T11:00:00Z"),
+          updatedAt: new Date("2024-01-17T16:45:00Z"),
+          priority: "high",
+          category: "financial",
+          isRecurring: true,
+          recurringPattern: {
+            frequency: "monthly",
+            interval: 3,
+            endDate: new Date("2024-12-31"),
+            exceptions: []
+          },
+          tags: ["budget", "financial", "quarterly"],
+          department: "Administration",
+          meetingLinks: {
+            zoom: {
+              meetingId: "zoom-456",
+              joinUrl: "https://zoom.us/j/123456789",
+              startUrl: "https://zoom.us/s/123456789",
+              password: "budget2024",
+              meetingNumber: "123456789",
+              status: "waiting",
+              createdAt: new Date()
+            },
+            primary: "zoom"
+          },
+          notifications: {
+            email: true,
+            dashboard: true,
+            teams: false,
+            reminders: [
+              { type: 'email', timing: 2880, enabled: true }, // 48h
+              { type: 'dashboard', timing: 60, enabled: true }
+            ],
+            escalation: {
+              enabled: false,
+              escalateAfterHours: 24,
+              escalateTo: [],
+              autoApprove: false
+            }
+          }
+        }
+      ];
+      
+      setMeetings(mockMeetings);
+    } catch (error) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in title, date, and time",
+        title: "Error",
+        description: "Failed to load meetings",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper functions
+  const timeSlots = [
+    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+    "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+    "15:00", "15:30", "16:00", "16:30", "17:00"
+  ];
+
+  const availableAttendees = [
+    { id: "principal", name: "Dr. Principal", email: "principal@iaoms.edu", role: "Principal" },
+    { id: "registrar", name: "Prof. Registrar", email: "registrar@iaoms.edu", role: "Registrar" },
+    { id: "hod-cse", name: "Dr. HOD-CSE", email: "hod.cse@iaoms.edu", role: "HOD", department: "Computer Science" },
+    { id: "hod-eee", name: "Dr. HOD-EEE", email: "hod.eee@iaoms.edu", role: "HOD", department: "Electrical Engineering" },
+    { id: "hod-ece", name: "Dr. HOD-ECE", email: "hod.ece@iaoms.edu", role: "HOD", department: "Electronics Engineering" },
+    { id: "hod-mech", name: "Dr. HOD-MECH", email: "hod.mech@iaoms.edu", role: "HOD", department: "Mechanical Engineering" },
+    { id: "dean", name: "Dr. Dean", email: "dean@iaoms.edu", role: "Dean" },
+    { id: "finance", name: "Mr. Finance Head", email: "finance@iaoms.edu", role: "Finance Head" },
+    { id: "academic", name: "Dr. Academic Cell", email: "academic@iaoms.edu", role: "Academic Cell" },
+    { id: "librarian", name: "Ms. Librarian", email: "library@iaoms.edu", role: "Librarian" }
+  ];
+
+  const meetingPlatforms: { value: MeetingPlatform; label: string; icon: React.ReactNode }[] = [
+    { value: "google-meet", label: "Google Meet", icon: <Video className="w-4 h-4" /> },
+    { value: "zoom", label: "Zoom", icon: <Monitor className="w-4 h-4" /> },
+    { value: "teams", label: "Microsoft Teams", icon: <MessageSquare className="w-4 h-4" /> },
+    { value: "physical", label: "Physical Room", icon: <MapPin className="w-4 h-4" /> }
+  ];
+
+  const getStatusBadge = (status: MeetingStatus) => {
+    const variants = {
+      scheduled: { variant: "secondary" as const, text: "Scheduled", icon: <Clock className="w-3 h-3" /> },
+      confirmed: { variant: "default" as const, text: "Confirmed", icon: <CheckCircle className="w-3 h-3" /> },
+      "in-progress": { variant: "default" as const, text: "In Progress", icon: <Zap className="w-3 h-3" /> },
+      completed: { variant: "default" as const, text: "Completed", icon: <CheckCircle className="w-3 h-3" /> },
+      cancelled: { variant: "destructive" as const, text: "Cancelled", icon: <XCircle className="w-3 h-3" /> },
+      postponed: { variant: "secondary" as const, text: "Postponed", icon: <Calendar className="w-3 h-3" /> }
+    };
+    return variants[status] || { variant: "default" as const, text: status, icon: <Clock className="w-3 h-3" /> };
+  };
+
+  const getPriorityBadge = (priority: MeetingPriority) => {
+    const variants = {
+      low: { variant: "secondary" as const, text: "Low Priority" },
+      medium: { variant: "default" as const, text: "Medium Priority" },
+      high: { variant: "default" as const, text: "High Priority" },
+      urgent: { variant: "destructive" as const, text: "Urgent" }
+    };
+    return variants[priority] || { variant: "default" as const, text: priority };
+  };
+
+  const getTypeIcon = (type: MeetingType) => {
+    switch (type) {
+      case "online": return <Video className="w-4 h-4" />;
+      case "physical": return <MapPin className="w-4 h-4" />;
+      case "hybrid": return <Globe className="w-4 h-4" />;
+      default: return <MapPin className="w-4 h-4" />;
+    }
+  };
+
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+  };
+
+  // Event handlers
+  const handleCreateMeeting = async () => {
+    if (!newMeeting.title || !newMeeting.date || !newMeeting.time) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
         variant: "destructive"
       });
       return;
     }
 
-    setIsCreating(true);
-
+    setLoading(true);
     try {
       // Check for conflicts first
-      const conflictCheck = await checkConflicts(meetingForm);
+      const conflictCheck = await meetingAPI.checkConflicts(newMeeting);
       
-      if (conflictCheck.hasConflict) {
-        toast({
-          title: "Scheduling Conflict Detected",
-          description: `${conflictCheck.conflicts.length} conflicts found. Please review suggestions.`,
-          variant: "destructive"
-        });
+      if (conflictCheck.hasConflict && conflictCheck.conflicts.length > 0) {
         setConflicts(conflictCheck);
+        setShowConflictDialog(true);
         return;
       }
 
-      const response = await meetingAPI.createMeeting(meetingForm as Meeting);
-      
-      setMeetings(prev => [...prev, response.meeting]);
-      setShowCreateDialog(false);
-      
-      // Reset form
-      setMeetingForm({
-        title: '',
-        description: '',
-        date: '',
-        time: '',
-        duration: 60,
-        attendees: [],
-        location: 'google-meet',
-        type: 'online',
-        priority: 'medium',
-        category: 'academic'
-      });
+      // Create the meeting
+      const response: CreateMeetingResponse = await meetingAPI.createMeeting({
+        ...newMeeting,
+        createdBy: user?.id || 'unknown',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        id: `meeting-${Date.now()}`,
+        approvalWorkflow: approvalWorkflow.isRequired ? approvalWorkflow : undefined,
+        recurringPattern: newMeeting.isRecurring ? recurringPattern : undefined
+      } as Meeting);
+
+      setMeetings(prev => [response.meeting, ...prev]);
+      setShowNewMeetingDialog(false);
+      resetNewMeetingForm();
 
       toast({
         title: "Meeting Created",
-        description: `Meeting scheduled successfully with ${response.meetingLinks?.primary} integration`,
+        description: `${response.meeting.title} has been scheduled successfully`,
+        variant: "default"
       });
 
+      // Show meeting links if online meeting
+      if (response.meetingLinks && (newMeeting.type === 'online' || newMeeting.type === 'hybrid')) {
+        const platform = response.meetingLinks.primary;
+        const link = response.meetingLinks[platform];
+        if (link && 'joinUrl' in link) {
+          toast({
+            title: "Meeting Link Generated",
+            description: `${platform} link: ${link.joinUrl}`,
+            variant: "default"
+          });
+        }
+      }
+
     } catch (error) {
+      console.error('Meeting creation failed:', error);
       toast({
         title: "Error",
-        description: "Failed to create meeting",
+        description: "Failed to create meeting. Please try again.",
         variant: "destructive"
       });
     } finally {
-      setIsCreating(false);
+      setLoading(false);
     }
   };
 
-  const getDateMeetings = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    return meetings.filter(meeting => meeting.date === dateStr);
+  const resetNewMeetingForm = () => {
+    setNewMeeting({
+      title: "",
+      description: "",
+      date: "",
+      time: "",
+      duration: 60,
+      attendees: [],
+      location: "",
+      type: "online",
+      status: "scheduled",
+      priority: "medium",
+      category: "academic",
+      isRecurring: false,
+      tags: [],
+      department: user?.department || "",
+      notifications: {
+        email: true,
+        dashboard: true,
+        teams: false,
+        reminders: [
+          { type: 'email', timing: 1440, enabled: true },
+          { type: 'dashboard', timing: 60, enabled: true },
+          { type: 'email', timing: 10, enabled: true }
+        ],
+        escalation: {
+          enabled: false,
+          escalateAfterHours: 24,
+          escalateTo: [],
+          autoApprove: false
+        }
+      }
+    });
   };
 
-  const getFilteredMeetings = () => {
-    let filtered = meetings;
+  const addAttendee = (attendeeData: any) => {
+    const attendee: MeetingAttendee = {
+      id: attendeeData.id,
+      name: attendeeData.name,
+      email: attendeeData.email,
+      role: attendeeData.role,
+      department: attendeeData.department,
+      status: "invited",
+      isRequired: true,
+      canEdit: false
+    };
 
-    if (filterStatus !== 'all') {
-      filtered = filtered.filter(meeting => meeting.status === filterStatus);
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter(meeting =>
-        meeting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        meeting.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    return filtered.sort((a, b) => new Date(a.date + ' ' + a.time).getTime() - new Date(b.date + ' ' + b.time).getTime());
+    setNewMeeting(prev => ({
+      ...prev,
+      attendees: [...(prev.attendees || []), attendee]
+    }));
   };
 
-  const isDateUnavailable = (date: Date) => {
-    const dateStr = date.toISOString().split('T')[0];
-    const dayMeetings = meetings.filter(meeting => meeting.date === dateStr);
+  const removeAttendee = (attendeeId: string) => {
+    setNewMeeting(prev => ({
+      ...prev,
+      attendees: prev.attendees?.filter(a => a.id !== attendeeId) || []
+    }));
+  };
+
+  const handleJoinMeeting = (meeting: Meeting) => {
+    if (!meeting.meetingLinks) return;
+
+    const platform = meeting.meetingLinks.primary;
+    const link = meeting.meetingLinks[platform];
     
-    // Block dates with more than 5 meetings or any emergency meetings
-    return dayMeetings.length >= 5 || dayMeetings.some(meeting => meeting.priority === 'urgent');
-  };
-
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    const newMonth = new Date(currentMonth);
-    if (direction === 'prev') {
-      newMonth.setMonth(newMonth.getMonth() - 1);
-    } else {
-      newMonth.setMonth(newMonth.getMonth() + 1);
-    }
-    setCurrentMonth(newMonth);
-  };
-
-  const getSyncStatusIcon = () => {
-    switch (syncStatus) {
-      case 'synced': return <Wifi className="w-4 h-4 text-success" />;
-      case 'syncing': return <RefreshCw className="w-4 h-4 text-warning animate-spin" />;
-      case 'error': return <WifiOff className="w-4 h-4 text-destructive" />;
+    if (link && 'joinUrl' in link) {
+      window.open(link.joinUrl, '_blank');
+      
+      toast({
+        title: "Joining Meeting",
+        description: `Opening ${platform} meeting...`,
+        variant: "default"
+      });
     }
   };
 
-  const filteredMeetings = getFilteredMeetings();
-  const todaysMeetings = getDateMeetings(new Date());
-  const upcomingMeetings = meetings.filter(m => new Date(m.date) > new Date()).slice(0, 5);
+  const generateCalendarDays = () => {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+    
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    
+    const days = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      const date = new Date(currentYear, currentMonth, i);
+      const dateStr = date.toISOString().split('T')[0];
+      const dayMeetings = meetings.filter(m => m.date === dateStr);
+      
+      days.push({
+        date: i,
+        fullDate: dateStr,
+        meetings: dayMeetings,
+        isToday: i === today.getDate(),
+        isSelected: dateStr === selectedDate.toISOString().split('T')[0]
+      });
+    }
+    
+    return days;
+  };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Enhanced Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-        <div>
-          <h2 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            <CalendarIcon className="w-8 h-8 text-primary" />
-            Meeting Scheduler
-          </h2>
-          <p className="text-muted-foreground mt-2 text-lg">
-            Schedule meetings with Google Meet, Zoom, and Teams integration
-          </p>
-          <div className="flex items-center gap-4 mt-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              {getSyncStatusIcon()}
-              <span>Last sync: {lastSync.toLocaleTimeString()}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <BarChart3 className="w-4 h-4" />
-              <span>{meetings.length} meetings scheduled</span>
-            </div>
+    <TooltipProvider>
+      <div className={`space-y-6 animate-fade-in ${className}`}>
+        {/* Header with Stats */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 className="text-3xl font-bold gradient-text">📅 Meeting Scheduler & Integration</h2>
+            <p className="text-muted-foreground">Advanced scheduling with Google Meet, Zoom, and Teams integration</p>
           </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
-              <Button variant="gradient" size="lg" className="h-12 px-6">
-                <Plus className="w-5 h-5 mr-2" />
-                Schedule Meeting
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-2xl">Create New Meeting</DialogTitle>
-              </DialogHeader>
-              
-              <Tabs defaultValue="basic" className="space-y-6">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="basic">Basic Info</TabsTrigger>
-                  <TabsTrigger value="attendees">Attendees</TabsTrigger>
-                  <TabsTrigger value="settings">Settings</TabsTrigger>
-                  <TabsTrigger value="ai">AI Assist</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="basic" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="title">Meeting Title *</Label>
-                      <Input
-                        id="title"
-                        value={meetingForm.title}
-                        onChange={(e) => setMeetingForm({...meetingForm, title: e.target.value})}
-                        placeholder="Enter meeting title"
-                        className="h-12"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select value={meetingForm.category} onValueChange={(value: any) => setMeetingForm({...meetingForm, category: value})}>
-                        <SelectTrigger className="h-12">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="academic">Academic</SelectItem>
-                          <SelectItem value="administrative">Administrative</SelectItem>
-                          <SelectItem value="financial">Financial</SelectItem>
-                          <SelectItem value="emergency">Emergency</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      value={meetingForm.description}
-                      onChange={(e) => setMeetingForm({...meetingForm, description: e.target.value})}
-                      placeholder="Meeting agenda and details"
-                      rows={4}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="date">Date *</Label>
-                      <Input
-                        id="date"
-                        type="date"
-                        value={meetingForm.date}
-                        onChange={(e) => setMeetingForm({...meetingForm, date: e.target.value})}
-                        className="h-12"
-                        min={new Date().toISOString().split('T')[0]}
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="time">Time *</Label>
-                      <Input
-                        id="time"
-                        type="time"
-                        value={meetingForm.time}
-                        onChange={(e) => setMeetingForm({...meetingForm, time: e.target.value})}
-                        className="h-12"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="duration">Duration (minutes)</Label>
-                      <Select value={meetingForm.duration.toString()} onValueChange={(value) => setMeetingForm({...meetingForm, duration: parseInt(value)})}>
-                        <SelectTrigger className="h-12">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="30">30 minutes</SelectItem>
-                          <SelectItem value="60">1 hour</SelectItem>
-                          <SelectItem value="90">1.5 hours</SelectItem>
-                          <SelectItem value="120">2 hours</SelectItem>
-                          <SelectItem value="180">3 hours</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Meeting Type</Label>
-                      <Select value={meetingForm.type} onValueChange={(value: any) => setMeetingForm({...meetingForm, type: value})}>
-                        <SelectTrigger className="h-12">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="online">
-                            <div className="flex items-center gap-2">
-                              <Video className="w-4 h-4" />
-                              Online Meeting
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="physical">
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              In-Person Meeting
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="hybrid">
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4" />
-                              Hybrid Meeting
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Platform/Location</Label>
-                      <Select value={meetingForm.location} onValueChange={(value) => setMeetingForm({...meetingForm, location: value})}>
-                        <SelectTrigger className="h-12">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {meetingForm.type === 'online' || meetingForm.type === 'hybrid' ? (
-                            <>
-                              <SelectItem value="google-meet">Google Meet</SelectItem>
-                              <SelectItem value="zoom">Zoom</SelectItem>
-                              <SelectItem value="teams">Microsoft Teams</SelectItem>
-                            </>
-                          ) : (
-                            <>
-                              <SelectItem value="conference-room-a">Conference Room A</SelectItem>
-                              <SelectItem value="conference-room-b">Conference Room B</SelectItem>
-                              <SelectItem value="auditorium">Auditorium</SelectItem>
-                              <SelectItem value="principal-office">Principal's Office</SelectItem>
-                            </>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="attendees" className="space-y-4">
-                  <div className="space-y-4">
-                    <h4 className="font-semibold">Select Attendees</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Choose participants for this meeting. Required attendees must accept for the meeting to proceed.
-                    </p>
-                    
-                    {/* Attendee selection would go here */}
-                    <div className="p-4 border rounded-lg bg-muted/30">
-                      <p className="text-sm text-muted-foreground">
-                        Attendee selection interface will be implemented here
-                      </p>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="settings" className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Priority Level</Label>
-                      <Select value={meetingForm.priority} onValueChange={(value: any) => setMeetingForm({...meetingForm, priority: value})}>
-                        <SelectTrigger className="h-12">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="low">Low Priority</SelectItem>
-                          <SelectItem value="medium">Medium Priority</SelectItem>
-                          <SelectItem value="high">High Priority</SelectItem>
-                          <SelectItem value="urgent">Urgent</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="ai" className="space-y-4">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                      <Brain className="w-5 h-5 text-primary" />
-                      <h4 className="font-semibold">AI Scheduling Assistant</h4>
-                    </div>
-                    
-                    <Button
-                      onClick={() => getAISuggestions(meetingForm)}
-                      variant="outline"
-                      className="w-full h-12"
-                    >
-                      <Zap className="w-4 h-4 mr-2" />
-                      Get AI Suggestions
-                    </Button>
-
-                    {aiSuggestions && (
-                      <div className="space-y-3">
-                        <h5 className="font-medium">Recommended Time Slots</h5>
-                        {aiSuggestions.recommendedSlots.slice(0, 3).map((slot, index) => (
-                          <div key={index} className="p-3 border rounded-lg hover:bg-accent cursor-pointer">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <p className="font-medium">{slot.date} at {slot.time}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {slot.availabilityScore * 100}% availability
-                                </p>
-                              </div>
-                              <Button size="sm" onClick={() => {
-                                setMeetingForm({
-                                  ...meetingForm,
-                                  date: slot.date,
-                                  time: slot.time,
-                                  duration: slot.duration
-                                });
-                              }}>
-                                Use This Slot
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
-              </Tabs>
-
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => setShowCreateDialog(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={createMeeting} disabled={isCreating}>
-                  {isCreating ? 'Creating...' : 'Create Meeting'}
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-
-          <Button 
-            variant="outline" 
-            onClick={() => setShowLiveConnectModal(true)}
-            className="h-12 px-6 border-orange-500 text-orange-600 hover:bg-orange-50"
-          >
-            🔴 LiveConnect+
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="shadow-elegant">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-lg">
-                <CalendarIcon className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{meetings.length}</p>
-                <p className="text-sm text-muted-foreground">Total Meetings</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-elegant">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-success/10 rounded-lg">
-                <CheckCircle className="w-6 h-6 text-success" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{meetings.filter(m => m.status === 'confirmed').length}</p>
-                <p className="text-sm text-muted-foreground">Confirmed</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-elegant">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-warning/10 rounded-lg">
-                <Clock className="w-6 h-6 text-warning" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{todaysMeetings.length}</p>
-                <p className="text-sm text-muted-foreground">Today</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="shadow-elegant">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-500/10 rounded-lg">
-                <Users className="w-6 h-6 text-blue-500" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{upcomingMeetings.length}</p>
-                <p className="text-sm text-muted-foreground">Upcoming</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Main Interface */}
-      <Tabs value={viewMode} onValueChange={(value: any) => setViewMode(value)} className="space-y-6">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          <TabsList className="grid w-full max-w-md grid-cols-4">
-            <TabsTrigger value="calendar">📅 Calendar</TabsTrigger>
-            <TabsTrigger value="list">📋 List</TabsTrigger>
-            <TabsTrigger value="live-requests" className="relative">
-              🔴 LiveConnect+
-              <Badge variant="destructive" className="ml-1 px-1 py-0 text-xs animate-pulse">
-                3
+          
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <Badge variant="outline" className="gap-1">
+                <Calendar className="w-3 h-3" />
+                {meetings.length} Meetings
               </Badge>
-            </TabsTrigger>
-            <TabsTrigger value="analytics">📊 Analytics</TabsTrigger>
-          </TabsList>
-
-          {/* Search and Filter */}
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search meetings..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-64 h-10"
-              />
+              <Badge variant="outline" className="gap-1">
+                <Clock className="w-3 h-3" />
+                {meetings.filter(m => m.status === 'scheduled').length} Scheduled
+              </Badge>
             </div>
             
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-40 h-10">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
+            <Button variant="gradient" onClick={() => setShowNewMeetingDialog(true)} className="animate-scale-in">
+              <Plus className="w-4 h-4 mr-2" />
+              Schedule Meeting
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              onClick={() => setShowLiveMeetingModal(true)}
+              className="border-orange-500 text-orange-600 hover:bg-orange-50 animate-scale-in"
+            >
+              🔴 LiveConnect+
+            </Button>
           </div>
         </div>
 
-        <TabsContent value="calendar" className="space-y-6">
-          <Card className="shadow-elegant">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2">
-                  <CalendarIcon className="w-5 h-5" />
-                  Month View
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => navigateMonth('prev')}>
-                    <ChevronLeft className="w-4 h-4" />
-                  </Button>
-                  <h3 className="text-lg font-semibold min-w-[200px] text-center">
-                    {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-                  </h3>
-                  <Button variant="outline" size="sm" onClick={() => navigateMonth('next')}>
-                    <ChevronRight className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                month={currentMonth}
-                onMonthChange={setCurrentMonth}
-                disabled={(date) => isDateUnavailable(date)}
-                className="rounded-md border"
-                modifiers={{
-                  booked: (date) => getDateMeetings(date).length > 0,
-                  unavailable: (date) => isDateUnavailable(date)
-                }}
-                modifiersStyles={{
-                  booked: { backgroundColor: 'hsl(var(--primary) / 0.1)', color: 'hsl(var(--primary))' },
-                  unavailable: { backgroundColor: 'hsl(var(--destructive) / 0.1)', color: 'hsl(var(--destructive))' }
-                }}
-              />
+        {/* View Mode Tabs */}
+        <Tabs value={viewMode} onValueChange={(value: any) => setViewMode(value)} className="w-full">
+          <div className="flex items-center justify-between">
+            <TabsList className="grid w-fit grid-cols-3">
+              <TabsTrigger value="calendar" className="gap-2">
+                <CalendarIcon className="w-4 h-4" />
+                Calendar
+              </TabsTrigger>
+              <TabsTrigger value="list" className="gap-2">
+                <Users className="w-4 h-4" />
+                List View
+              </TabsTrigger>
+              <TabsTrigger value="analytics" className="gap-2">
+                <BarChart3 className="w-4 h-4" />
+                Analytics
+              </TabsTrigger>
+            </TabsList>
+            
+            <div className="flex items-center gap-2">
+              <Select value={filterBy} onValueChange={(value: any) => setFilterBy(value)}>
+                <SelectTrigger className="w-32">
+                  <Filter className="w-4 h-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Time</SelectItem>
+                  <SelectItem value="today">Today</SelectItem>
+                  <SelectItem value="week">This Week</SelectItem>
+                  <SelectItem value="month">This Month</SelectItem>
+                </SelectContent>
+              </Select>
               
-              {/* Date Details */}
-              {selectedDate && (
-                <div className="mt-6 p-4 bg-muted/30 rounded-lg">
-                  <h4 className="font-semibold mb-3">
-                    {selectedDate.toLocaleDateString('en-US', { 
-                      weekday: 'long', 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}
-                  </h4>
-                  
-                  {getDateMeetings(selectedDate).length > 0 ? (
-                    <div className="space-y-2">
-                      {getDateMeetings(selectedDate).map(meeting => (
-                        <div key={meeting.id} className="flex items-center justify-between p-3 bg-white rounded border">
-                          <div>
-                            <h5 className="font-medium">{meeting.title}</h5>
-                            <p className="text-sm text-muted-foreground">
-                              {meeting.time} • {meeting.duration} minutes
-                            </p>
-                          </div>
-                          <Badge variant={meeting.status === 'confirmed' ? 'default' : 'secondary'}>
-                            {meeting.status}
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-muted-foreground">No meetings scheduled for this date</p>
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
+              <Button variant="outline" size="icon" onClick={loadMeetings}>
+                <RefreshCw className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
 
-        <TabsContent value="list" className="space-y-6">
-          <Card className="shadow-elegant">
-            <CardHeader>
-              <CardTitle>All Meetings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-96">
-                <div className="space-y-4">
-                  {filteredMeetings.map(meeting => (
-                    <div key={meeting.id} className="p-4 border rounded-lg hover:bg-accent transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-semibold text-lg">{meeting.title}</h4>
-                          <p className="text-muted-foreground mt-1">{meeting.description}</p>
-                          
-                          <div className="flex items-center gap-4 mt-3 text-sm text-muted-foreground">
+          {/* Calendar View */}
+          <TabsContent value="calendar" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Calendar Grid */}
+              <Card className="lg:col-span-2 shadow-elegant">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CalendarIcon className="w-5 h-5 text-primary" />
+                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-7 gap-2 mb-4">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                      <div key={day} className="text-center text-sm font-medium text-muted-foreground p-2">
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-7 gap-2">
+                    {generateCalendarDays().map((day) => (
+                      <div
+                        key={day.date}
+                        className={`p-2 rounded-lg cursor-pointer transition-all hover:bg-accent ${
+                          day.isToday ? 'bg-primary text-primary-foreground' :
+                          day.isSelected ? 'bg-accent' : ''
+                        }`}
+                        onClick={() => setSelectedDate(new Date(day.fullDate))}
+                      >
+                        <div className="text-sm font-medium">{day.date}</div>
+                        {day.meetings.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {day.meetings.slice(0, 2).map((meeting, idx) => (
+                              <Tooltip key={idx}>
+                                <TooltipTrigger>
+                                  <div className={`w-2 h-2 rounded-full ${
+                                    meeting.status === 'confirmed' ? 'bg-green-500' : 
+                                    meeting.status === 'scheduled' ? 'bg-blue-500' :
+                                    'bg-yellow-500'
+                                  }`} />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>{meeting.title}</p>
+                                  <p className="text-xs">{formatTime(meeting.time)}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ))}
+                            {day.meetings.length > 2 && (
+                              <span className="text-xs">+{day.meetings.length - 2}</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Upcoming Meetings Sidebar */}
+              <Card className="shadow-elegant">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-primary" />
+                    Upcoming Meetings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ScrollArea className="h-96">
+                    <div className="space-y-3">
+                      {meetings.slice(0, 5).map((meeting) => (
+                        <div key={meeting.id} className="p-3 border rounded-lg hover:bg-accent transition-colors cursor-pointer" onClick={() => setSelectedMeeting(meeting)}>
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-medium text-sm line-clamp-2">{meeting.title}</h4>
+                            <Badge variant={getStatusBadge(meeting.status).variant} className="text-xs shrink-0 ml-2">
+                              {getStatusBadge(meeting.status).icon}
+                              {getStatusBadge(meeting.status).text}
+                            </Badge>
+                          </div>
+                          <div className="space-y-1 text-xs text-muted-foreground">
                             <div className="flex items-center gap-1">
-                              <CalendarIcon className="w-4 h-4" />
-                              {meeting.date}
+                              <CalendarIcon className="w-3 h-3" />
+                              {meeting.date} at {formatTime(meeting.time)}
                             </div>
                             <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {meeting.time}
+                              {getTypeIcon(meeting.type)}
+                              {meeting.type === 'online' ? 
+                                meetingPlatforms.find(p => p.value === meeting.meetingLinks?.primary)?.label || 'Online' 
+                                : meeting.location}
                             </div>
                             <div className="flex items-center gap-1">
-                              {meeting.type === 'online' ? <Video className="w-4 h-4" /> : <MapPin className="w-4 h-4" />}
-                              {meeting.location}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Users className="w-4 h-4" />
+                              <Users className="w-3 h-3" />
                               {meeting.attendees.length} attendees
                             </div>
                           </div>
+                          
+                          {(meeting.type === 'online' || meeting.type === 'hybrid') && meeting.meetingLinks && (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="w-full mt-2"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleJoinMeeting(meeting);
+                              }}
+                            >
+                              <Video className="w-3 h-3 mr-1" />
+                              Join Meeting
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* List View */}
+          <TabsContent value="list" className="space-y-4">
+            <Card className="shadow-elegant">
+              <CardHeader>
+                <CardTitle>All Meetings</CardTitle>
+                <CardDescription>Manage and track all scheduled meetings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {meetings.map((meeting) => (
+                    <div key={meeting.id} className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-all">
+                      <div className="flex items-start justify-between">
+                        <div className="space-y-1 flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold">{meeting.title}</h3>
+                            <Badge variant={getPriorityBadge(meeting.priority).variant} className="text-xs">
+                              {meeting.priority.toUpperCase()}
+                            </Badge>
+                            {meeting.isRecurring && (
+                              <Badge variant="outline" className="text-xs gap-1">
+                                <Repeat className="w-3 h-3" />
+                                Recurring
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{meeting.description}</p>
+                          
+                          {/* Tags */}
+                          {meeting.tags && meeting.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {meeting.tags.map((tag, idx) => (
+                                <Badge key={idx} variant="secondary" className="text-xs">
+                                  {tag}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         
+                        <div className="flex items-center gap-2 ml-4">
+                          <Badge variant={getStatusBadge(meeting.status).variant} className="gap-1">
+                            {getStatusBadge(meeting.status).icon}
+                            {getStatusBadge(meeting.status).text}
+                          </Badge>
+                          
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <MoreVertical className="w-4 h-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem onClick={() => setSelectedMeeting(meeting)}>
+                                <Eye className="w-4 h-4 mr-2" />
+                                View Details
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit Meeting
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Copy className="w-4 h-4 mr-2" />
+                                Duplicate
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem className="text-red-600">
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Cancel Meeting
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div className="flex items-center gap-2">
-                          <Badge variant={meeting.status === 'confirmed' ? 'default' : 'secondary'}>
-                            {meeting.status}
-                          </Badge>
-                          <Badge variant={
-                            meeting.priority === 'urgent' ? 'destructive' :
-                            meeting.priority === 'high' ? 'warning' : 'outline'
-                          }>
-                            {meeting.priority}
-                          </Badge>
+                          <CalendarIcon className="w-4 h-4 text-muted-foreground" />
+                          <span>{meeting.date}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-muted-foreground" />
+                          <span>{formatTime(meeting.time)} ({meeting.duration}m)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {getTypeIcon(meeting.type)}
+                          <span>
+                            {meeting.type === 'online' ? 
+                              meetingPlatforms.find(p => p.value === meeting.meetingLinks?.primary)?.label || 'Online'
+                              : meeting.location}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Users className="w-4 h-4 text-muted-foreground" />
+                          <span>{meeting.attendees.length} attendees</span>
+                        </div>
+                      </div>
+                      
+                      {/* Attendees */}
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Attendees</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {meeting.attendees.slice(0, 5).map((attendee, idx) => (
+                            <div key={idx} className="flex items-center gap-2 px-2 py-1 bg-muted rounded-md text-sm">
+                              <Avatar className="w-5 h-5">
+                                <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${attendee.name}`} />
+                                <AvatarFallback className="text-xs">
+                                  {attendee.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span>{attendee.name}</span>
+                              <Badge variant="outline" className="text-xs">
+                                {attendee.status}
+                              </Badge>
+                            </div>
+                          ))}
+                          {meeting.attendees.length > 5 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{meeting.attendees.length - 5} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex justify-between items-center pt-2">
+                        <div className="flex gap-2">
+                          {(meeting.type === 'online' || meeting.type === 'hybrid') && meeting.meetingLinks && (
+                            <Button 
+                              variant="default" 
+                              size="sm"
+                              onClick={() => handleJoinMeeting(meeting)}
+                            >
+                              <Video className="w-4 h-4 mr-2" />
+                              Join Meeting
+                            </Button>
+                          )}
+                        </div>
+                        
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="sm">
+                            <Bell className="w-4 h-4 mr-1" />
+                            Remind
+                          </Button>
+                          <Button variant="ghost" size="sm">
+                            <Share className="w-4 h-4 mr-1" />
+                            Share
+                          </Button>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="live-requests" className="space-y-6">
-          {/* LiveConnect+ Feature Introduction */}
-          <Card className="shadow-elegant border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-50 to-red-50">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Video className="w-6 h-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-foreground mb-2">
-                    🔴 LiveConnect+ Real-Time Meetings
-                  </h3>
-                  <p className="text-muted-foreground mb-4 text-lg leading-relaxed">
-                    Request immediate clarification meetings during document approval workflows. 
-                    Connect instantly with stakeholders for faster decision-making and streamlined approvals.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm">Instant meeting requests</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm">Auto-generated meeting links</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm">Context-aware notifications</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm">Document workflow integration</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm">Multi-platform support</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-success" />
-                      <span className="text-sm">Real-time status tracking</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* How It Works */}
-          <Card className="shadow-elegant">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="w-5 h-5 text-primary" />
-                How LiveConnect+ Works
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl font-bold text-blue-600">1</span>
-                  </div>
-                  <h4 className="font-semibold mb-2">Request Meeting</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Click "🔴 LiveConnect+" during document review to request immediate clarification
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl font-bold text-green-600">2</span>
-                  </div>
-                  <h4 className="font-semibold mb-2">Instant Notification</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Recipients receive immediate alerts via email, dashboard, and mobile notifications
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl font-bold text-purple-600">3</span>
-                  </div>
-                  <h4 className="font-semibold mb-2">Quick Response</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Accept or decline with optional message and suggested alternative times
-                  </p>
-                </div>
-                <div className="text-center">
-                  <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-2xl font-bold text-orange-600">4</span>
-                  </div>
-                  <h4 className="font-semibold mb-2">Auto-Generated Link</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Meeting link automatically created for Google Meet, Zoom, or Teams
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowLiveConnectModal(true)}
-              className="h-16 flex flex-col gap-2 border-orange-500 text-orange-600 hover:bg-orange-50"
-            >
-              <Video className="w-6 h-6" />
-              <span>Request LiveConnect+</span>
-            </Button>
-            
-            <Button variant="outline" className="h-16 flex flex-col gap-2">
-              <Eye className="w-6 h-6" />
-              <span>View Active Requests</span>
-            </Button>
-            
-            <Button variant="outline" className="h-16 flex flex-col gap-2">
-              <BarChart3 className="w-6 h-6" />
-              <span>LiveConnect+ Analytics</span>
-            </Button>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="shadow-elegant">
-              <CardHeader>
-                <CardTitle>Meeting Analytics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span>Completion Rate</span>
-                    <span className="font-bold text-success">94%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Average Duration</span>
-                    <span className="font-bold">67 minutes</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>On-Time Start Rate</span>
-                    <span className="font-bold text-primary">89%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Platform Usage</span>
-                    <div className="flex gap-2">
-                      <Badge variant="outline">Google Meet 45%</Badge>
-                      <Badge variant="outline">Zoom 35%</Badge>
-                      <Badge variant="outline">Teams 20%</Badge>
-                    </div>
-                  </div>
-                </div>
               </CardContent>
             </Card>
+          </TabsContent>
 
-            <Card className="shadow-elegant">
-              <CardHeader>
-                <CardTitle>LiveConnect+ Analytics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+          {/* Analytics View */}
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card>
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <span>Total Requests</span>
-                    <span className="font-bold">24</span>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Total Meetings</p>
+                      <p className="text-2xl font-bold">{meetings.length}</p>
+                    </div>
+                    <CalendarIcon className="w-8 h-8 text-muted-foreground" />
                   </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <span>Success Rate</span>
-                    <span className="font-bold text-success">96%</span>
+                    <div>
+                      <p className="text-sm text-muted-foreground">This Week</p>
+                      <p className="text-2xl font-bold">
+                        {meetings.filter(m => {
+                          const meetingDate = new Date(m.date);
+                          const now = new Date();
+                          const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
+                          return meetingDate >= weekStart;
+                        }).length}
+                      </p>
+                    </div>
+                    <TrendingUp className="w-8 h-8 text-muted-foreground" />
                   </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <span>Avg Response Time</span>
-                    <span className="font-bold">8 minutes</span>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Online Meetings</p>
+                      <p className="text-2xl font-bold">
+                        {meetings.filter(m => m.type === 'online' || m.type === 'hybrid').length}
+                      </p>
+                    </div>
+                    <Video className="w-8 h-8 text-muted-foreground" />
                   </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-4">
                   <div className="flex items-center justify-between">
-                    <span>Most Active Time</span>
-                    <span className="font-bold">10-12 AM</span>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Avg Duration</p>
+                      <p className="text-2xl font-bold">
+                        {Math.round(meetings.reduce((acc, m) => acc + m.duration, 0) / meetings.length || 0)}m
+                      </p>
+                    </div>
+                    <Timer className="w-8 h-8 text-muted-foreground" />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      {/* Conflict Detection Alert */}
-      {conflicts && conflicts.hasConflict && (
-        <Alert className="border-destructive bg-red-50">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Scheduling Conflicts Detected:</strong> {conflicts.conflicts.length} conflicts found.
-            <div className="mt-2">
-              <Button size="sm" variant="outline" onClick={() => setConflicts(null)}>
-                View Suggestions
-              </Button>
+                </CardContent>
+              </Card>
             </div>
-          </AlertDescription>
-        </Alert>
-      )}
+          </TabsContent>
+        </Tabs>
 
-      {/* LiveConnect+ Modal */}
-      <LiveMeetingRequestModal
-        isOpen={showLiveConnectModal}
-        onClose={() => setShowLiveConnectModal(false)}
-        documentId="sample-doc-id"
-        documentType="circular"
-        documentTitle="Sample Document for LiveConnect+ Demo"
-      />
-    </div>
+        {/* New Meeting Dialog */}
+        <Dialog open={showNewMeetingDialog} onOpenChange={setShowNewMeetingDialog}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <CalendarIcon className="w-5 h-5" />
+                Schedule New Meeting
+              </DialogTitle>
+              <DialogDescription>
+                Create a new meeting with advanced scheduling options and integrations
+              </DialogDescription>
+            </DialogHeader>
+            
+            <Tabs defaultValue="basic" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="basic">Basic Info</TabsTrigger>
+                <TabsTrigger value="attendees">Attendees</TabsTrigger>
+                <TabsTrigger value="settings">Settings</TabsTrigger>
+                <TabsTrigger value="approval">Approval</TabsTrigger>
+              </TabsList>
+              
+              {/* Basic Information Tab */}
+              <TabsContent value="basic" className="space-y-4 mt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Meeting Title *</Label>
+                    <Input
+                      id="title"
+                      placeholder="Enter meeting title"
+                      value={newMeeting.title}
+                      onChange={(e) => setNewMeeting({...newMeeting, title: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Select value={newMeeting.category} onValueChange={(value: MeetingCategory) => setNewMeeting({...newMeeting, category: value})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="academic">Academic</SelectItem>
+                        <SelectItem value="administrative">Administrative</SelectItem>
+                        <SelectItem value="financial">Financial</SelectItem>
+                        <SelectItem value="recruitment">Recruitment</SelectItem>
+                        <SelectItem value="disciplinary">Disciplinary</SelectItem>
+                        <SelectItem value="emergency">Emergency</SelectItem>
+                        <SelectItem value="social">Social</SelectItem>
+                        <SelectItem value="training">Training</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="date">Date *</Label>
+                    <Input
+                      id="date"
+                      type="date"
+                      value={newMeeting.date}
+                      onChange={(e) => setNewMeeting({...newMeeting, date: e.target.value})}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="time">Time *</Label>
+                    <Select value={newMeeting.time} onValueChange={(value) => setNewMeeting({...newMeeting, time: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select time" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeSlots.map((time) => (
+                          <SelectItem key={time} value={time}>{formatTime(time)}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>Duration</Label>
+                    <Select value={newMeeting.duration?.toString()} onValueChange={(value) => setNewMeeting({...newMeeting, duration: parseInt(value)})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="30">30 minutes</SelectItem>
+                        <SelectItem value="45">45 minutes</SelectItem>
+                        <SelectItem value="60">1 hour</SelectItem>
+                        <SelectItem value="90">1.5 hours</SelectItem>
+                        <SelectItem value="120">2 hours</SelectItem>
+                        <SelectItem value="180">3 hours</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Meeting Type</Label>
+                    <Select value={newMeeting.type} onValueChange={(value: MeetingType) => setNewMeeting({...newMeeting, type: value})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="online">Online Only</SelectItem>
+                        <SelectItem value="physical">Physical Only</SelectItem>
+                        <SelectItem value="hybrid">Hybrid</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Priority</Label>
+                    <Select value={newMeeting.priority} onValueChange={(value: MeetingPriority) => setNewMeeting({...newMeeting, priority: value})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Low</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="urgent">Urgent</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                {(newMeeting.type === 'online' || newMeeting.type === 'hybrid') && (
+                  <div className="space-y-2">
+                    <Label>Meeting Platform</Label>
+                    <Select value={newMeeting.location} onValueChange={(value) => setNewMeeting({...newMeeting, location: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select platform" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {meetingPlatforms.filter(p => p.value !== 'physical').map((platform) => (
+                          <SelectItem key={platform.value} value={platform.value}>
+                            <div className="flex items-center gap-2">
+                              {platform.icon}
+                              {platform.label}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description & Agenda</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Meeting agenda, objectives, and important notes..."
+                    value={newMeeting.description}
+                    onChange={(e) => setNewMeeting({...newMeeting, description: e.target.value})}
+                    rows={4}
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="recurring" 
+                    checked={newMeeting.isRecurring}
+                    onCheckedChange={(checked) => setNewMeeting({...newMeeting, isRecurring: !!checked})}
+                  />
+                  <Label htmlFor="recurring" className="flex items-center gap-2">
+                    <Repeat className="w-4 h-4" />
+                    Make this a recurring meeting
+                  </Label>
+                </div>
+              </TabsContent>
+              
+              {/* Attendees Tab */}
+              <TabsContent value="attendees" className="space-y-4 mt-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Users className="w-5 h-5" />
+                  <h3 className="text-lg font-semibold">Select Attendees</h3>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Available Staff</Label>
+                    <ScrollArea className="h-64 border rounded-md p-2">
+                      {availableAttendees.map((person) => (
+                        <div key={person.id} className="flex items-center justify-between p-2 hover:bg-accent rounded-md">
+                          <div className="flex items-center gap-2">
+                            <Avatar className="w-8 h-8">
+                              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${person.name}`} />
+                              <AvatarFallback className="text-xs">
+                                {person.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium">{person.name}</p>
+                              <p className="text-xs text-muted-foreground">{person.role}</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => addAttendee(person)}
+                            disabled={newMeeting.attendees?.some(a => a.id === person.id)}
+                          >
+                            <UserPlus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </ScrollArea>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Selected Attendees ({newMeeting.attendees?.length || 0})</Label>
+                    <ScrollArea className="h-64 border rounded-md p-2">
+                      {newMeeting.attendees?.map((attendee) => (
+                        <div key={attendee.id} className="flex items-center justify-between p-2 hover:bg-accent rounded-md">
+                          <div className="flex items-center gap-2">
+                            <Avatar className="w-8 h-8">
+                              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${attendee.name}`} />
+                              <AvatarFallback className="text-xs">
+                                {attendee.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium">{attendee.name}</p>
+                              <p className="text-xs text-muted-foreground">{attendee.role}</p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removeAttendee(attendee.id)}
+                          >
+                            <UserMinus className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </ScrollArea>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              {/* Settings Tab */}
+              <TabsContent value="settings" className="space-y-4 mt-4">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Settings className="w-5 h-5" />
+                    <h3 className="text-lg font-semibold">Meeting Settings</h3>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-sm font-medium">Email Notifications</Label>
+                        <p className="text-xs text-muted-foreground">Send email invites to attendees</p>
+                      </div>
+                      <Switch 
+                        checked={newMeeting.notifications?.email} 
+                        onCheckedChange={(checked) => setNewMeeting({
+                          ...newMeeting, 
+                          notifications: {...newMeeting.notifications!, email: checked}
+                        })}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-sm font-medium">Dashboard Notifications</Label>
+                        <p className="text-xs text-muted-foreground">Show notifications in IAOMS dashboard</p>
+                      </div>
+                      <Switch 
+                        checked={newMeeting.notifications?.dashboard} 
+                        onCheckedChange={(checked) => setNewMeeting({
+                          ...newMeeting, 
+                          notifications: {...newMeeting.notifications!, dashboard: checked}
+                        })}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-sm font-medium">Teams Integration</Label>
+                        <p className="text-xs text-muted-foreground">Post meeting details to Microsoft Teams</p>
+                      </div>
+                      <Switch 
+                        checked={newMeeting.notifications?.teams} 
+                        onCheckedChange={(checked) => setNewMeeting({
+                          ...newMeeting, 
+                          notifications: {...newMeeting.notifications!, teams: checked}
+                        })}
+                      />
+                    </div>
+                  </div>
+                  
+                  <Separator />
+                  
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block">Reminder Settings</Label>
+                    <div className="space-y-2">
+                      {newMeeting.notifications?.reminders?.map((reminder, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 border rounded-md">
+                          <div className="flex items-center gap-2">
+                            <Bell className="w-4 h-4" />
+                            <span className="text-sm">
+                              {reminder.timing >= 1440 ? `${reminder.timing / 1440} day(s)` : 
+                               reminder.timing >= 60 ? `${reminder.timing / 60} hour(s)` : 
+                               `${reminder.timing} minute(s)`} before
+                            </span>
+                          </div>
+                          <Switch checked={reminder.enabled} />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+              
+              {/* Approval Tab */}
+              <TabsContent value="approval" className="space-y-4 mt-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Shield className="w-5 h-5" />
+                  <h3 className="text-lg font-semibold">Approval Workflow</h3>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-sm font-medium">Require Approval</Label>
+                    <p className="text-xs text-muted-foreground">Meeting needs approval before sending invites</p>
+                  </div>
+                  <Switch 
+                    checked={approvalWorkflow.isRequired}
+                    onCheckedChange={(checked) => setApprovalWorkflow({
+                      ...approvalWorkflow, 
+                      isRequired: checked
+                    })}
+                  />
+                </div>
+                
+                {approvalWorkflow.isRequired && (
+                  <Alert>
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Approval Required</AlertTitle>
+                    <AlertDescription>
+                      This meeting will be sent to the appropriate authorities for approval before invites are sent.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </TabsContent>
+            </Tabs>
+            
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setShowNewMeetingDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleCreateMeeting} disabled={loading} className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                {loading ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <CalendarIcon className="w-4 h-4 mr-2" />
+                    Schedule Meeting
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Conflict Resolution Dialog */}
+        <Dialog open={showConflictDialog} onOpenChange={setShowConflictDialog}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                Scheduling Conflicts Detected
+              </DialogTitle>
+              <DialogDescription>
+                The selected time conflicts with existing meetings. Review conflicts and suggestions below.
+              </DialogDescription>
+            </DialogHeader>
+            
+            {conflicts && (
+              <div className="space-y-4">
+                {conflicts.conflicts.length > 0 && (
+                  <div>
+                    <h4 className="font-medium mb-2">Conflicts:</h4>
+                    <div className="space-y-2">
+                      {conflicts.conflicts.map((conflict, index) => (
+                        <div key={index} className="p-2 border rounded-md bg-red-50">
+                          <p className="text-sm font-medium">{conflict.attendeeName}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Has meeting "{conflict.meetingTitle}" at the same time
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {conflicts.suggestions.length > 0 && (
+                  <div>
+                    <h4 className="font-medium mb-2">Suggested Alternative Times:</h4>
+                    <div className="space-y-2">
+                      {conflicts.suggestions.slice(0, 3).map((suggestion, index) => (
+                        <div key={index} className="p-2 border rounded-md bg-green-50 cursor-pointer hover:bg-green-100"
+                             onClick={() => {
+                               setNewMeeting({...newMeeting, date: suggestion.date, time: suggestion.time});
+                               setShowConflictDialog(false);
+                             }}>
+                          <p className="text-sm font-medium">
+                            {suggestion.date} at {formatTime(suggestion.time)}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Availability Score: {Math.round(suggestion.availabilityScore * 100)}%
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowConflictDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={() => {
+                setShowConflictDialog(false);
+                handleCreateMeeting();
+              }}>
+                Schedule Anyway
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* LiveMeet+ Request Modal */}
+        <LiveMeetingRequestModal
+          isOpen={showLiveMeetingModal}
+          onClose={() => setShowLiveMeetingModal(false)}
+          documentId="meeting-scheduler"
+          documentType="report"
+          documentTitle=""
+        />
+      </div>
+    </TooltipProvider>
   );
-};
+}

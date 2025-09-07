@@ -47,7 +47,7 @@ export const HITAMTreeLoading: React.FC<LoadingAnimationProps> = ({
             alt="HITAM Tree Logo"
             className="w-full h-full object-contain hitam-tree-rising"
             style={{
-              filter: 'hue-rotate(25deg) saturate(1.6) brightness(1.2) contrast(1.1)'
+              filter: 'hue-rotate(15deg) saturate(1.4) brightness(1.1) contrast(1.05)'
             }}
           />
         </div>
@@ -55,14 +55,14 @@ export const HITAMTreeLoading: React.FC<LoadingAnimationProps> = ({
         {/* Ripple Effect at the Base */}
         <div 
           key={`ripple-${animationKey}`}
-          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent rounded-full opacity-0 hitam-ripple"
+          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-transparent via-emerald-500 to-transparent rounded-full opacity-0 hitam-ripple"
         >
         </div>
         
         {/* Glow Effect */}
         <div 
           key={`glow-${animationKey}`}
-          className="absolute inset-0 bg-gradient-to-t from-green-400/30 via-emerald-400/20 to-transparent opacity-0 rounded-lg hitam-glow"
+          className="absolute inset-0 bg-gradient-to-t from-emerald-300/25 via-green-400/15 to-transparent opacity-0 rounded-lg hitam-glow"
         >
         </div>
         
@@ -72,7 +72,7 @@ export const HITAMTreeLoading: React.FC<LoadingAnimationProps> = ({
             <div
               key={`sparkle-${i}-${animationKey}`}
               className={cn(
-                "absolute w-1 h-1 bg-green-500 rounded-full opacity-0 hitam-sparkle",
+                "absolute w-1 h-1 bg-emerald-500 rounded-full opacity-0 hitam-sparkle",
                 `hitam-sparkle-${i}`
               )}
             />
@@ -95,7 +95,7 @@ export const HITAMTreeLoading: React.FC<LoadingAnimationProps> = ({
             {[...Array(3)].map((_, i) => (
               <div
                 key={`dot-${i}-${animationKey}`}
-                className={cn("w-2 h-2 bg-green-500 rounded-full hitam-dot-pulse", `hitam-dot-${i}`)}
+                className={cn("w-2 h-2 bg-emerald-500 rounded-full hitam-dot-pulse", `hitam-dot-${i}`)}
               />
             ))}
           </div>

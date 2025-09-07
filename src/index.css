@@ -233,8 +233,8 @@ All colors MUST be HSL.
   @media screen and (max-width: 768px) {
     /* Improved card spacing */
     .card-mobile {
-      margin-bottom: 16px;
-      padding: 16px;
+      margin-bottom: 20px;
+      padding: 20px;
     }
     
     /* Better text readability */
@@ -264,13 +264,13 @@ All colors MUST be HSL.
     /* Enhanced dashboard grid for mobile */
     .dashboard-grid {
       grid-template-columns: 1fr;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
     /* Better card proportions on mobile */
     .dashboard-card {
-      padding: 0.75rem;
-      min-height: 140px;
+      padding: 1rem;
+      min-height: 120px;
     }
 
     /* Improved text sizing for mobile */
@@ -284,60 +284,6 @@ All colors MUST be HSL.
       font-size: 0.875rem;
       color: hsl(var(--muted-foreground));
       line-height: 1.4;
-    }
-
-    /* Dashboard widget containers */
-    .dashboard-widget-container {
-      min-height: 180px;
-      max-height: 400px;
-    }
-
-    .dashboard-widget-content {
-      padding: 0.75rem;
-    }
-
-    /* Perfect alignment system */
-    .dashboard-grid-system {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 0.75rem;
-      align-items: start;
-    }
-
-    /* Standardized spacing */
-    .dashboard-spacing {
-      margin-bottom: 0.75rem;
-    }
-
-    .dashboard-padding {
-      padding: 0.75rem;
-    }
-  }
-
-  /* Desktop dashboard improvements */
-  @media screen and (min-width: 769px) {
-    .dashboard-widget-container {
-      min-height: 200px;
-      max-height: 400px;
-    }
-
-    .dashboard-widget-content {
-      padding: 1rem;
-    }
-
-    .dashboard-grid-system {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 1rem;
-      align-items: start;
-    }
-
-    .dashboard-spacing {
-      margin-bottom: 1rem;
-    }
-
-    .dashboard-padding {
-      padding: 1rem;
     }
   }
 
@@ -651,8 +597,8 @@ All colors MUST be HSL.
 
   @keyframes hitam-glow-effect {
     0% { opacity: 0; }
-    50% { opacity: 0.4; }
-    100% { opacity: 0.15; }
+    50% { opacity: 0.3; }
+    100% { opacity: 0.1; }
   }
 
   @keyframes hitam-sparkle {

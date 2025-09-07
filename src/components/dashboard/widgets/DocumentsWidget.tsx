@@ -264,13 +264,13 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
       </CardHeader>
       
       <CardContent className="dashboard-widget-content">
-        <ScrollArea className={cn(isMobile ? "h-40" : "h-48")}>
-          <div className="space-y-3">
+        <ScrollArea className={cn(isMobile ? "h-32" : "h-40")}>
+          <div className="space-y-2">
             {filteredDocuments.slice(0, 5).map((doc, index) => (
               <div
                 key={doc.id}
                 className={cn(
-                  "p-4 border rounded-lg hover:bg-gray-50 transition-all cursor-pointer animate-fade-in",
+                  "p-3 border rounded-lg hover:bg-gray-50 transition-all cursor-pointer animate-fade-in",
                   doc.status === 'emergency' && "border-red-200 bg-red-50",
                   doc.requiresAction && "border-l-4 border-l-orange-500"
                 )}
@@ -278,13 +278,13 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
                 onClick={() => navigate(`/documents/${doc.id}`)}
               >
                 {/* Header Row */}
-                <div className="flex items-start justify-between mb-2">
+                <div className="flex items-start justify-between mb-1.5">
                   <div className="flex-1 min-w-0 pr-3">
-                    <h4 className="font-medium text-sm line-clamp-2 text-gray-900 leading-tight">
+                    <h4 className="font-medium text-xs line-clamp-2 text-gray-900 leading-tight">
                       {doc.title}
                     </h4>
                     {doc.aiSummary && (
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-1">
+                      <p className="text-xs text-gray-600 mt-0.5 line-clamp-1">
                         🤖 {doc.aiSummary}
                       </p>
                     )}
@@ -292,28 +292,28 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
                   
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {getStatusIcon(doc.status)}
-                    <Badge className={cn("text-sm px-2 py-1", getStatusBadge(doc.status).color)}>
+                    <Badge className={cn("text-xs px-1.5 py-0.5", getStatusBadge(doc.status).color)}>
                       {getStatusBadge(doc.status).text}
                     </Badge>
                   </div>
                 </div>
                 
                 {/* Info Grid */}
-                <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-2">
+                <div className="grid grid-cols-2 gap-1 text-xs text-gray-600 mb-1.5">
                   <div className="flex items-center gap-1">
-                    <User className="w-4 h-4" />
+                    <User className="w-2.5 h-2.5" />
                     <span className="truncate">{doc.submittedBy}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Building className="w-4 h-4" />
+                    <Building className="w-2.5 h-2.5" />
                     <span className="truncate">{doc.department}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <CalendarIcon className="w-4 h-4" />
+                    <Calendar className="w-2.5 h-2.5" />
                     <span>{doc.date}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <AlertTriangle className={cn("w-4 h-4", getPriorityColor(doc.priority))} />
+                    <AlertTriangle className={cn("w-2.5 h-2.5", getPriorityColor(doc.priority))} />
                     <span className={getPriorityColor(doc.priority)}>
                       {doc.priority.toUpperCase()}
                     </span>
@@ -322,14 +322,14 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
                 {/* Branch and Year info */}
                 {(userRole === 'program-head' || userRole === 'hod') && (doc.branch || doc.year) && (
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-1 mb-1.5">
                     {doc.branch && (
-                      <Badge variant="outline" className="text-sm px-2 py-1">
+                      <Badge variant="outline" className="text-xs px-1 py-0">
                         {doc.branch}
                       </Badge>
                     )}
                     {doc.year && (
-                      <Badge variant="outline" className="text-sm px-2 py-1">
+                      <Badge variant="outline" className="text-xs px-1 py-0">
                         {doc.year}
                       </Badge>
                     )}
@@ -338,13 +338,13 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
                 {/* Action Required Indicator */}
                 {doc.requiresAction && (
-                  <div className="flex items-center gap-2 p-2 bg-orange-50 rounded border border-orange-200">
-                    <Zap className="w-4 h-4 text-orange-600" />
-                    <span className="text-sm font-medium text-orange-800">
+                  <div className="flex items-center gap-1.5 p-1.5 bg-orange-50 rounded border border-orange-200">
+                    <Zap className="w-3 h-3 text-orange-600" />
+                    <span className="text-xs font-medium text-orange-800">
                       Action Required
                     </span>
                     {doc.escalationLevel > 0 && (
-                      <Badge className="bg-red-100 text-red-800 text-sm px-2 py-1">
+                      <Badge className="bg-red-100 text-red-800 text-xs px-1 py-0">
                         Escalated {doc.escalationLevel}x
                       </Badge>
                     )}
@@ -353,17 +353,17 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
                 {/* Quick Actions for Approvers */}
                 {doc.requiresAction && (userRole === 'principal' || userRole === 'registrar' || userRole === 'hod') && (
-                  <div className="flex gap-2 mt-3">
-                    <Button size="sm" className="flex-1 h-8 text-sm bg-green-600 hover:bg-green-700">
-                      <CheckCircle className="w-4 h-4 mr-1" />
+                  <div className="flex gap-1 mt-2">
+                    <Button size="sm" className="flex-1 h-6 text-xs bg-green-600 hover:bg-green-700">
+                      <CheckCircle className="w-2.5 h-2.5 mr-1" />
                       Approve
                     </Button>
-                    <Button size="sm" variant="destructive" className="flex-1 h-8 text-sm">
-                      <XCircle className="w-4 h-4 mr-1" />
+                    <Button size="sm" variant="destructive" className="flex-1 h-6 text-xs">
+                      <XCircle className="w-2.5 h-2.5 mr-1" />
                       Reject
                     </Button>
-                    <Button size="sm" variant="outline" className="h-8 px-3">
-                      <ArrowRight className="w-4 h-4" />
+                    <Button size="sm" variant="outline" className="h-6 px-1.5">
+                      <ArrowRight className="w-2.5 h-2.5" />
                     </Button>
                   </div>
                 )}
@@ -372,9 +372,9 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
             
             {filteredDocuments.length === 0 && (
               <div className="text-center py-6 text-gray-500">
-                <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p className="text-lg font-medium">No documents found</p>
-                <p className="text-sm">
+                <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm font-medium">No documents found</p>
+                <p className="text-xs">
                   {filter === 'all' ? 'No documents available' : `No ${filter} documents`}
                 </p>
               </div>
@@ -383,8 +383,8 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
         </ScrollArea>
 
         {/* Widget Footer */}
-        <div className="flex items-center justify-between pt-4 border-t mt-4">
-          <div className="flex items-center gap-4 text-base text-gray-600">
+        <div className="flex items-center justify-between pt-2 border-t mt-2">
+          <div className="flex items-center gap-4 text-sm text-gray-600">
             <span>{filteredDocuments.length} documents</span>
             {urgentCount > 0 && (
               <span className="text-orange-600 font-medium">
@@ -397,10 +397,10 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
             variant="ghost" 
             size="sm"
             onClick={() => navigate("/documents")}
-            className="h-8 text-sm"
+            className="h-6 text-xs"
           >
             View All
-            <ArrowRight className="w-4 h-4 ml-1" />
+            <ArrowRight className="w-2.5 h-2.5 ml-1" />
           </Button>
         </div>
       </CardContent>

@@ -3,13 +3,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, TrendingUp, Users, FileText, Clock, CheckCircle2, XCircle, Calendar } from "lucide-react";
+import { BarChart3, TrendingUp, Users, FileText, Clock, CheckCircle2, XCircle, Calendar, Lightbulb, Play, RotateCcw, Target, ArrowLeft, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTutorial } from "@/components/tutorial/TutorialProvider";
+import { useState } from "react";
 
 const Analytics = () => {
   const { user, logout } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { startTutorial, hasCompletedTutorial, resetTutorial } = useTutorial();
+  const [tutorialStep, setTutorialStep] = useState(0);
+  const [showTutorialModal, setShowTutorialModal] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -17,7 +24,50 @@ const Analytics = () => {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    navigate("/");
   };
+
+  const handleStartTutorial = () => {
+    setShowTutorialModal(true);
+    setTutorialStep(0);
+  };
+
+  const handleNextTutorialStep = () => {
+    if (tutorialStep < tutorialSteps.length - 1) {
+      setTutorialStep(tutorialStep + 1);
+    } else {
+      setShowTutorialModal(false);
+      toast({
+        title: "Tutorial Complete!",
+        description: "You've completed the IAOMS tutorial.",
+      });
+    }
+  };
+
+  const handlePrevTutorialStep = () => {
+    if (tutorialStep > 0) {
+      setTutorialStep(tutorialStep - 1);
+    }
+  };
+
+  const tutorialSteps = [
+    {
+      title: "Welcome to IAOMS",
+      description: "Learn how to navigate and use the Institutional Activity Oversight and Management System effectively."
+    },
+    {
+      title: "Dashboard Overview",
+      description: "Your dashboard provides quick access to all essential features and real-time updates."
+    },
+    {
+      title: "Document Management",
+      description: "Submit, track, and manage your documents through the complete approval workflow."
+    },
+    {
+      title: "Communication Tools",
+      description: "Use real-time chat, polls, and digital signatures for seamless collaboration."
+    }
+  ];
 
   if (!user) {
     return null; // This should be handled by ProtectedRoute, but adding as safety
@@ -118,10 +168,11 @@ const Analytics = () => {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="departments">Departments</TabsTrigger>
             <TabsTrigger value="trends">Trends</TabsTrigger>
+            <TabsTrigger value="performance">Performance</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="space-y-6">
@@ -276,6 +327,207 @@ const Analytics = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="performance" className="space-y-6">
+            {/* Interactive Tutorials Card - Fixed Version */}
+            <Card className="shadow-lg border-primary/20 tutorial-card-container">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="w-6 h-6 text-primary" />
+                  Interactive Tutorials
+                </CardTitle>
+                <CardDescription>
+                  Learn how to use IAOMS effectively with guided tutorials
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6 pb-6">
+                {/* Tutorial Modal Toggle */}
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+                  <div className="flex-1 pr-4">
+                    <h4 className="font-semibold text-lg mb-2">IAOMS Quick Tour</h4>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Master the essential features and navigation in just 5 minutes
+                    </p>
+                    {hasCompletedTutorial && (
+                      <Badge variant="default" className="bg-success text-white">
+                        <CheckCircle2 className="w-3 h-3 mr-1" />
+                        Completed
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2 min-w-fit">
+                    <Button
+                      onClick={handleStartTutorial}
+                      variant="default"
+                      size="sm"
+                      className="w-full"
+                    >
+                      <Play className="w-4 h-4 mr-2" />
+                      {hasCompletedTutorial ? 'Review Tour' : 'Start Tour'}
+                    </Button>
+                    {hasCompletedTutorial && (
+                      <Button
+                        onClick={resetTutorial}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Reset
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Tutorial Steps Preview */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 border border-border rounded-lg hover:border-primary/30 transition-colors">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="w-5 h-5 text-primary" />
+                      <h4 className="font-medium">Role-Specific Features</h4>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Discover features tailored for your {user?.role} role
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => navigate('/tutorials')}
+                    >
+                      Explore Role Guide
+                    </Button>
+                  </div>
+                  
+                  <div className="p-4 border border-border rounded-lg hover:border-primary/30 transition-colors">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="w-5 h-5 text-primary" />
+                      <h4 className="font-medium">Workflow Mastery</h4>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Learn document submission and approval processes
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full"
+                      onClick={() => navigate('/tutorials')}
+                    >
+                      View Workflows
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Tutorial Modal */}
+                {showTutorialModal && (
+                  <div className="tutorial-modal-overlay">
+                    <div className="tutorial-modal-content">
+                      <div className="tutorial-modal-body">
+                        <div className="tutorial-modal-header">
+                          <Badge variant="outline" className="text-xs">
+                            Step {tutorialStep + 1} of {tutorialSteps.length}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setShowTutorialModal(false)}
+                            className="h-auto p-1"
+                          >
+                            ✕
+                          </Button>
+                        </div>
+                        
+                        <div className="tutorial-modal-content-area">
+                          <h3 className="text-xl font-semibold mb-3">
+                            {tutorialSteps[tutorialStep].title}
+                          </h3>
+                          <p className="text-muted-foreground leading-relaxed">
+                            {tutorialSteps[tutorialStep].description}
+                          </p>
+                        </div>
+                        
+                        <div className="tutorial-modal-footer">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handlePrevTutorialStep}
+                            disabled={tutorialStep === 0}
+                            className="flex items-center gap-2"
+                          >
+                            <ArrowLeft className="w-4 h-4" />
+                            Back
+                          </Button>
+                          
+                          <Button
+                            size="sm"
+                            onClick={handleNextTutorialStep}
+                            className="flex items-center gap-2"
+                          >
+                            {tutorialStep === tutorialSteps.length - 1 ? (
+                              <>
+                                <CheckCircle2 className="w-4 h-4" />
+                                Complete
+                              </>
+                            ) : (
+                              <>
+                                Next
+                                <ArrowRight className="w-4 h-4" />
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>System Performance Metrics</CardTitle>
+                <CardDescription>Key performance indicators for workflow efficiency</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Processing Times</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-sm">Average Processing Time</span>
+                        <span className="font-medium">2.2 days</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Fastest Approval</span>
+                        <span className="font-medium">4 hours</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Longest Processing</span>
+                        <span className="font-medium">7 days</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Quality Metrics</h4>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-sm">First-time Approval Rate</span>
+                        <span className="font-medium">78.5%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">Resubmission Rate</span>
+                        <span className="font-medium">12.3%</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm">User Satisfaction</span>
+                        <span className="font-medium">4.6/5.0</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
