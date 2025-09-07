@@ -153,11 +153,6 @@ export function DashboardLayout({ children, userRole, onLogout }: DashboardLayou
                       Profile Settings
                     </DropdownMenuItem>
                     
-                    <DropdownMenuItem onClick={() => navigate('/tutorials')}>
-                      <Lightbulb className="w-4 h-4 mr-2" />
-                      Tutorials
-                    </DropdownMenuItem>
-                    
                     <DropdownMenuSeparator />
                     
                     <DropdownMenuItem onClick={onLogout} className="text-destructive focus:text-destructive">

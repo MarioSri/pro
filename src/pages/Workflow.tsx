@@ -3,16 +3,52 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Workflow, GitBranch, Clock, CheckCircle2, XCircle, Users, Settings } from "lucide-react";
+import { Workflow, GitBranch, Clock, CheckCircle2, XCircle, Users, Settings, Plus, ChevronDown, ChevronUp, FileText, AlertTriangle, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { WorkflowBuilder } from "@/components/WorkflowBuilder";
 import { useAuth } from "@/contexts/AuthContext";
+import { useState, useEffect, useRef } from "react";
 
 const WorkflowManagement = () => {
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [expandedWorkflowId, setExpandedWorkflowId] = useState<number | null>(null);
+  const dropdownRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (expandedWorkflowId !== null) {
+        const currentDropdown = dropdownRefs.current[expandedWorkflowId];
+        if (currentDropdown && !currentDropdown.contains(event.target as Node)) {
+          setExpandedWorkflowId(null);
+        }
+      }
+    };
+
+    if (expandedWorkflowId !== null) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [expandedWorkflowId]);
+
+  const handleHierarchyToggle = (workflowId: number) => {
+    setExpandedWorkflowId(expandedWorkflowId === workflowId ? null : workflowId);
+  };
+
+  const handleHierarchyOption = (option: string) => {
+    toast({
+      title: "Workflow Created",
+      description: `${option} workflow has been created successfully.`,
+    });
+    setExpandedWorkflowId(null);
+    // Here you can add navigation or other logic for each option
+  };
 
   const handleLogout = () => {
     logout();
@@ -115,13 +151,17 @@ const WorkflowManagement = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <GitBranch className="h-5 w-5" />
-                  Workflow Templates
-                </CardTitle>
-                <CardDescription>
-                  Manage and configure approval workflows
-                </CardDescription>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-shrink-0">
+                    <CardTitle className="flex items-center gap-2">
+                      <GitBranch className="h-5 w-5" />
+                      Workflow Templates
+                    </CardTitle>
+                    <CardDescription>
+                      Manage and configure approval workflows
+                    </CardDescription>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -154,7 +194,55 @@ const WorkflowManagement = () => {
                       </div>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm">Edit Workflow</Button>
-                        <Button variant="outline" size="sm">View Analytics</Button>
+                        <div className="relative" ref={(el) => dropdownRefs.current[workflow.id] = el}>
+                          <Button 
+                            onClick={() => handleHierarchyToggle(workflow.id)}
+                            className="flex items-center gap-2 transition-all duration-700 ease-out flex-shrink-0"
+                            variant="default"
+                            size="sm"
+                          >
+                            <Plus className="h-4 w-4" />
+                            Add Hierarchy
+                            {expandedWorkflowId === workflow.id ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                          </Button>
+                          
+                          {/* Horizontal Expandable Options */}
+                          <div className={`absolute top-full left-0 mt-2 z-10 transition-all duration-700 ease-out ${
+                            expandedWorkflowId === workflow.id ? 'max-w-none opacity-100 visible' : 'max-w-0 opacity-0 invisible'
+                          }`}>
+                            <div className="flex flex-col gap-2 bg-white border rounded-lg p-2 shadow-lg min-w-max">
+                              <Button
+                                onClick={() => handleHierarchyOption('Document Management')}
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-2 whitespace-nowrap justify-start"
+                              >
+                                <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />
+                                <span>Document Management</span>
+                              </Button>
+                              
+                              <Button
+                                onClick={() => handleHierarchyOption('Emergency Management')}
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-2 whitespace-nowrap justify-start"
+                              >
+                                <AlertTriangle className="h-4 w-4 text-red-600 flex-shrink-0" />
+                                <span>Emergency Management</span>
+                              </Button>
+                              
+                              <Button
+                                onClick={() => handleHierarchyOption('Approval Chain with Bypass')}
+                                variant="outline"
+                                size="sm"
+                                className="flex items-center gap-2 whitespace-nowrap justify-start"
+                              >
+                                <Shield className="h-4 w-4 text-green-600 flex-shrink-0" />
+                                <span>Approval Chain with Bypass</span>
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}

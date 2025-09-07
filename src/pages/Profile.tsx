@@ -27,12 +27,14 @@ import {
   Smartphone,
   Monitor,
   Sun,
-  Moon
+  Moon,
+  Lightbulb
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { TutorialManager } from "@/components/tutorial/TutorialSystem";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -109,10 +111,11 @@ const Profile = () => {
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-12">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-12">
             <TabsTrigger value="profile" className="text-sm md:text-base">Profile</TabsTrigger>
             <TabsTrigger value="preferences" className="text-sm md:text-base">Preferences</TabsTrigger>
             <TabsTrigger value="security" className="text-sm md:text-base">Security</TabsTrigger>
+            <TabsTrigger value="tutorials" className="text-sm md:text-base">Tutorials</TabsTrigger>
             <TabsTrigger value="account" className="text-sm md:text-base">Account</TabsTrigger>
           </TabsList>
 
@@ -424,6 +427,10 @@ const Profile = () => {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="tutorials" className="space-y-6">
+            <TutorialManager />
           </TabsContent>
 
           <TabsContent value="account" className="space-y-6">

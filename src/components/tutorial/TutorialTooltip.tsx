@@ -52,7 +52,7 @@ export const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
   return (
     <div
       className={cn(
-        "fixed z-50 bg-white border-2 border-primary shadow-2xl rounded-xl p-6 max-w-sm animate-scale-in",
+        "fixed z-50 bg-white border-2 border-primary shadow-2xl rounded-xl p-4 md:p-6 w-72 md:w-80 lg:w-96 animate-scale-in",
         isMobile ? "left-4 right-4 bottom-4" : "transform -translate-x-1/2",
         className
       )}
@@ -111,44 +111,44 @@ export const TutorialTooltip: React.FC<TutorialTooltipProps> = ({
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between mt-6 pt-4 border-t">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mt-6 pt-4 border-t gap-3 sm:gap-0">
         <Button
           variant="outline"
           size="sm"
           onClick={onPrev}
           disabled={currentStep === 0}
-          className="flex items-center gap-2"
+          className="flex items-center justify-center gap-2 order-2 sm:order-1"
         >
           <ArrowLeft className="w-4 h-4" />
           Back
         </Button>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-shrink-0 order-1 sm:order-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={onSkip}
-            className="text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground whitespace-nowrap flex-1 sm:flex-none"
           >
             <SkipForward className="w-4 h-4 mr-1" />
-            Skip Tour
+            Skip
           </Button>
           
           <Button
             size="sm"
             onClick={onNext}
             variant="gradient"
-            className="flex items-center gap-2 shadow-elegant"
+            className="flex items-center justify-center gap-2 shadow-elegant whitespace-nowrap flex-1 sm:flex-none min-w-0"
           >
             {isLastStep ? (
               <>
-                <CheckCircle className="w-4 h-4" />
-                Complete Tour
+                <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">Complete</span>
               </>
             ) : (
               <>
-                Next
-                <ArrowRight className="w-4 h-4" />
+                <span className="truncate">Next</span>
+                <ArrowRight className="w-4 h-4 flex-shrink-0" />
               </>
             )}
           </Button>

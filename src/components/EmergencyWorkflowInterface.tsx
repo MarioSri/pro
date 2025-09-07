@@ -24,7 +24,8 @@ import {
   History,
   Upload,
   File,
-  X
+  X,
+  Plus
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -32,7 +33,6 @@ interface EmergencySubmission {
   id: string;
   title: string;
   description: string;
-  reason: string;
   urgencyLevel: 'high' | 'critical' | 'disaster';
   recipients: string[];
   submittedBy: string;
@@ -61,13 +61,11 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
   const [documentTitle, setDocumentTitle] = useState('');
   const [documentTypes, setDocumentTypes] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-  const [documentDescription, setDocumentDescription] = useState('');
   const [emergencyHistory, setEmergencyHistory] = useState<EmergencySubmission[]>([
     {
       id: '1',
       title: 'Infrastructure Damage - Block A',
       description: 'Severe water leakage affecting electrical systems in Block A',
-      reason: 'Infrastructure failure requiring immediate attention',
       urgencyLevel: 'critical',
       recipients: ['principal', 'registrar', 'maintenance-head'],
       submittedBy: 'Maintenance Team',
@@ -80,7 +78,6 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
       id: '2',
       title: 'Student Medical Emergency Protocol',
       description: 'Updated emergency response procedures for medical incidents',
-      reason: 'Policy update requiring immediate implementation',
       urgencyLevel: 'high',
       recipients: ['all-hods', 'health-center', 'security'],
       submittedBy: 'Health Center',
@@ -165,7 +162,6 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
       id: Date.now().toString(),
       title: emergencyData.title,
       description: emergencyData.description,
-      reason: emergencyData.reason,
       urgencyLevel: emergencyData.urgencyLevel,
       recipients: selectedRecipients,
       submittedBy: userRole,
@@ -189,7 +185,6 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
     setDocumentTitle('');
     setDocumentTypes([]);
     setUploadedFiles([]);
-    setDocumentDescription('');
     
     setIsEmergencyMode(false);
 
@@ -208,6 +203,14 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
         variant: "destructive"
       });
     }, 5000);
+  };
+
+  const handleAddHierarchy = () => {
+    toast({
+      title: "Emergency Hierarchy",
+      description: "Emergency hierarchy management is available but restricted during active emergency mode.",
+      variant: "default"
+    });
   };
 
   const getStatusBadge = (status: string) => {
@@ -348,7 +351,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="emergency-title">Emergency Title *</Label>
+                <Label htmlFor="emergency-title">Emergency Document Title</Label>
                 <Input
                   id="emergency-title"
                   value={emergencyData.title}
@@ -359,7 +362,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="urgency-level">Urgency Level *</Label>
+                <Label htmlFor="urgency-level">Urgency Level</Label>
                 <select
                   id="urgency-level"
                   title="Select emergency urgency level"
@@ -379,20 +382,7 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
             {/* Document Submission Section */}
             <div className="border-t-2 border-destructive/20 pt-6">
               <div className="mb-4">
-                <Label className="text-lg font-semibold text-destructive">Document Submission (Optional)</Label>
-                <p className="text-sm text-muted-foreground mt-1">Attach relevant documents to support your emergency submission</p>
-              </div>
-
-              {/* Document Title */}
-              <div className="space-y-2 mb-4">
-                <Label htmlFor="document-title">Document Title</Label>
-                <Input
-                  id="document-title"
-                  value={documentTitle}
-                  onChange={(e) => setDocumentTitle(e.target.value)}
-                  placeholder="Enter document title"
-                  className="border-destructive/30 focus:ring-destructive"
-                />
+                <Label className="text-lg font-semibold text-destructive">Document Submission</Label>
               </div>
 
               {/* Document Type Selection */}
@@ -468,22 +458,10 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
                 )}
               </div>
 
-              {/* Document Description */}
-              <div className="space-y-2 mb-6">
-                <Label htmlFor="document-description">Document Description / Comments</Label>
-                <Textarea
-                  id="document-description"
-                  value={documentDescription}
-                  onChange={(e) => setDocumentDescription(e.target.value)}
-                  placeholder="Provide additional context about the attached documents..."
-                  rows={3}
-                  className="border-destructive/30 focus:ring-destructive"
-                />
-              </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="emergency-description">Emergency Description *</Label>
+              <Label htmlFor="emergency-description">Emergency Description</Label>
               <Textarea
                 id="emergency-description"
                 value={emergencyData.description}
@@ -494,30 +472,27 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="emergency-reason">Emergency Reason</Label>
-              <select
-                id="emergency-reason"
-                title="Select emergency reason"
-                value={emergencyData.reason}
-                onChange={(e) => setEmergencyData({...emergencyData, reason: e.target.value})}
-                className="w-full h-10 px-3 py-2 border border-input bg-background rounded-md text-sm"
-              >
-                <option value="">Select reason...</option>
-                {emergencyReasons.map(reason => (
-                  <option key={reason} value={reason}>{reason}</option>
-                ))}
-              </select>
-            </div>
-
             {/* Expanded Recipient Selection */}
             <div className="space-y-4">
-              <Label>Emergency Management Recipients *</Label>
+              <Label>Emergency Management Recipients</Label>
               <RecipientSelector
                 userRole={userRole}
                 selectedRecipients={selectedRecipients}
                 onRecipientsChange={setSelectedRecipients}
               />
+              
+              {/* Add Hierarchy Button (Optional) */}
+              <div className="flex justify-center pt-2">
+                <Button 
+                  onClick={handleAddHierarchy}
+                  className="flex items-center gap-2 transition-all duration-700 ease-out flex-shrink-0"
+                  variant="outline"
+                  size="sm"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Hierarchy
+                </Button>
+              </div>
             </div>
 
 
@@ -610,12 +585,6 @@ export const EmergencyWorkflowInterface: React.FC<EmergencyWorkflowInterfaceProp
                         </div>
                       )}
                     </div>
-
-                    {emergency.reason && (
-                      <div className="mb-3">
-                        <p className="text-sm text-muted-foreground">Reason: {emergency.reason}</p>
-                      </div>
-                    )}
 
                     {emergency.escalationLevel > 0 && (
                       <div className="flex items-center gap-2 text-sm text-warning">

@@ -8,10 +8,10 @@ const generateMockResults = (query: string, filters: SearchFilters, userPermissi
     {
       id: 'DOC-2024-001',
       title: 'Faculty Recruitment Authorization Letter',
-      type: 'Letter',
-      status: 'Approved & Archived',
+      type: 'Letter' as const,
+      status: 'Approved & Archived' as const,
       department: 'Computer Science & Engineering',
-      branch: 'CSE',
+      branch: 'CSE' as const,
       year: '2024',
       role: 'HOD',
       submittedBy: 'Dr. Rajesh Kumar',
@@ -19,7 +19,8 @@ const generateMockResults = (query: string, filters: SearchFilters, userPermissi
       createdDate: '2024-01-15',
       modifiedDate: '2024-01-16',
       approvedDate: '2024-01-17',
-      priority: 'High',
+      priority: 'High' as const,
+      urgency: 'urgent' as const,
       description: 'Authorization for hiring 3 new faculty members in CSE department',
       tags: ['recruitment', 'faculty', 'authorization'],
       permissions: {
@@ -37,15 +38,16 @@ const generateMockResults = (query: string, filters: SearchFilters, userPermissi
     {
       id: 'DOC-2024-002',
       title: 'Semester Fee Structure Circular',
-      type: 'Circular',
-      status: 'Pending',
+      type: 'Circular' as const,
+      status: 'Pending' as const,
       department: 'Finance',
       role: 'Registrar',
       submittedBy: 'Prof. Anita Sharma',
       submittedByRole: 'Registrar',
       createdDate: '2024-01-14',
       modifiedDate: '2024-01-15',
-      priority: 'Medium',
+      priority: 'Medium' as const,
+      urgency: 'normal' as const,
       description: 'Updated fee structure for upcoming semester',
       tags: ['fees', 'semester', 'finance'],
       permissions: {
@@ -63,17 +65,18 @@ const generateMockResults = (query: string, filters: SearchFilters, userPermissi
     {
       id: 'DOC-2024-003',
       title: 'Monthly Academic Performance Report',
-      type: 'Report',
-      status: 'In Progress',
+      type: 'Report' as const,
+      status: 'In Progress' as const,
       department: 'Academic Affairs',
-      branch: 'EEE',
+      branch: 'EEE' as const,
       year: '2024',
       role: 'HOD',
       submittedBy: 'Dr. Mohammed Ali',
       submittedByRole: 'HOD',
       createdDate: '2024-01-13',
       modifiedDate: '2024-01-14',
-      priority: 'Medium',
+      priority: 'Medium' as const,
+      urgency: 'normal' as const,
       description: 'Comprehensive academic performance analysis for EEE department',
       tags: ['academic', 'performance', 'monthly'],
       permissions: {
@@ -91,16 +94,17 @@ const generateMockResults = (query: string, filters: SearchFilters, userPermissi
     {
       id: 'DOC-2024-004',
       title: 'Infrastructure Upgrade Proposal',
-      type: 'Report',
-      status: 'Rejected',
+      type: 'Report' as const,
+      status: 'Rejected' as const,
       department: 'Electrical Engineering',
-      branch: 'EEE',
+      branch: 'EEE' as const,
       role: 'Employee',
       submittedBy: 'Prof. David Brown',
       submittedByRole: 'Employee',
       createdDate: '2024-01-12',
       modifiedDate: '2024-01-13',
-      priority: 'Low',
+      priority: 'Low' as const,
+      urgency: 'normal' as const,
       description: 'Proposal for upgrading laboratory equipment in EEE department',
       tags: ['infrastructure', 'upgrade', 'laboratory'],
       permissions: {
@@ -119,16 +123,17 @@ const generateMockResults = (query: string, filters: SearchFilters, userPermissi
     {
       id: 'USER-001',
       title: 'Dr. Rajesh Kumar',
-      type: 'User',
-      status: 'Approved & Archived',
+      type: 'User' as const,
+      status: 'Active' as const,
       department: 'Computer Science & Engineering',
-      branch: 'CSE',
+      branch: 'CSE' as const,
       role: 'HOD',
       submittedBy: 'System',
       submittedByRole: 'System',
       createdDate: '2023-06-01',
       modifiedDate: '2024-01-10',
-      priority: 'Medium',
+      priority: 'Medium' as const,
+      urgency: 'normal' as const,
       description: 'Head of Department - Computer Science & Engineering',
       tags: ['faculty', 'hod', 'computer-science'],
       permissions: {
@@ -141,15 +146,16 @@ const generateMockResults = (query: string, filters: SearchFilters, userPermissi
     {
       id: 'EVENT-001',
       title: 'Annual Faculty Development Program',
-      type: 'Event',
-      status: 'In Progress',
+      type: 'Event' as const,
+      status: 'Scheduled' as const,
       department: 'Academic Affairs',
       role: 'Principal',
       submittedBy: 'Dr. Robert Smith',
       submittedByRole: 'Principal',
       createdDate: '2024-01-10',
       modifiedDate: '2024-01-15',
-      priority: 'High',
+      priority: 'High' as const,
+      urgency: 'normal' as const,
       description: 'Three-day faculty development program focusing on modern teaching methodologies',
       tags: ['faculty', 'development', 'training'],
       permissions: {
@@ -200,6 +206,10 @@ const generateMockResults = (query: string, filters: SearchFilters, userPermissi
     filteredResults = filteredResults.filter(item => filters.priority.includes(item.priority));
   }
 
+  if (filters.types.length > 0) {
+    filteredResults = filteredResults.filter(item => filters.types.includes(item.type));
+  }
+
   // Apply role-based visibility
   return filteredResults.filter(item => {
     // Basic permission check
@@ -242,6 +252,7 @@ export const useUniversalSearch = (userPermissions: UserPermissions) => {
       years: [],
       roles: [],
       priority: [],
+      types: [],
       dateRange: {
         type: 'created',
         startDate: '',
@@ -409,6 +420,7 @@ export const useUniversalSearch = (userPermissions: UserPermissions) => {
       years: [],
       roles: [],
       priority: [],
+      types: [],
       dateRange: {
         type: 'created',
         startDate: '',
@@ -440,9 +452,9 @@ export const useUniversalSearch = (userPermissions: UserPermissions) => {
 
   // Get active filter count
   const activeFilterCount = useMemo(() => {
-    const { status, departments, branches, years, roles, priority, dateRange } = searchState.filters;
+    const { status, departments, branches, years, roles, priority, types, dateRange } = searchState.filters;
     return status.length + departments.length + branches.length + years.length + 
-           roles.length + priority.length + 
+           roles.length + priority.length + types.length +
            (dateRange.startDate ? 1 : 0) + (dateRange.endDate ? 1 : 0);
   }, [searchState.filters]);
 

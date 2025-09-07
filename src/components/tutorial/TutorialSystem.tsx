@@ -365,7 +365,7 @@ export const TutorialSystem: React.FC<TutorialSystemProps> = ({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="text-center text-2xl font-bold text-primary">
-              Welcome to IAOMS! 🎉
+              Welcome to IAOMS
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">

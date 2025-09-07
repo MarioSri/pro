@@ -245,28 +245,99 @@ export const AdvancedDigitalSignature: React.FC<AdvancedDigitalSignatureProps> =
     const video = videoRef.current;
     const canvas = canvasRef.current;
     
-    if (!video || !canvas) return;
+    if (!video || !canvas) {
+      toast({
+        title: "Camera Not Ready",
+        description: "Please start the camera first to capture a signature.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!cameraActive) {
+      toast({
+        title: "Camera Not Active",
+        description: "Please start the camera before capturing a signature.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
 
     // Clear canvas and draw video frame
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
+    // Convert canvas to image data URL
+    const dataUrl = canvas.toDataURL('image/png');
+    
+    // Create signature data
+    const newSignature: SignatureData = {
+      id: `camera-${Date.now()}`,
+      name: `Camera Signature ${new Date().toLocaleString()}`,
+      dataUrl,
+      type: 'scanned',
+      quality: 95,
+      createdAt: new Date(),
+      metadata: {
+        width: canvas.width,
+        height: canvas.height,
+        signer: userRole,
+        role: userRole
+      }
+    };
+
+    // Add to signatures list
+    setSignatures(prev => [newSignature, ...prev]);
+    setSelectedSignature(newSignature);
+    
+    // Stop camera after capture
     stopCamera();
     
     toast({
-      title: "Signature Captured",
-      description: "Signature captured from camera. You can now save it.",
+      title: "Signature Captured Successfully",
+      description: "Your signature has been captured and saved. You can now use it for signing documents.",
     });
   };
 
   const stopCamera = () => {
+    if (!cameraActive) {
+      toast({
+        title: "Camera Not Active",
+        description: "Camera is already stopped or was never started.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (videoRef.current?.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach(track => {
+        track.stop();
+        console.log('Camera track stopped:', track.kind);
+      });
+      
+      // Clear the video source
+      videoRef.current.srcObject = null;
+      
       setCameraActive(false);
+      
+      toast({
+        title: "Camera Stopped",
+        description: "Camera stream has been stopped successfully.",
+      });
+    } else {
+      setCameraActive(false);
+      toast({
+        title: "Camera Stopped",
+        description: "Camera stream has been stopped.",
+      });
     }
   };
 
@@ -490,7 +561,7 @@ export const AdvancedDigitalSignature: React.FC<AdvancedDigitalSignatureProps> =
                   </Button>
                   <Button 
                     onClick={captureFromCamera} 
-                    disabled={!cameraActive}
+                    disabled={false}
                     variant="outline"
                   >
                     <Scan className="w-4 h-4 mr-2" />
@@ -498,7 +569,7 @@ export const AdvancedDigitalSignature: React.FC<AdvancedDigitalSignatureProps> =
                   </Button>
                   <Button 
                     onClick={stopCamera} 
-                    disabled={!cameraActive}
+                    disabled={false}
                     variant="outline"
                   >
                     Stop Camera

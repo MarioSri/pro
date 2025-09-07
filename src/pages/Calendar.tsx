@@ -26,8 +26,8 @@ const Calendar = () => {
     <DashboardLayout userRole={user.role} onLogout={handleLogout}>
       <div className="container mx-auto p-6">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Meeting Scheduler</h1>
-          <p className="text-muted-foreground">Schedule meetings and manage your calendar</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">📅 Meeting Scheduler</h1>
+          <p className="text-muted-foreground">The smart way to schedule meetings and manage your calendar, with advanced integration for Google Meet, Zoom, and Microsoft Teams.</p>
         </div>
         
         <MeetingScheduler userRole={user.role} />

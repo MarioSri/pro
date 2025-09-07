@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { Canvas as FabricCanvas } from 'fabric';
+import { Canvas as FabricCanvas, Image as FabricImage } from 'fabric';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -207,26 +207,114 @@ export const DigitalSignature: React.FC<SignatureComponentProps> = ({
   }, [toast]);
 
   const stopCamera = useCallback(() => {
+    if (!cameraActive) {
+      toast({
+        title: "Camera Not Active",
+        description: "Camera is already stopped or was never started.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (videoRef.current?.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach(track => {
+        track.stop();
+        console.log('Camera track stopped:', track.kind);
+      });
+      
+      // Clear the video source
+      videoRef.current.srcObject = null;
+      
       setCameraActive(false);
+      
+      toast({
+        title: "Camera Stopped",
+        description: "Camera stream has been stopped successfully.",
+      });
+    } else {
+      setCameraActive(false);
+      toast({
+        title: "Camera Stopped",
+        description: "Camera stream has been stopped.",
+      });
     }
-  }, []);
+  }, [cameraActive, toast]);
 
   const captureFromCamera = useCallback(() => {
-    if (!videoRef.current || !fabricCanvas) return;
+    if (!videoRef.current || !fabricCanvas) {
+      toast({
+        title: "Camera Not Ready",
+        description: "Please start the camera first to capture a signature.",
+        variant: "destructive"
+      });
+      return;
+    }
 
+    if (!cameraActive) {
+      toast({
+        title: "Camera Not Active",
+        description: "Please start the camera before capturing a signature.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create a temporary canvas to capture the video frame
+    const tempCanvas = document.createElement('canvas');
+    const video = videoRef.current;
+    
+    tempCanvas.width = video.videoWidth || 640;
+    tempCanvas.height = video.videoHeight || 480;
+    
+    const tempCtx = tempCanvas.getContext('2d');
+    if (!tempCtx) return;
+    
+    // Draw current video frame to temporary canvas
+    tempCtx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+    
+    // Get the image data and add it to the fabric canvas
+    const imageDataURL = tempCanvas.toDataURL('image/png');
+    
     fabricCanvas.clear();
     fabricCanvas.backgroundColor = "#ffffff";
-    fabricCanvas.renderAll();
+    
+    // Create fabric image from captured frame
+    FabricImage.fromURL(imageDataURL).then((img) => {
+      if (!img || !fabricCanvas) return;
+      
+      // Scale image to fit canvas
+      const scale = Math.min(
+        fabricCanvas.width! / img.width!,
+        fabricCanvas.height! / img.height!
+      );
+      
+      img.scale(scale);
+      img.set({
+        left: (fabricCanvas.width! - img.width! * scale) / 2,
+        top: (fabricCanvas.height! - img.height! * scale) / 2,
+        selectable: false,
+        evented: false
+      });
+      
+      fabricCanvas.add(img);
+      fabricCanvas.renderAll();
+    }).catch((error) => {
+      console.error('Error loading captured image:', error);
+      toast({
+        title: "Capture Error",
+        description: "Failed to process the captured image.",
+        variant: "destructive"
+      });
+    });
+    
     stopCamera();
     
     toast({
-      title: "Camera Capture",
-      description: "Camera input captured. You can now draw your signature."
+      title: "Signature Captured Successfully",
+      description: "Camera input captured. You can now edit or save your signature."
     });
-  }, [fabricCanvas, stopCamera, toast]);
+  }, [fabricCanvas, stopCamera, toast, cameraActive]);
 
   const resizeCanvas = useCallback((width: number, height: number) => {
     setCanvasSize({ width, height });
@@ -320,12 +408,12 @@ export const DigitalSignature: React.FC<SignatureComponentProps> = ({
                   </Button>
                   <Button 
                     onClick={captureFromCamera} 
-                    disabled={!cameraActive}
+                    disabled={false}
                     variant="outline"
                   >
                     Capture Signature
                   </Button>
-                  <Button onClick={stopCamera} disabled={!cameraActive} variant="outline">
+                  <Button onClick={stopCamera} disabled={false} variant="outline">
                     Stop Camera
                   </Button>
                 </div>

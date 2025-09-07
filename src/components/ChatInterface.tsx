@@ -54,7 +54,8 @@ import {
   WifiOff,
   CheckCircle2,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Vote
 } from 'lucide-react';
 
 interface ChatInterfaceProps {
@@ -504,14 +505,26 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                 )}
                 
                 {message.metadata.pollId && (
-                  <div className="mt-2 p-3 bg-green-50 dark:bg-green-900/20 rounded border">
-                    <div className="flex items-center gap-2">
-                      <BarChart3 className="w-4 h-4" />
-                      <span className="text-sm font-medium">Poll Created</span>
+                  <div className="mt-2 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center gap-2 mb-3">
+                      <BarChart3 className="w-5 h-5 text-blue-600" />
+                      <span className="text-sm font-medium text-blue-900 dark:text-blue-100">Interactive Poll</span>
                     </div>
-                    <Button size="sm" className="mt-2">
-                      Vote Now
-                    </Button>
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                        A new poll has been created. Click below to view options, cast your vote, and see live results!
+                      </p>
+                      <div className="flex gap-2">
+                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                          <Vote className="w-4 h-4 mr-2" />
+                          Vote & View Results
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <Eye className="w-4 h-4 mr-2" />
+                          View Poll Details
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </>
@@ -659,10 +672,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
                     <DropdownMenuItem onClick={() => handleCreatePoll('Quick Poll', ['Yes', 'No'])}>
                       <BarChart3 className="w-4 h-4 mr-2" />
                       Create Poll
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Zap className="w-4 h-4 mr-2" />
-                      AI Summary
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

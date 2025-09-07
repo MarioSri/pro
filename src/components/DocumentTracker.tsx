@@ -21,7 +21,8 @@ import {
   Calendar,
   User,
   PenTool,
-  Signature
+  Signature,
+  Shield
 } from "lucide-react";
 import { DigitalSignature } from "./DigitalSignature";
 import { useToast } from "@/hooks/use-toast";
@@ -193,6 +194,13 @@ export const DocumentTracker: React.FC<DocumentTrackerProps> = ({ userRole }) =>
     });
   };
 
+  const handleApprovalChainBypass = (docId: string) => {
+    toast({
+      title: "Approval Chain Initiated",
+      description: `Approval chain with bypass has been activated for document ${docId}`,
+    });
+  };
+
   const handleSignatureCapture = (signatureData: string) => {
     toast({
       title: "Signature Captured",
@@ -348,7 +356,7 @@ export const DocumentTracker: React.FC<DocumentTrackerProps> = ({ userRole }) =>
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col gap-2 min-w-[150px]">
+                <div className="flex flex-col gap-2 min-w-[200px] max-w-[240px] w-full lg:w-auto flex-shrink-0">
                   <Button variant="outline" size="sm">
                     <Eye className="h-4 w-4 mr-2" />
                     View
@@ -356,6 +364,15 @@ export const DocumentTracker: React.FC<DocumentTrackerProps> = ({ userRole }) =>
                   <Button variant="outline" size="sm">
                     <Download className="h-4 w-4 mr-2" />
                     Download
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="whitespace-nowrap text-xs sm:text-sm"
+                    onClick={() => handleApprovalChainBypass(document.id)}
+                  >
+                    <Shield className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="truncate">Approval Chain with Bypass</span>
                   </Button>
                   
                   {userRole === 'Principal' || userRole === 'Registrar' || userRole === 'HOD' ? (

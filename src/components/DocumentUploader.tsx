@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RecipientSelector } from "@/components/RecipientSelector";
+import { useToast } from "@/hooks/use-toast";
 import {
   Upload,
   FileText,
@@ -16,7 +17,8 @@ import {
   Clock,
   AlertCircle,
   Users,
-  Send
+  Send,
+  Plus
 } from "lucide-react";
 import { LoadingState } from "@/components/ui/loading-states";
 import {
@@ -33,6 +35,7 @@ interface DocumentUploaderProps {
 }
 
 export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) {
+  const { toast } = useToast();
   const [documentTypes, setDocumentTypes] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -64,7 +67,41 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
   };
 
   const handleSubmit = () => {
+    // Check if required fields are filled
+    if (documentTypes.length === 0) {
+      toast({
+        title: "Document Type Required",
+        description: "Please select at least one document type.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (uploadedFiles.length === 0) {
+      toast({
+        title: "File Upload Required",
+        description: "Please upload at least one file to submit.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (selectedRecipients.length === 0) {
+      toast({
+        title: "Recipients Required", 
+        description: "Please select at least one recipient for the document.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsUploading(true);
+    
+    // Show success toast
+    toast({
+      title: "Document Submitted Successfully",
+      description: "Your document has been submitted and is being processed.",
+    });
     
     // Simulate upload process with loading animation
     setTimeout(() => {
@@ -81,7 +118,16 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
     }, 2000);
   };
 
-  const isSubmitDisabled = documentTypes.length === 0 || uploadedFiles.length === 0 || selectedRecipients.length === 0;
+  const handleAddHierarchy = () => {
+    toast({
+      title: "Hierarchy Management",
+      description: "Document hierarchy management is available for advanced workflow configuration.",
+      variant: "default"
+    });
+  };
+
+  // Enable the button but show validation messages on click
+  const isSubmitDisabled = false;
 
   return (
     <div className="space-y-6">
@@ -91,9 +137,6 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
             <Upload className="w-5 h-5 text-primary" />
             Submit Document
           </CardTitle>
-          <CardDescription>
-            Upload and submit documents for approval through HITAM's workflow system
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Document Type Selection */}
@@ -177,6 +220,19 @@ export function DocumentUploader({ userRole, onSubmit }: DocumentUploaderProps) 
               selectedRecipients={selectedRecipients}
               onRecipientsChange={setSelectedRecipients}
             />
+            
+            {/* Add Hierarchy Button (Optional) */}
+            <div className="flex justify-center pt-2">
+              <Button 
+                onClick={handleAddHierarchy}
+                className="flex items-center gap-2 transition-all duration-700 ease-out flex-shrink-0"
+                variant="outline"
+                size="sm"
+              >
+                <Plus className="h-4 w-4" />
+                Add Hierarchy
+              </Button>
+            </div>
           </div>
 
           {/* Priority */}

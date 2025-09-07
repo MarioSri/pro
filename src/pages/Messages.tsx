@@ -5,21 +5,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChatInterface } from "@/components/ChatInterface";
-import { PollManager } from "@/components/PollManager";
-import { SignatureManager } from "@/components/SignatureManager";
 import { DecentralizedChatService } from "@/services/DecentralizedChatService";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   MessageCircle, 
   Users, 
-  Bell, 
   BarChart3, 
   PenTool, 
   Zap, 
   MessageSquare,
   TrendingUp,
   Hash,
-  FileText,
   CheckCircle2,
   Clock,
   Video
@@ -86,37 +82,13 @@ const Messages = () => {
         </div>
 
         <Tabs defaultValue="notes" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="notes">Notes & Reminders</TabsTrigger>
             <TabsTrigger value="chat" className="relative">
               Department Chat
               {stats.unreadMessages > 0 && (
                 <Badge variant="destructive" className="ml-2 px-1 py-0 text-xs">
                   {stats.unreadMessages}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="polls">
-              Polls & Voting
-              {stats.activePolls > 0 && (
-                <Badge variant="secondary" className="ml-2 px-1 py-0 text-xs">
-                  {stats.activePolls}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="signatures">
-              Digital Signatures
-              {stats.pendingSignatures > 0 && (
-                <Badge variant="secondary" className="ml-2 px-1 py-0 text-xs">
-                  {stats.pendingSignatures}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="notifications">
-              Notifications
-              {stats.notifications > 0 && (
-                <Badge variant="destructive" className="ml-2 px-1 py-0 text-xs">
-                  {stats.notifications}
                 </Badge>
               )}
             </TabsTrigger>
@@ -219,149 +191,6 @@ const Messages = () => {
               <CardContent className="p-0">
                 <div className="h-[600px]">
                   <ChatInterface />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="polls" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Polls & Voting Center
-                </CardTitle>
-                <CardDescription>
-                  Create polls, collect feedback, and make collaborative decisions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <PollManager
-                  chatService={chatService}
-                  channelId="general"
-                  userId={user?.id || ''}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="signatures" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <PenTool className="h-5 w-5" />
-                  Digital Signature Center
-                </CardTitle>
-                <CardDescription>
-                  Request, collect, and manage digital signatures for documents
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <SignatureManager
-                  chatService={chatService}
-                  channelId="general"
-                  userId={user?.id || ''}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          
-          <TabsContent value="notifications" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5" />
-                  Notification Center
-                </CardTitle>
-                <CardDescription>
-                  Manage communication alerts and system notifications
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Quick Stats */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-lg">
-                    <MessageCircle className="w-8 h-8 text-blue-500" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">New Messages</p>
-                      <p className="text-xl font-bold">{stats.unreadMessages}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-lg">
-                    <PenTool className="w-8 h-8 text-purple-500" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Signature Requests</p>
-                      <p className="text-xl font-bold">{stats.pendingSignatures}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-lg">
-                    <BarChart3 className="w-8 h-8 text-green-500" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Active Polls</p>
-                      <p className="text-xl font-bold">{stats.activePolls}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-3 p-4 bg-muted/20 rounded-lg">
-                    <FileText className="w-8 h-8 text-orange-500" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Document Updates</p>
-                      <p className="text-xl font-bold">3</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recent Notifications */}
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold">Recent Notifications</h3>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-3 p-4 border rounded-lg">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm">New message in #general</h4>
-                          <Badge variant="secondary">2 min ago</Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">John Doe shared a document for review</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-3 p-4 border rounded-lg">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm">Signature request received</h4>
-                          <Badge variant="secondary">15 min ago</Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">Academic letter requires your approval</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-3 p-4 border rounded-lg">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm">Poll participation reminder</h4>
-                          <Badge variant="secondary">1 hour ago</Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">Vote on the new academic calendar proposal</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-start gap-3 p-4 border rounded-lg">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-sm">Document workflow completed</h4>
-                          <Badge variant="secondary">2 hours ago</Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">Annual report has been approved by all stakeholders</p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </CardContent>
             </Card>

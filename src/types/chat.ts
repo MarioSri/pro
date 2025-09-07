@@ -204,6 +204,11 @@ export interface ChatPoll {
   status: 'active' | 'closed' | 'expired';
   results: PollResults;
   createdAt: Date;
+  metadata?: {
+    showVoters?: boolean;
+    allowMultipleChoice?: boolean;
+    [key: string]: any;
+  };
 }
 
 export interface PollOption {

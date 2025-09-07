@@ -97,7 +97,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-center text-3xl font-bold text-primary mb-2">
-            Welcome to IAOMS! 🎉
+            Welcome to IAOMS
           </DialogTitle>
         </DialogHeader>
         
@@ -173,7 +173,7 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
           
           <div className="text-center">
             <p className="text-xs text-muted-foreground">
-              💡 You can access tutorials anytime from your profile menu → Tutorials
+              💡 You can access tutorials anytime from your profile menu → Tutorials tab
             </p>
           </div>
         </div>

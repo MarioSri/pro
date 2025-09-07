@@ -24,7 +24,6 @@ import Emergency from "./pages/Emergency";
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
-import Tutorials from "./pages/Tutorials";
 
 const queryClient = new QueryClient();
 
@@ -128,13 +127,6 @@ const App = () => (
                     <ProtectedRoute>
                       <TutorialProvider>
                         <Profile />
-                      </TutorialProvider>
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/tutorials" element={
-                    <ProtectedRoute>
-                      <TutorialProvider>
-                        <Tutorials />
                       </TutorialProvider>
                     </ProtectedRoute>
                   } />

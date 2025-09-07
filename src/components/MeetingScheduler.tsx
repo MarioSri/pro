@@ -614,8 +614,6 @@ export function MeetingScheduler({ userRole, className }: MeetingSchedulerProps)
         {/* Header with Stats */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h2 className="text-3xl font-bold gradient-text">📅 Meeting Scheduler & Integration</h2>
-            <p className="text-muted-foreground">Advanced scheduling with Google Meet, Zoom, and Teams integration</p>
           </div>
           
           <div className="flex items-center gap-4">

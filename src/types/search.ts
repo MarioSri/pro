@@ -1,19 +1,20 @@
-// TypeScript interfaces for Universal Search System
+// TypeScript interfaces for Universal Search System - HITAM IAOMS
 export interface SearchResult {
   id: string;
   title: string;
-  type: 'Letter' | 'Circular' | 'Report' | 'User' | 'Department' | 'Event' | 'Meeting';
-  status: 'In Progress' | 'Pending' | 'Rejected' | 'Approved & Archived';
+  type: 'Letter' | 'Circular' | 'Report' | 'User' | 'Department' | 'Event' | 'Meeting' | 'LiveMeeting' | 'Emergency';
+  status: 'In Progress' | 'Pending' | 'Rejected' | 'Approved & Archived' | 'Draft' | 'Active' | 'Scheduled' | 'Completed';
   department: string;
-  branch?: string;
-  year?: string;
+  branch?: 'EEE' | 'MECH' | 'CSE' | 'ECE' | 'CSM' | 'CSO' | 'CSD' | 'CSC';
+  year?: '1st' | '2nd' | '3rd' | '4th';
   role?: string;
   submittedBy: string;
   submittedByRole: string;
   createdDate: string;
   modifiedDate: string;
   approvedDate?: string;
-  priority: 'Low' | 'Medium' | 'High' | 'Emergency';
+  priority: 'Low' | 'Medium' | 'High' | 'Emergency' | 'Immediate' | 'Urgent' | 'Normal';
+  urgency?: 'immediate' | 'urgent' | 'normal';
   description: string;
   tags: string[];
   permissions: {
@@ -27,16 +28,20 @@ export interface SearchResult {
     documentId?: string;
     workflowStep?: string;
     rejectionReason?: string;
+    meetingLink?: string;
+    location?: string;
+    participants?: string[];
   };
 }
 
 export interface SearchFilters {
   status: string[];
   departments: string[];
-  branches: string[];
-  years: string[];
+  branches: ('EEE' | 'MECH' | 'CSE' | 'ECE' | 'CSM' | 'CSO' | 'CSD' | 'CSC')[];
+  years: ('1st' | '2nd' | '3rd' | '4th')[];
   roles: string[];
-  priority: string[];
+  priority: ('Low' | 'Medium' | 'High' | 'Emergency' | 'Immediate' | 'Urgent' | 'Normal')[];
+  types: ('Letter' | 'Circular' | 'Report' | 'User' | 'Department' | 'Event' | 'Meeting' | 'LiveMeeting' | 'Emergency')[];
   dateRange: {
     type: 'created' | 'modified' | 'approved';
     startDate: string;

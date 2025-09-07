@@ -536,7 +536,12 @@ export function UniversalSearch({ userRole, className = '' }: UniversalSearchPro
   return (
     <div className={`w-full max-w-7xl mx-auto p-4 space-y-6 ${className}`}>
       {/* Search Header */}
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Universal Search</h1>
+          <p className="text-gray-600">Search across all IAOMS documents, users, and activities</p>
+        </div>
+        
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
