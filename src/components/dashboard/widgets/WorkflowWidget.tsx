@@ -232,7 +232,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className={cn(isMobile && "pb-3")}>
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className={cn(
             "flex items-center gap-2",
@@ -282,21 +282,21 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent className="dashboard-widget-content">
-        <ScrollArea className={cn(isMobile ? "h-32" : "h-40")}>
-          <div className="space-y-3">
+      <CardContent className="dashboard-widget-content p-4">
+        <ScrollArea className={cn(isMobile ? "h-28" : "h-32")}>
+          <div className="space-y-2">
             {filteredWorkflows.slice(0, isMobile ? 3 : 5).map((workflow, index) => (
               <div
                 key={workflow.id}
                 className={cn(
-                  "p-3 border rounded-lg hover:bg-accent transition-all cursor-pointer animate-fade-in",
+                  "p-2.5 border rounded-lg hover:bg-accent transition-all cursor-pointer animate-fade-in",
                   workflow.type === 'emergency' && "border-destructive bg-red-50",
                   workflow.escalationLevel > 0 && "border-l-4 border-l-warning"
                 )}
                 style={{ animationDelay: `${index * 100}ms` }}
                 onClick={() => navigate(`/workflow/${workflow.id}`)}
               >
-                <div className="flex items-start justify-between mb-2">
+                <div className="flex items-start justify-between mb-1.5">
                   <div className="flex-1 min-w-0">
                     <h5 className={cn(
                       "font-medium line-clamp-2",
@@ -327,7 +327,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
                 </div>
 
                 {/* Progress Bar */}
-                <div className="space-y-2 mb-3">
+                <div className="space-y-1.5 mb-2">
                   <div className="flex justify-between text-sm">
                     <span>Progress</span>
                     <span>{workflow.progress}%</span>
@@ -342,7 +342,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
                 </div>
 
                 {/* Current Step Details */}
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-2">
                   {getStepStatusIcon(workflow.steps[workflow.currentStep - 1]?.status)}
                   <span className={cn(
                     "font-medium",
@@ -359,7 +359,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
 
                 {/* Escalation Warning */}
                 {workflow.escalationLevel > 0 && (
-                  <div className="flex items-center gap-2 p-2 bg-warning/10 rounded border border-warning/20 mb-3">
+                  <div className="flex items-center gap-2 p-1.5 bg-warning/10 rounded border border-warning/20 mb-2">
                     <AlertTriangle className="w-4 h-4 text-warning" />
                     <span className="text-sm font-medium text-warning">
                       Escalated {workflow.escalationLevel} time(s)
@@ -369,7 +369,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
 
                 {/* Emergency Indicator */}
                 {workflow.type === 'emergency' && (
-                  <div className="flex items-center gap-2 p-2 bg-red-100 rounded border border-red-200 mb-3">
+                  <div className="flex items-center gap-2 p-1.5 bg-red-100 rounded border border-red-200 mb-2">
                     <Zap className="w-4 h-4 text-destructive animate-pulse" />
                     <span className="text-sm font-medium text-destructive">
                       Emergency Workflow - Expedited Processing
@@ -391,7 +391,7 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
 
                 {/* Action Buttons for Current Assignee */}
                 {workflow.steps[workflow.currentStep - 1]?.assignee === user?.name && (
-                  <div className="flex gap-2 mt-3">
+                  <div className="flex gap-1.5 mt-2">
                     <Button size="sm" variant="default" className="flex-1">
                       <CheckCircle className="w-3 h-3 mr-1" />
                       Approve
@@ -421,11 +421,11 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
         </ScrollArea>
 
         {/* Workflow Stats */}
-        <div className="grid grid-cols-3 gap-2 pt-4 border-t">
-          <div className="text-center p-2 bg-muted/30 rounded">
+        <div className="grid grid-cols-3 gap-1.5 pt-2 border-t">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-primary",
-              isMobile ? "text-lg" : "text-xl"
+              isMobile ? "text-base" : "text-lg"
             )}>
               {workflows.length}
             </p>
@@ -436,10 +436,10 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
               Active
             </p>
           </div>
-          <div className="text-center p-2 bg-muted/30 rounded">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-warning",
-              isMobile ? "text-lg" : "text-xl"
+              isMobile ? "text-base" : "text-lg"
             )}>
               {pendingCount}
             </p>
@@ -450,10 +450,10 @@ export const WorkflowWidget: React.FC<WorkflowWidgetProps> = ({
               Pending
             </p>
           </div>
-          <div className="text-center p-2 bg-muted/30 rounded">
+          <div className="text-center p-1.5 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-destructive",
-              isMobile ? "text-lg" : "text-xl"
+              isMobile ? "text-base" : "text-lg"
             )}>
               {escalatedCount}
             </p>

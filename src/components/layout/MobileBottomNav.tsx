@@ -71,6 +71,7 @@ export const MobileBottomNav: React.FC = () => {
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </Badge>
               )}
+              data-tutorial={item.path.replace('/', '').replace('-', '-')}
             </div>
             <span className="text-xs font-medium leading-tight">{item.label}</span>
           </Button>

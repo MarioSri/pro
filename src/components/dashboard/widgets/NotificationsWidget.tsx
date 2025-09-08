@@ -86,7 +86,7 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className={cn(isMobile && "pb-3")}>
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className={cn(
             "flex items-center gap-2",
@@ -124,9 +124,9 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent className="dashboard-widget-content">
-        <ScrollArea className={cn(isMobile ? "h-32" : "h-40")}>
-          <div className="space-y-2">
+      <CardContent className="dashboard-widget-content p-4">
+        <ScrollArea className={cn(isMobile ? "h-28" : "h-32")}>
+          <div className="space-y-1.5">
             {filteredNotifications.slice(0, isMobile ? 5 : 8).map((notification, index) => (
               <div
                 key={notification.id}
@@ -139,7 +139,7 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => markAsRead(notification.id)}
               >
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-1.5">
                   <div className="flex-shrink-0 mt-1">
                     {getNotificationIcon(notification.type)}
                   </div>
@@ -178,7 +178,7 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
                       {notification.message}
                     </p>
                     
-                    <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center justify-between mt-0.5">
                       <span className="text-xs text-muted-foreground">
                         {getTimeAgo(notification.timestamp)}
                       </span>
@@ -206,11 +206,11 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
         </ScrollArea>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-1 pt-2 border-t">
-          <div className="text-center p-1.5 bg-muted/30 rounded">
+        <div className="grid grid-cols-3 gap-1 pt-1.5 border-t">
+          <div className="text-center p-1 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-primary",
-              "text-lg"
+              "text-base"
             )}>
               {notifications.length}
             </p>
@@ -221,10 +221,10 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
               Total
             </p>
           </div>
-          <div className="text-center p-1.5 bg-muted/30 rounded">
+          <div className="text-center p-1 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-warning",
-              "text-lg"
+              "text-base"
             )}>
               {unreadCount}
             </p>
@@ -235,10 +235,10 @@ export const NotificationsWidget: React.FC<NotificationsWidgetProps> = ({
               Unread
             </p>
           </div>
-          <div className="text-center p-1.5 bg-muted/30 rounded">
+          <div className="text-center p-1 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-destructive",
-              "text-lg"
+              "text-base"
             )}>
               {urgentCount}
             </p>

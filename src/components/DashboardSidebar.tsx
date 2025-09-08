@@ -173,6 +173,7 @@ export function DashboardSidebar({ userRole }: DashboardSidebarProps) {
                         isActive={isActive}
                         tooltip={collapsed ? item.title : undefined}
                         className="w-full justify-start"
+                        data-tutorial={item.url.replace('/', '').replace('-', '-')}
                       >
                         <item.icon className="w-4 h-4" />
                         {!collapsed && <span>{item.title}</span>}

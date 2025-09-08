@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { TutorialSystem } from './TutorialSystem';
+import { TutorialNavigationSync } from './TutorialNavigationSync';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface TutorialContextType {
@@ -80,6 +81,9 @@ export const TutorialProvider: React.FC<TutorialProviderProps> = ({ children }) 
       resetTutorial
     }}>
       {children}
+      
+      {/* Tutorial Navigation Sync */}
+      <TutorialNavigationSync isActive={showTutorial} />
       
       {/* Tutorial System */}
       {user && (

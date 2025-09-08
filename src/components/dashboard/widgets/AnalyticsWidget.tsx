@@ -163,7 +163,7 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className={cn(isMobile && "pb-3")}>
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className={cn(
             "flex items-center gap-2",
@@ -197,11 +197,11 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent className="dashboard-widget-content space-y-3">
+      <CardContent className="dashboard-widget-content p-4 space-y-2.5">
         {/* Key Metrics */}
-        <div className="grid grid-cols-2 gap-2">
-          <div className="p-2 bg-success/10 rounded-lg border border-success/20">
-            <div className="flex items-center gap-1.5 mb-1">
+        <div className="grid grid-cols-2 gap-1.5">
+          <div className="p-2 bg-success/10 rounded-lg border border-success/20 h-16">
+            <div className="flex items-center gap-1 mb-0.5">
               <CheckCircle className="w-4 h-4 text-success" />
               <span className={cn(
                 "font-medium text-success",
@@ -212,18 +212,18 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
             </div>
             <p className={cn(
               "font-bold text-success",
-              "text-xl"
+              "text-lg"
             )}>
               {approvalRate.toFixed(1)}%
             </p>
-            <div className="flex items-center gap-1 mt-0.5">
+            <div className="flex items-center gap-1">
               <TrendingUp className="w-3 h-3 text-success" />
               <span className="text-xs text-success">+2.3% vs last {timeframe}</span>
             </div>
           </div>
           
-          <div className="p-2 bg-warning/10 rounded-lg border border-warning/20">
-            <div className="flex items-center gap-1.5 mb-1">
+          <div className="p-2 bg-warning/10 rounded-lg border border-warning/20 h-16">
+            <div className="flex items-center gap-1 mb-0.5">
               <Clock className="w-4 h-4 text-warning" />
               <span className={cn(
                 "font-medium text-warning",
@@ -234,11 +234,11 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
             </div>
             <p className={cn(
               "font-bold text-warning",
-              "text-xl"
+              "text-lg"
             )}>
               {analytics.documentStats.avgProcessingTime}d
             </p>
-            <div className="flex items-center gap-1 mt-0.5">
+            <div className="flex items-center gap-1">
               <TrendingDown className="w-3 h-3 text-success" />
               <span className="text-xs text-success">-0.5d improvement</span>
             </div>
@@ -254,14 +254,14 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
             )}>
               Top Performing Departments
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {analytics.departmentStats
                 .sort((a, b) => b.approvalRate - a.approvalRate)
                 .slice(0, 3)
                 .map((dept, index) => (
                   <div
                     key={dept.name}
-                    className="flex items-center justify-between p-2 bg-muted/30 rounded"
+                    className="flex items-center justify-between p-1.5 bg-muted/30 rounded"
                   >
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="text-xs">
@@ -299,13 +299,13 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
           )}>
             Recent Trends
           </h4>
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             {analytics.trends.slice(-3).map((trend, index) => {
               const approvalRate = (trend.approvals / trend.documents) * 100;
               return (
                 <div
                   key={trend.period}
-                  className="flex items-center justify-between p-2 bg-muted/30 rounded"
+                  className="flex items-center justify-between p-1.5 bg-muted/30 rounded"
                 >
                   <span className={cn(
                     "font-medium",
@@ -335,12 +335,12 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
 
         {/* User Activity (for Principal/Registrar) */}
         {(userRole === 'principal' || userRole === 'registrar') && (
-          <div className="pt-2 border-t">
-            <div className="grid grid-cols-2 gap-3 text-center">
-              <div className="p-2 bg-primary/10 rounded">
+          <div className="pt-1.5 border-t">
+            <div className="grid grid-cols-2 gap-1.5 text-center">
+              <div className="p-1.5 bg-primary/10 rounded">
                 <p className={cn(
                   "font-bold text-primary",
-                  isMobile ? "text-lg" : "text-xl"
+                  isMobile ? "text-base" : "text-lg"
                 )}>
                   {analytics.userActivity.activeUsers}
                 </p>
@@ -351,10 +351,10 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
                   Active Users
                 </p>
               </div>
-              <div className="p-2 bg-success/10 rounded">
+              <div className="p-1.5 bg-success/10 rounded">
                 <p className={cn(
                   "font-bold text-success",
-                  isMobile ? "text-lg" : "text-xl"
+                  isMobile ? "text-base" : "text-lg"
                 )}>
                   {analytics.userActivity.documentsToday}
                 </p>
@@ -367,7 +367,7 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
               </div>
             </div>
             
-            <div className="mt-2 p-2 bg-muted/30 rounded text-center">
+            <div className="mt-1.5 p-1.5 bg-muted/30 rounded text-center">
               <p className="text-xs text-muted-foreground">
                 Peak Activity: {analytics.userActivity.peakHours}
               </p>
@@ -376,7 +376,7 @@ export const AnalyticsWidget: React.FC<AnalyticsWidgetProps> = ({
         )}
 
         {/* Widget Footer */}
-        <div className="flex items-center justify-between pt-2 border-t">
+        <div className="flex items-center justify-between pt-1.5 border-t">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Activity className="w-4 h-4" />
             <span>Live data</span>

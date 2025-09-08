@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTutorial } from "@/components/tutorial/TutorialProvider";
 import { useState } from "react";
+import { InteractiveTutorialGrid } from "@/components/tutorial/InteractiveTutorialGrid";
 
 const Analytics = () => {
   const { user, logout } = useAuth();
@@ -344,11 +345,14 @@ const Analytics = () => {
                   Learn how to use IAOMS effectively with guided tutorials
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6 pb-6">
+              <CardContent className="space-y-4 pb-4">
+                {/* Interactive Tutorial Grid */}
+                <InteractiveTutorialGrid />
+                
                 {/* Tutorial Modal Toggle */}
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl border border-primary/20">
                   <div className="flex-1 pr-4">
-                    <h4 className="font-semibold text-lg mb-2">IAOMS Quick Tour</h4>
+                    <h4 className="font-semibold text-base mb-1.5">IAOMS Quick Tour</h4>
                     <p className="text-sm text-muted-foreground mb-3">
                       Master the essential features and navigation in just 5 minutes
                     </p>
@@ -384,8 +388,8 @@ const Analytics = () => {
                 </div>
 
                 {/* Tutorial Steps Preview */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 border border-border rounded-lg hover:border-primary/30 transition-colors">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="p-3 border border-border rounded-lg hover:border-primary/30 transition-colors">
                     <div className="flex items-center gap-2 mb-2">
                       <Target className="w-5 h-5 text-primary" />
                       <h4 className="font-medium">Role-Specific Features</h4>
@@ -403,7 +407,7 @@ const Analytics = () => {
                     </Button>
                   </div>
                   
-                  <div className="p-4 border border-border rounded-lg hover:border-primary/30 transition-colors">
+                  <div className="p-3 border border-border rounded-lg hover:border-primary/30 transition-colors">
                     <div className="flex items-center gap-2 mb-2">
                       <FileText className="w-5 h-5 text-primary" />
                       <h4 className="font-medium">Workflow Mastery</h4>

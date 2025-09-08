@@ -249,7 +249,7 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className={cn(isMobile && "pb-3")}>
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className={cn(
             "flex items-center gap-2",
@@ -288,9 +288,9 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent className="dashboard-widget-content space-y-3">
+      <CardContent className="dashboard-widget-content p-4 space-y-2.5">
         {/* Quick Query */}
-        <div className="space-y-1.5">
+        <div className="space-y-1">
           <div className="flex gap-2">
             <Textarea
               placeholder="Ask AI about documents, workflows, or analytics..."
@@ -317,8 +317,8 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
         </div>
 
         {/* AI Insights */}
-        <ScrollArea className={cn(isMobile ? "h-28" : "h-32")}>
-          <div className="space-y-2">
+        <ScrollArea className={cn(isMobile ? "h-24" : "h-28")}>
+          <div className="space-y-1.5">
             {filteredInsights.slice(0, isMobile ? 3 : 4).map((insight, index) => (
               <div
                 key={insight.id}
@@ -329,13 +329,13 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
                 )}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="flex items-start gap-2">
+                <div className="flex items-start gap-1.5">
                   <div className="flex-shrink-0 mt-1">
                     {getInsightIcon(insight.type)}
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-1">
+                    <div className="flex items-start justify-between mb-0.5">
                       <h5 className={cn(
                         "font-medium",
                         "text-sm"
@@ -355,7 +355,7 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
                     </div>
                     
                     <p className={cn(
-                      "text-muted-foreground mb-1",
+                      "text-muted-foreground mb-0.5",
                       "text-xs"
                     )}>
                       {insight.content}
@@ -392,7 +392,7 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
         </ScrollArea>
 
         {/* AI Quick Actions */}
-        <div className="grid grid-cols-2 gap-1 pt-2 border-t">
+        <div className="grid grid-cols-2 gap-1 pt-1.5 border-t">
           <Button variant="outline" size="sm" className="text-xs h-6">
             <FileText className="w-3 h-3 mr-1" />
             Summarize Docs
@@ -412,11 +412,11 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
         </div>
 
         {/* AI Stats */}
-        <div className="grid grid-cols-3 gap-1 pt-2 border-t">
-          <div className="text-center p-1.5 bg-muted/30 rounded">
+        <div className="grid grid-cols-3 gap-1 pt-1.5 border-t">
+          <div className="text-center p-1 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-primary",
-              "text-lg"
+              "text-base"
             )}>
               {insights.length}
             </p>
@@ -427,10 +427,10 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
               Insights
             </p>
           </div>
-          <div className="text-center p-1.5 bg-muted/30 rounded">
+          <div className="text-center p-1 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-warning",
-              "text-lg"
+              "text-base"
             )}>
               {actionableCount}
             </p>
@@ -441,10 +441,10 @@ export const AIWidget: React.FC<AIWidgetProps> = ({
               Actionable
             </p>
           </div>
-          <div className="text-center p-1.5 bg-muted/30 rounded">
+          <div className="text-center p-1 bg-muted/30 rounded">
             <p className={cn(
               "font-bold text-success",
-              "text-lg"
+              "text-base"
             )}>
               89%
             </p>

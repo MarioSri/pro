@@ -221,7 +221,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
             <FileText className="w-5 h-5 text-primary" />
@@ -263,14 +263,14 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
         </div>
       </CardHeader>
       
-      <CardContent className="dashboard-widget-content">
-        <ScrollArea className={cn(isMobile ? "h-32" : "h-40")}>
-          <div className="space-y-2">
+      <CardContent className="dashboard-widget-content p-4">
+        <ScrollArea className={cn(isMobile ? "h-28" : "h-32")}>
+          <div className="space-y-1.5">
             {filteredDocuments.slice(0, 5).map((doc, index) => (
               <div
                 key={doc.id}
                 className={cn(
-                  "p-3 border rounded-lg hover:bg-gray-50 transition-all cursor-pointer animate-fade-in",
+                  "p-2.5 border rounded-lg hover:bg-gray-50 transition-all cursor-pointer animate-fade-in",
                   doc.status === 'emergency' && "border-red-200 bg-red-50",
                   doc.requiresAction && "border-l-4 border-l-orange-500"
                 )}
@@ -278,7 +278,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
                 onClick={() => navigate(`/documents/${doc.id}`)}
               >
                 {/* Header Row */}
-                <div className="flex items-start justify-between mb-1.5">
+                <div className="flex items-start justify-between mb-1">
                   <div className="flex-1 min-w-0 pr-3">
                     <h4 className="font-medium text-xs line-clamp-2 text-gray-900 leading-tight">
                       {doc.title}
@@ -299,7 +299,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
                 </div>
                 
                 {/* Info Grid */}
-                <div className="grid grid-cols-2 gap-1 text-xs text-gray-600 mb-1.5">
+                <div className="grid grid-cols-2 gap-1 text-xs text-gray-600 mb-1">
                   <div className="flex items-center gap-1">
                     <User className="w-2.5 h-2.5" />
                     <span className="truncate">{doc.submittedBy}</span>
@@ -322,7 +322,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
                 {/* Branch and Year info */}
                 {(userRole === 'program-head' || userRole === 'hod') && (doc.branch || doc.year) && (
-                  <div className="flex items-center gap-1 mb-1.5">
+                  <div className="flex items-center gap-1 mb-1">
                     {doc.branch && (
                       <Badge variant="outline" className="text-xs px-1 py-0">
                         {doc.branch}
@@ -338,7 +338,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
                 {/* Action Required Indicator */}
                 {doc.requiresAction && (
-                  <div className="flex items-center gap-1.5 p-1.5 bg-orange-50 rounded border border-orange-200">
+                  <div className="flex items-center gap-1 p-1.5 bg-orange-50 rounded border border-orange-200">
                     <Zap className="w-3 h-3 text-orange-600" />
                     <span className="text-xs font-medium text-orange-800">
                       Action Required
@@ -353,7 +353,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
 
                 {/* Quick Actions for Approvers */}
                 {doc.requiresAction && (userRole === 'principal' || userRole === 'registrar' || userRole === 'hod') && (
-                  <div className="flex gap-1 mt-2">
+                  <div className="flex gap-1 mt-1.5">
                     <Button size="sm" className="flex-1 h-6 text-xs bg-green-600 hover:bg-green-700">
                       <CheckCircle className="w-2.5 h-2.5 mr-1" />
                       Approve
@@ -383,7 +383,7 @@ export const DocumentsWidget: React.FC<DocumentsWidgetProps> = ({
         </ScrollArea>
 
         {/* Widget Footer */}
-        <div className="flex items-center justify-between pt-2 border-t mt-2">
+        <div className="flex items-center justify-between pt-1.5 border-t mt-1.5">
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <span>{filteredDocuments.length} documents</span>
             {urgentCount > 0 && (
