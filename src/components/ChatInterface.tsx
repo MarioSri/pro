@@ -592,6 +592,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ className }) => {
           <h3 className="font-semibold">Channels</h3>
           <div className="flex items-center gap-2">
             {getConnectionIcon()}
+            <Button size="sm" variant="ghost" onClick={() => setShowSettings(true)}>
+              <Settings className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </div>

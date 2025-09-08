@@ -195,22 +195,22 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <TrendingUp className="w-5 h-5 text-primary" />
           Dashboard Statistics
         </CardTitle>
       </CardHeader>
-      <CardContent className="dashboard-widget-content p-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <CardContent className="dashboard-widget-content">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
           {statsCards.map((stat, index) => (
             <div
               key={index}
-              className="relative p-3 rounded-lg border hover:shadow-md transition-all duration-200 animate-scale-in bg-white h-20 flex flex-col justify-between"
+              className="relative p-3 rounded-lg border hover:shadow-md transition-all duration-200 animate-scale-in bg-white min-h-[80px] flex flex-col justify-between"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Icon and Change Indicator */}
-              <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center justify-between mb-2">
                 <div className={cn("p-1.5 rounded-lg", stat.bgColor)}>
                   <stat.icon className={cn("w-4 h-4", stat.color)} />
                 </div>
@@ -224,8 +224,8 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
               </div>
               
               {/* Value and Title */}
-              <div className="space-y-0.5">
-                <p className="text-lg font-bold text-gray-900">
+              <div className="space-y-1">
+                <p className="text-xl font-bold text-gray-900">
                   {stat.value}
                 </p>
                 <p className="text-xs text-gray-600 font-medium leading-tight">
@@ -238,14 +238,14 @@ export const StatsWidget: React.FC<StatsWidgetProps> = ({
 
         {/* Department Overview for Admin Roles */}
         {stats && (userRole === 'principal' || userRole === 'registrar') && (
-          <div className="mt-3 pt-2 border-t">
+          <div className="mt-4 pt-3 border-t">
             <h4 className="font-semibold mb-3 text-sm text-gray-700">
               Department Overview
             </h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {Object.entries(stats.byDepartment).slice(0, 4).map(([dept, count]) => (
-                <div key={dept} className="text-center p-1.5 bg-gray-50 rounded-lg">
-                  <p className="text-base font-bold text-gray-900">{count}</p>
+                <div key={dept} className="text-center p-2 bg-gray-50 rounded-lg">
+                  <p className="text-lg font-bold text-gray-900">{count}</p>
                   <p className="text-xs text-gray-600 font-medium">{dept}</p>
                 </div>
               ))}

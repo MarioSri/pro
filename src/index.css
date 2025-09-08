@@ -755,25 +755,5 @@ All colors MUST be HSL.
   .tutorial-pulse {
     animation: none !important;
     transition: none !important;
-
-  /* Tutorial Navigation Highlighting */
-  .tutorial-navigation-highlight {
-    background-color: #00FF00 !important;
-    color: white !important;
-    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5) !important;
-    transform: scale(1.05) !important;
-    transition: all 0.3s ease-in-out !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-  }
-
-  .tutorial-navigation-highlight svg {
-    color: white !important;
-  }
-
-  .tutorial-navigation-highlight:hover {
-    background-color: #00DD00 !important;
-    transform: scale(1.08) !important;
-  }
   }
 }

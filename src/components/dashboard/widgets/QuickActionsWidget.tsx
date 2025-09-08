@@ -281,7 +281,7 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
       isSelected && "border-primary",
       isCustomizing && "cursor-pointer"
     )} onClick={onSelect}>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between text-lg">
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-primary" />
@@ -292,15 +292,15 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="dashboard-widget-content p-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+      <CardContent className="dashboard-widget-content">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           {actions.map((action, index) => (
             <Button
               key={action.path}
               variant="outline"
               onClick={() => navigate(action.path)}
               className={cn(
-                "flex flex-col gap-1 h-14 p-2 transition-all duration-200 hover:shadow-md animate-scale-in border-gray-200 hover:border-gray-300",
+                "flex flex-col gap-1.5 h-16 p-2 transition-all duration-200 hover:shadow-md animate-scale-in border-gray-200 hover:border-gray-300",
                 "group relative overflow-hidden"
               )}
               style={{ animationDelay: `${index * 50}ms` }}
@@ -312,14 +312,14 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
               )} />
               
               {/* Content */}
-              <div className="relative z-10 flex flex-col items-center gap-0.5">
+              <div className="relative z-10 flex flex-col items-center gap-1">
                 <div className={cn(
-                  "p-1 rounded-lg transition-colors duration-200",
+                  "p-1.5 rounded-lg transition-colors duration-200",
                   action.bgColor,
                   "group-hover:bg-white group-hover:shadow-sm"
                 )}>
                   <action.icon className={cn(
-                    "w-3 h-3 transition-colors duration-200",
+                    "w-3.5 h-3.5 transition-colors duration-200",
                     action.color
                   )} />
                 </div>
@@ -335,22 +335,22 @@ export const QuickActionsWidget: React.FC<QuickActionsWidgetProps> = ({
 
         {/* Role-specific quick stats */}
         {(userRole === 'principal' || userRole === 'registrar') && (
-          <div className="mt-2 pt-2 border-t">
-            <div className="grid grid-cols-3 gap-1.5 text-center">
-              <div className="p-1.5 bg-gray-50 rounded-lg">
-                <p className="text-base font-bold text-red-600">
+          <div className="mt-3 pt-3 border-t">
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <p className="text-lg font-bold text-red-600">
                   {userRole === 'principal' ? '8' : '5'}
                 </p>
                 <p className="text-xs text-gray-600 font-medium">Urgent</p>
               </div>
-              <div className="p-1.5 bg-gray-50 rounded-lg">
-                <p className="text-base font-bold text-orange-600">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <p className="text-lg font-bold text-orange-600">
                   {userRole === 'principal' ? '23' : '12'}
                 </p>
                 <p className="text-xs text-gray-600 font-medium">Today</p>
               </div>
-              <div className="p-1.5 bg-gray-50 rounded-lg">
-                <p className="text-base font-bold text-green-600">
+              <div className="p-2 bg-gray-50 rounded-lg">
+                <p className="text-lg font-bold text-green-600">
                   {userRole === 'principal' ? '156' : '89'}
                 </p>
                 <p className="text-xs text-gray-600 font-medium">This Week</p>

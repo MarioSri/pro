@@ -357,14 +357,14 @@ export const DynamicDashboard: React.FC<DynamicDashboardProps> = ({ className })
       {/* Improved Dashboard Grid - Consistent Spacing */}
       <div 
         className={cn(
-          "grid gap-3 auto-rows-min",
+          "grid gap-4 auto-rows-min",
           isMobile ? "grid-cols-1" : 
           isTablet ? "grid-cols-2" : 
           "grid-cols-12"
         )}
         style={{
-          gridTemplateRows: 'repeat(auto-fit, minmax(160px, auto))',
-          gridAutoRows: 'minmax(160px, auto)'
+          gridTemplateRows: 'repeat(auto-fit, minmax(180px, auto))',
+          gridAutoRows: 'minmax(180px, auto)'
         }}
       >
         {widgets
